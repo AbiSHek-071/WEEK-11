@@ -10,7 +10,7 @@ const generateAccessToken = require("../utils/genarateAccessToken");
 const generateRefreshToken = require("../utils/genarateRefreshToken");
 const reviews = require("../Models/reviews");
 const sendOtp = async(req,res)=>{
-  console.log("hi")
+
     try{
         const {email} = req.body;
         const checkExist = await User.findOne({email});
