@@ -14,6 +14,11 @@ export default function ProductDetails({
 }) {
   const [mainImage, setMainImage] = useState(product.images[0]);
   const [quantity, setQuantity] = useState(1);
+ useEffect(() => {
+   if (product && product.images && product.images.length > 0) {
+     setMainImage(product.images[0]);
+   }
+ }, [product]);
 
   return (
     <div className='container mx-auto px-4 py-8'>

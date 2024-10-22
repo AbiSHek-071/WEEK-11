@@ -19,15 +19,18 @@ import { Switch } from "@/components/ui/switch";
 import { Eye, Edit, Tag } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@radix-ui/react-select";
 import ProductCard from "./ProductCard";
+import { useNavigate } from "react-router-dom";
 
 
 export default function ImprovedProductList() {
+  const navigate = useNavigate()
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [reload,setReload] = useState(false);
   useEffect(() => {
     async function fetchProducts() {
       try {
+       
         const response = await axiosInstance.get("/admin/fetchproducts");
         setProducts(response.data.products);
         const res = await axiosInstance.get("/admin/getcategory");
@@ -44,7 +47,18 @@ export default function ImprovedProductList() {
   }, [reload]);
   return (
     <div className='container mx-auto py-8'>
-      <h1 className='text-2xl font-bold mb-6'>Product List</h1>
+      <div className='flex justify-between'>
+        <h1 className='text-2xl font-bold mb-6 inline-block'>Product List</h1>
+
+        <Button
+          onClick={() => {
+            navigate("/admin/addproduct");
+          }}
+          className=''>
+          Add Product
+        </Button>
+      </div>
+      <p className='text-gray-500 mb-5'>Dashboard &gt; product</p>
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
         {products.map((product) => (
           <ProductCard

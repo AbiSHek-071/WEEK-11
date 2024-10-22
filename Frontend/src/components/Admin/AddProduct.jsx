@@ -39,7 +39,55 @@ export default function AddProduct() {
   const [addInfo, setAddInfo] = useState("");
   const [sleeve, setSleeve] = useState("");
   const [catId,setCatId] = useState(null);
-  
+  const [error,setError] = useState({})
+
+  function validate() {
+    const error = {};
+
+   if (!name?.trim()) {
+     error.name = "Product name is required";
+   } else if (name.trim().length < 4) {
+     error.name = "Product name must be at least 4 characters long";
+   } else if (!/^[a-zA-Z\s]+$/.test(name.trim())) {
+     error.name = "Product name can only contain letters and spaces";
+   }
+
+   if (!price) {
+     error.price = "Price is required";
+   } else if (isNaN(price) || price <= 0) {
+     error.price = "Price must be a positive number";
+   }
+
+   if (!description?.trim()) {
+     error.description = "Description is required";
+   } else if (description.trim().split(/\s+/).length < 3) {
+     error.description = "Description must be at least 3 words";
+   } else if (/^\d/.test(description.trim())) {
+     error.description = "Description cannot start with a number";
+   } 
+
+   if (!addInfo?.trim()) {
+     error.addInfo = "Additional information is required";
+   } else if (addInfo.trim().split(/\s+/).length < 3) {
+     error.addInfo = "Additional information must be at least 3 words";
+   } 
+
+   if (
+     !croppedImages ||
+     !Array.isArray(croppedImages) ||
+     croppedImages.length < 3
+   ) {
+     error.croppedImages = "At least 3 images are required";
+   }
+
+    setError(error);
+    if (Object.keys(error).length == 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
 
   useEffect(() => {
     async function fetchCat() {
@@ -109,63 +157,61 @@ export default function AddProduct() {
   };
 
   async function handleAddProduct() {
-    console.log(croppedImages);
+   if(validate()){
+     try {
+       const convertBlobUrlToFile = async (blobUrl) => {
+         const response = await fetch(blobUrl);
+         const blob = await response.blob();
+         const file = new File(
+           [blob],
+           `image_${new Date().toLocaleString().replace(/[/: ]/g, "_")}.png`,
+           { type: blob.type }
+         );
+         return file;
+       };
 
-    try {
-      const convertBlobUrlToFile = async (blobUrl) => {
-        const response = await fetch(blobUrl);
-        const blob = await response.blob();
-        const file = new File(
-          [blob],
-          `image_${new Date().toLocaleString().replace(/[/: ]/g, "_")}.png`,
-          { type: blob.type }
-        );
-        return file;
-      };
+       const files = [];
+       for (const blobUrl of croppedImages) {
+         const file = await convertBlobUrlToFile(blobUrl);
+         files.push(file);
+       }
+       console.log(files);
 
-      const files = [];
-      for (const blobUrl of croppedImages) {
-        const file = await convertBlobUrlToFile(blobUrl);
-        files.push(file);
-      }
-      console.log(files);
+       // Upload each file to Cloudinary
+       const uploadedImageUrls = [];
+       for (const file of files) {
+         const formData = new FormData();
+         formData.append("file", file);
+         formData.append("upload_preset", "my_unsigned_preset");
 
-      // Upload each file to Cloudinary
-      const uploadedImageUrls = [];
-      for (const file of files) {
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("upload_preset", "my_unsigned_preset"); 
+         const res = await axios.post(
+           "https://api.cloudinary.com/v1_1/dneqndzyc/image/upload/",
+           formData
+         );
 
-        const res = await axios.post(
-          "https://api.cloudinary.com/v1_1/dneqndzyc/image/upload/", 
-          formData
-        );
+         uploadedImageUrls.push(res.data.secure_url);
+       }
 
-        uploadedImageUrls.push(res.data.secure_url);
-      }
-
-      const response = await axiosInstance.post("/admin/addproduct", {
-        name,
-        price,
-        description,
-        sizes,
-        addInfo,
-        catId,
-        sleeve,
-        uploadedImageUrls,
-      });
-      navigate("/admin/product");
-      toast.success(response.data.message);
-      
-    } catch (err) {
+       const response = await axiosInstance.post("/admin/addproduct", {
+         name,
+         price,
+         description,
+         sizes,
+         addInfo,
+         catId,
+         sleeve,
+         uploadedImageUrls,
+       });
+       navigate("/admin/product");
+       toast.success(response.data.message);
+     } catch (err) {
        toast.error("Error uploading images:", err);
-      if (err.response && err.response.status === 404) {
-        return toast.error(err.response.data.message);
-      }
-      toast.error("An error occurred. Please try again.");
-     
-    }
+       if (err.response && err.response.status === 404) {
+         return toast.error(err.response.data.message);
+       }
+       toast.error("An error occurred. Please try again.");
+     }
+   }
   }
 
   return (
@@ -196,12 +242,12 @@ export default function AddProduct() {
                   aspect={2 / 3}
                   onCropChange={(newCrop) => {
                     const newCrops = [...crops];
-                    newCrops[index] = newCrop; 
+                    newCrops[index] = newCrop;
                     setCrops(newCrops);
                   }}
                   onZoomChange={(newZoom) => {
                     const newZooms = [...zooms];
-                    newZooms[index] = newZoom; 
+                    newZooms[index] = newZoom;
                     setZooms(newZooms);
                   }}
                   onCropComplete={onCropComplete(index)}
@@ -224,7 +270,7 @@ export default function AddProduct() {
           <p className='text-gray-500'>Dashboard &gt; product &gt; add</p>
         </div>
 
-        <div className='bg-white shadow-md rounded-lg p-6'>
+        <div className='bg-white relative shadow-md rounded-lg p-6'>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
             {/* Image Upload Section */}
             <div className='grid grid-cols-2 md:grid-cols-3 gap-4'>
@@ -240,7 +286,7 @@ export default function AddProduct() {
                         className='absolute inset-0 w-full h-full opacity-0 cursor-pointer'
                         type='file'
                         accept='image/*'
-                        onChange={(e) => handleImageUpload(e, index)} 
+                        onChange={(e) => handleImageUpload(e, index)}
                       />
                       <Upload className='mx-auto h-12 w-12 text-gray-400' />
                       <p className='mt-1 text-sm text-gray-600'>Browse Image</p>
@@ -248,6 +294,9 @@ export default function AddProduct() {
                   )}
                 </div>
               ))}
+              <span className='text-red-700 absolute bottom-5  mt-10 ms-2'>
+                {error && error.croppedImages}
+              </span>
             </div>
 
             {/* Product Details Section */}
@@ -256,6 +305,9 @@ export default function AddProduct() {
                 onChange={(e) => setName(e.target.value)}
                 placeholder='Enter Product name here...'
               />
+              <span className='text-red-700  mt-10 ms-2'>
+                {error && error.name}
+              </span>
 
               <div className='grid grid-cols-2 gap-4'>
                 <div>
@@ -267,10 +319,9 @@ export default function AddProduct() {
                         <Select
                           onValueChange={(value) => {
                             const updatedSizes = [...sizes];
-                            updatedSizes[index].stock = parseInt(value); 
+                            updatedSizes[index].stock = parseInt(value);
                             setSizes(updatedSizes);
                             console.log(sizes);
-                           
                           }}>
                           <SelectTrigger className='w-[80px]'>
                             <SelectValue placeholder='0' />
@@ -294,10 +345,13 @@ export default function AddProduct() {
                     onChange={(e) => setPrice(e.target.value)}
                     placeholder='Enter Regular Price here...'
                   />
-                  <Input
+                  <span className='text-red-700  mt-10 ms-2'>
+                    {error && error.price}
+                  </span>
+                  {/* <Input
                     placeholder='Enter Sale Price here...'
                     className='mt-4'
-                  />
+                  /> */}
                 </div>
               </div>
 
@@ -306,7 +360,6 @@ export default function AddProduct() {
                   onValueChange={(value) => {
                     setCatId(value);
                     console.log(value);
-                    
                   }}>
                   <SelectTrigger>
                     <SelectValue placeholder='Category' />
@@ -314,7 +367,9 @@ export default function AddProduct() {
                   <SelectContent>
                     {categories.map((cat, index) => {
                       return (
-                        <SelectItem key={index} value={cat._id}>{cat.name}</SelectItem>
+                        <SelectItem key={index} value={cat._id}>
+                          {cat.name}
+                        </SelectItem>
                       );
                     })}
                   </SelectContent>
@@ -342,6 +397,9 @@ export default function AddProduct() {
                   placeholder='Enter Product Description here...'
                   className='min-h-[100px]'
                 />
+                <span className='text-red-700  mt-10 ms-2'>
+                  {error && error.description}
+                </span>
                 <Textarea
                   onChange={(e) => {
                     setAddInfo(e.target.value);
@@ -349,11 +407,14 @@ export default function AddProduct() {
                   placeholder='Enter Additional Information about the product here...'
                   className='min-h-[100px]'
                 />
+                <span className='text-red-700  mt-10 ms-2'>
+                  {error && error.addInfo}
+                </span>
               </div>
             </div>
           </div>
           <div className='mt-6 flex justify-end space-x-4'>
-            <Button variant='outline'>Save to Draft</Button>
+            <Button variant='outline'>Cancel</Button>
             <Button onClick={handleAddProduct}>Add Product</Button>
           </div>
         </div>

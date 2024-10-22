@@ -124,7 +124,7 @@ const googleAuth = async (req, res) => {
       if (userData.googleId && userData.googleId == sub) {
         return res
           .status(200)
-          .json({ success: true, message: "Login Successful" });
+          .json({ success: true, message: "Login Successful",userData });
       }
       
       else if (userData.googleId && userData.googleId != sub) {
@@ -139,7 +139,7 @@ const googleAuth = async (req, res) => {
         
         return res
           .status(200)
-          .json({ success: true, message: "Login Successful,Welcome Back" });
+          .json({ success: true, message: "Login Successful,Welcome Back",userData });
       }
     } else {
       
@@ -148,10 +148,10 @@ const googleAuth = async (req, res) => {
         email: email,
         googleId: sub,
       });
-      await newUser.save();
+      const userData = await newUser.save();
       return res
         .status(201)
-        .json({ success: true, message: "You are Registered, Welcome to Stitchers" });
+        .json({ success: true, message: "You are Registered, Welcome to Stitchers",userData });
     }
   } catch (err) {
     console.log(err);

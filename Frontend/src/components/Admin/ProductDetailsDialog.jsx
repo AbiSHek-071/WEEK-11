@@ -49,8 +49,52 @@ function ProductDetailsDialog({ product, categories, setReload }) {
   const [images, setImages] = useState([]);
   const [crops, setCrops] = useState([{ x: 0, y: 0 }]);
   const [croppedPixels, setCroppedPixels] = useState([]);
-  const [croppedImages, setCroppedImages] = useState(new Array(5).fill(false));
+  const [croppedImages, setCroppedImages] = useState([]);
   const [zooms, setZooms] = useState([1]);
+  const[error,setError] = useState({})
+
+  function validate() {
+    const error = {};
+
+   if (!editName?.trim()) {
+     error.name = "Product name is required";
+   } else if (editName.trim().length < 4) {
+     error.name = "Product name must be at least 4 characters long";
+   } else if (!/^[a-zA-Z\s]+$/.test(editName.trim())) {
+     error.name = "Product name can only contain letters and spaces";
+   }
+
+   if (!editPrice) {
+     error.price = "Price is required";
+   } else if (isNaN(editPrice) || editPrice <= 0) {
+     error.price = "Price must be a positive number";
+   }
+
+   if (!editDescription?.trim()) {
+     error.description = "Description is required";
+   } else if (editDescription.trim().split(/\s+/).length < 3) {
+     error.description = "Description must be at least 3 words";
+   } else if (/^\d/.test(editDescription.trim())) {
+     error.description = "Description cannot start with a number";
+   } 
+
+  
+   if (!croppedImages || !Array.isArray(croppedImages) || croppedImages.length + editImages.length < 3) {
+     error.croppedImages = "At least 3 images are required";
+   }
+   console.log("cropped",croppedImages);
+   console.log("edited",editImages);
+   
+   
+
+    setError(error);
+    if (Object.keys(error).length == 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   const handleImageUpload = (e, index) => {
     const file = e.target.files[0];
 
@@ -105,82 +149,81 @@ function ProductDetailsDialog({ product, categories, setReload }) {
   };
 
   async function handleEdit() {
-    try {
-      const convertBlobUrlToFile = async (blobUrl) => {
-        const response = await fetch(blobUrl);
-        const blob = await response.blob();
-        const file = new File(
-          [blob],
-          `image_${new Date().toLocaleString().replace(/[/: ]/g, "_")}.png`,
-          { type: blob.type }
-        );
-        return file;
-      };
-
-      const files = [];
-      for (const blobUrl of croppedImages) {
-        if (!blobUrl) {
-          files.push(blobUrl);
-        } else {
-          const file = await convertBlobUrlToFile(blobUrl);
-          files.push(file);
-        }
-      }
-
-      // Upload each file to Cloudinary
-      const uploadedImageUrls = [];
-      for (const file of files) {
-        if (!file) {
-          uploadedImageUrls.push(file);
-        } else {
-          const formData = new FormData();
-          formData.append("file", file);
-          formData.append("upload_preset", "my_unsigned_preset");
-
-          const res = await axios.post(
-            "https://api.cloudinary.com/v1_1/dneqndzyc/image/upload/",
-            formData
+    if (validate()) {
+      try {
+        const convertBlobUrlToFile = async (blobUrl) => {
+          const response = await fetch(blobUrl);
+          const blob = await response.blob();
+          const file = new File(
+            [blob],
+            `image_${new Date().toLocaleString().replace(/[/: ]/g, "_")}.png`,
+            { type: blob.type }
           );
+          return file;
+        };
 
-          uploadedImageUrls.push(res.data.secure_url);
-        }
-      }
-      const imagesEdit = [];
-   
-      Array.from({ length: 5 }).map((_, index) => {
-        if (uploadedImageUrls[index]) {
-          imagesEdit.push(uploadedImageUrls[index]);
-        } else {
-          
-
-          if (editImages[index]) {
-            imagesEdit.push(editImages[index]);
+        const files = [];
+        for (const blobUrl of croppedImages) {
+          if (!blobUrl) {
+            files.push(blobUrl);
           } else {
-            console.log("upload true", uploadedImageUrls[index]);
+            const file = await convertBlobUrlToFile(blobUrl);
+            files.push(file);
           }
         }
-      });
-     
 
-      const result = await axiosInstance.put("/admin/editproduct", {
-        _id: product._id,
-        name: editName,
-        description: editDescription,
-        price: editPrice,
-        category: editCategory,
-        sleeve: editSleeve,
-        sizes: editSizes,
-        images: imagesEdit,
-      });
-    
-      setReload(true);
-      toast.success(result.data.message);
-    } catch (err) {
-      if (err.result && err.result.status === 404) {
-        return toast.error(err.result.data.message);
+        // Upload each file to Cloudinary
+        const uploadedImageUrls = [];
+        for (const file of files) {
+          if (!file) {
+            uploadedImageUrls.push(file);
+          } else {
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("upload_preset", "my_unsigned_preset");
+
+            const res = await axios.post(
+              "https://api.cloudinary.com/v1_1/dneqndzyc/image/upload/",
+              formData
+            );
+
+            uploadedImageUrls.push(res.data.secure_url);
+          }
+        }
+        const imagesEdit = [];
+
+        Array.from({ length: 5 }).map((_, index) => {
+          if (uploadedImageUrls[index]) {
+            imagesEdit.push(uploadedImageUrls[index]);
+          } else {
+            if (editImages[index]) {
+              imagesEdit.push(editImages[index]);
+            } else {
+              console.log("upload true", uploadedImageUrls[index]);
+            }
+          }
+        });
+
+        const result = await axiosInstance.put("/admin/editproduct", {
+          _id: product._id,
+          name: editName,
+          description: editDescription,
+          price: editPrice,
+          category: editCategory,
+          sleeve: editSleeve,
+          sizes: editSizes,
+          images: imagesEdit,
+        });
+
+        setReload(true);
+        toast.success(result.data.message);
+      } catch (err) {
+        if (err.result && err.result.status === 404) {
+          return toast.error(err.result.data.message);
+        }
+        toast.error("An error occurred. Please try again.");
+        console.log(err);
       }
-      toast.error("An error occurred. Please try again.");
-      console.log(err);
     }
   }
 
@@ -261,17 +304,20 @@ function ProductDetailsDialog({ product, categories, setReload }) {
                 value={editName}
                 className='col-span-3'
               />
+              <span className='text-red-700 absolute bottom-5  mt-10 ms-2'></span>
             </div>
             <div className='grid grid-cols-4 items-center gap-4'>
               <Label htmlFor='price' className='text-right'>
                 Price
               </Label>
+
               <Input
                 id='price'
                 onChange={(e) => setEditPrice(e.target.value)}
                 value={editPrice}
                 className='col-span-3'
               />
+              <span className='text-red-700 absolute bottom-5  mt-10 ms-2'></span>
             </div>
             <div className='grid grid-cols-4 items-start gap-4'>
               <Label htmlFor='description' className='text-right pt-2'>
@@ -284,6 +330,7 @@ function ProductDetailsDialog({ product, categories, setReload }) {
                 className='col-span-3 h-32'
                 placeholder='Enter product description'
               />
+              <span className='text-red-700 absolute bottom-5  mt-10 ms-2'></span>
             </div>
             <div className='grid grid-cols-4 items-center gap-4'>
               <Label htmlFor='category' className='text-right'>
@@ -326,6 +373,20 @@ function ProductDetailsDialog({ product, categories, setReload }) {
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+            <div className='flex flex-col absolute bottom-5 border p-5'>
+              <span className='text-red-700 '>
+                {error && error.name}
+              </span>
+              <span className='text-red-700 '>
+                {error && error.description}
+              </span>
+              <span className='text-red-700 '>
+                {error && error.price}
+              </span>
+              <span className='text-red-700 '>
+                {error && error.croppedImages}
+              </span>
             </div>
           </div>
           <div className='space-y-4'>
@@ -402,14 +463,12 @@ function ProductDetailsDialog({ product, categories, setReload }) {
                 </div>
               ))}
             </div>
+            <span className='text-red-700 absolute bottom-5  mt-10 ms-2'></span>
           </div>
         </div>
+
         <DialogFooter>
-          <DialogClose asChild>
-            <Button onClick={handleEdit} type='submit'>
-              Save changes
-            </Button>
-          </DialogClose>
+          <Button onClick={handleEdit}>Save changes</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

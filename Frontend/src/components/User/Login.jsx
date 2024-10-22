@@ -1,24 +1,28 @@
 import { Label } from '@radix-ui/react-label';
 import React, { useState } from 'react'
+import { jwtDecode } from "jwt-decode";
 import { Input } from '../ui/input';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { Button } from '../ui/button';
 import { toast } from 'sonner';
 import axiosInstance from '@/AxiosConfig';
 import { Link, useNavigate } from 'react-router-dom';
-import { GoogleLogin } from '@react-oauth/google';
+import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
 import { useDispatch, useSelector } from 'react-redux';
 import { addUser } from '@/store/slice/userSlice';
 import { toast as reactToast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import store from '@/store/store';
 
+
 function Login() {
   const dispatch = useDispatch();
   const userData = useSelector((store)=>store.user.userData);
   const [email,setEmail] = useState("");
   const [password,setPassword] = useState("");
+   const [googleData, setGoogleData] = useState(null);
   const navigate = useNavigate()
+
    const [showPassword, setShowPassword] = useState(false);
    const handleLogin = async (e) => {
      e.preventDefault();
@@ -27,17 +31,18 @@ function Login() {
          email,
          password,
        });
-       console.log(response.data.userData)
+
        dispatch(addUser(response.data.userData));
        navigate("/user/home");
        return toast.success(response.data.message);
      } catch (err) {
        if (err.response && err.response.status === 401) {
          return toast.error(err.response.data.message);
+       } if (err.response && err.response.status === 404) {
+         return toast.error(err.response.data.message);
        }
         if (err.response && err.response.status === 403) {
       
-          
           return reactToast.error(
             <>
               <strong>Error 403:</strong> {err.response.data.message}
@@ -129,7 +134,7 @@ function Login() {
             onSuccess={async (credentialResponse) => {
               try {
                 const decodeData = jwtDecode(credentialResponse.credential);
-                console.log(decodeData);
+                
                 setGoogleData(decodeData);
 
                 const response = await axiosInstance.post("/user/googleAuth", {
@@ -138,15 +143,18 @@ function Login() {
                   email: decodeData.email,
                 });
 
-                console.log("send");
+                
                 if (response.data.success) {
                   toast.success(response.data.message);
-                  navigate("/home");
+                   dispatch(addUser(response.data.userData)); 
+                  navigate("/user/home");
                 }
               } catch (err) {
                 if (err.response && err.response.status === 401) {
                   return toast.error(err.response.data.message);
                 }
+                console.log(err);
+                
                 toast.error("An error occurred. Please try again.");
               }
             }}
