@@ -8,6 +8,7 @@ const generateRefreshToken = require("../utils/genarateRefreshToken");
 
 
 async function createAdmin(req,res) {
+  console.log("esd")
   try {
 
     
@@ -55,6 +56,9 @@ async function login(req,res) {
         }
           const accessToken = generateAccessToken(adminData._id);
           const refreshToken = generateRefreshToken(adminData._id);
+          console.log("admin A",accessToken);
+          console.log("admin R",refreshToken);
+
 
           res.cookie("adminAccessToken", accessToken, {
             httpOnly: true,
@@ -69,6 +73,7 @@ async function login(req,res) {
             sameSite: "Strict",
             maxAge: 7 * 24 * 60 * 60 * 1000,
           });
+          adminData.password = undefined;
           return res.status(200).json({
             success: true,
             message: "Login Successful, Welcome Back",
@@ -111,7 +116,7 @@ async function addCategory(req,res){
 }
 async function fetchCategory(req,res) {
   try {
-    const categories = await Category.find();
+    const categories = await Category.find({});
     if(!categories){
        return res.status(404)
      .json({ success: false, message: "Category fetch failed"});
@@ -257,7 +262,7 @@ async function sendCatgories(req, res) {
   try {
     
     
-    const categories = await Category.find(); 
+    const categories = await Category.find({isActive:true}); 
 
     
     if(categories.length === 0) {
@@ -329,19 +334,26 @@ async function addProduct(req,res) {
 
 async function fetchProducts(req,res) {
   try {
-   const products = await Product.find({}).populate("category", "name");
+   const products = await Product.find({ isActive: true }).populate({
+      path: "category",
+      match: { isActive: true },
+      select: "name",
+    });
+   const filteredProductData = products.filter(
+     (prod) => prod.category !== null
+   );
 
 
-    if(products.length == 0){
-      return res.status(404).json({ success:false,message:"unable to fetch products"})
+    if (filteredProductData.length == 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "unable to fetch products" });
     }
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: "Products list fetched Successfully",
-        products,
-      });
+    return res.status(200).json({
+      success: true,
+      message: "Products list fetched Successfully",
+      products: filteredProductData,
+    });
   } catch (err) {
     console.log(err);
     

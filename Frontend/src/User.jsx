@@ -9,21 +9,32 @@ import ProductPage from "./Pages/ProductPage";
 
 import { Provider } from "react-redux";
 import store from "./store/store";
+import ProtectedLogin from "./private/ProtectedLogin";
+import ProtectedHome from "./private/ProtectedHome";
 
 
 function User() {
   return (
-    <Provider store={store}>
-      <Routes>
-        <Route path='/signup' element={<SignupPage />} />
-        <Route path='/' element={<LandingPage />} />
+    <Routes>
+      <Route path='/signup' element={<SignupPage />} />
 
-        <Route path='/login' element={<LoginPage />} />
-        <Route path='/home' element={<LandingPage />} />
-        <Route path='/product/:id' element={<ProductPage />} />
-        <Route path='/shop' element={<ShopPage />} />
-      </Routes>
-    </Provider>
+      <Route
+        path='/login'
+        element={
+          <ProtectedLogin>
+            <LoginPage />
+          </ProtectedLogin>
+        }
+      />
+      <Route
+        path='/home'
+        element={
+            <LandingPage />
+        }
+      />
+      <Route path='/product/:id' element={<ProductPage />} />
+      <Route path='/shop' element={<ShopPage />} />
+    </Routes>
   );
 }
 

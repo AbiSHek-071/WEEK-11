@@ -31,7 +31,7 @@ const sendOtp = async(req,res)=>{
           `<h2>${otp}</h2>`,
         );
        
-        return res.status(200).json({success:true,message:"OTP Send Successfully"})
+        return res.status(200).json({success:true,message:"OTP Send Successfully",otp})
 
     }catch(err){message;
         console.log(err);
@@ -66,6 +66,11 @@ const login = async (req, res) => {
 
     const matchPass = await bcrypt.compare(password, userData.password);
     if (matchPass) {
+      if (userData.isActive == false) {
+        const message = `Your account is currently inactive, and access to the website is restricted...!`;
+        return res.status(403).json({ success: false, message });
+      }
+
       userData.password = undefined;
 
       const accessToken = generateAccessToken(userData._id);
@@ -158,11 +163,27 @@ const googleAuth = async (req, res) => {
 async function fetchnewarraivals (req,res){
   try {
     
-    const productData = await product.find().populate("category", "name");
+      const productData = await product.find({ isActive: true }).populate({
+        path: "category",
+        match: { isActive: true }, 
+        select: "name", 
+      });
+      const filteredProductData = productData.filter(
+        (prod) => prod.category !== null
+      );
+
+
+      console.log("filtered product:", productData);
     if(!productData){
       return res.status(404).json({message:"Unable to fetch Image",success:false});
     }
-    return res.status(200).json({message:"products fetched successfully",success:true,productData})
+    return res
+      .status(200)
+      .json({
+        message: "products fetched successfully",
+        success: true,
+        productData: filteredProductData,
+      });
   } catch (err) {
     console.log(err);
     
@@ -171,7 +192,8 @@ async function fetchnewarraivals (req,res){
 async function fetchproduct(req,res) {
   try {
     const {id} = req.body;
-    const productData = await product.findById({ _id:id });    
+    const productData = await product.findById({ _id:id });
+        
 
     if(!productData){
       return res.status(404).json({success:true,message:"Unable to Find the Product,"});
@@ -269,7 +291,35 @@ async function fetchAverageRating(req, res) {
 }
 
 
+async function fetchRelatedProducts(req,res) {
+  try {
 
+    
+    const {categoryId} =req.body;    
+    const productData = await product.find({category:categoryId, isActive: true }).populate({
+      path: "category",
+      match: { isActive: true },
+      select: "name",
+    });
+    const filteredProductData = productData.filter(
+      (prod) => prod.category !== null
+    );
+
+    console.log("filtered product:", productData);
+    if (!productData) {
+      return res
+        .status(404)
+        .json({ message: "Unable to fetch Image", success: false });
+    }
+    return res.status(200).json({
+      message: "products fetched successfully",
+      success: true,
+      productData: filteredProductData,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 
 
@@ -285,4 +335,5 @@ module.exports = {
   addReviews,
   fetchReviews,
   fetchAverageRating,
+  fetchRelatedProducts,
 };

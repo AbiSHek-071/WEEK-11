@@ -9,6 +9,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUser } from '@/store/slice/userSlice';
+import { toast as reactToast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import store from '@/store/store';
 
 function Login() {
@@ -33,6 +35,26 @@ function Login() {
        if (err.response && err.response.status === 401) {
          return toast.error(err.response.data.message);
        }
+        if (err.response && err.response.status === 403) {
+      
+          
+          return reactToast.error(
+            <>
+              <strong>Error 403:</strong> {err.response.data.message}
+              <br />
+             <strong>Contact the Admin for Further Details</strong>
+            </>,
+            {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+            }
+          );
+        }
+
        toast.error("An error occurred. Please try again.");
      }
    };

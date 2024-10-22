@@ -31,12 +31,12 @@ export default function SignUp() {
     
     if(password==confirm){
       try{
-        
+        toast.success("Generating OTP please Wait")
         const response = await axiosInstance.post("/user/sendotp", { email });
         
         toast.success(response.data.message); 
         setIsOTPDialogOpen(true);  
-        
+        console.log(response.data.otp)
       }catch(err){
         if (err.response && err.response.status === 409) {
           return toast.error(err.response.data.message);
@@ -161,7 +161,9 @@ export default function SignUp() {
           </div>
           <div className='text-sm text-center'>
             Already have an account?{" "}
-            <Link to='/user/login' className='font-medium text-primary hover:underline'>
+            <Link
+              to='/user/login'
+              className='font-medium text-primary hover:underline'>
               Log in
             </Link>
           </div>
@@ -175,7 +177,7 @@ export default function SignUp() {
           </div>
           <div className='relative flex justify-center text-xs uppercase'>
             <span className='bg-background px-2 text-muted-foreground'>
-              Or Continue with 
+              Or Continue with
             </span>
           </div>
         </div>
@@ -214,6 +216,7 @@ export default function SignUp() {
       </div>
 
       <OTPVerification
+        handleSignUp={handleSignUp}
         isOpen={isOTPDialogOpen}
         onClose={() => setIsOTPDialogOpen(false)}
         onVerify={handleOTPVerify}

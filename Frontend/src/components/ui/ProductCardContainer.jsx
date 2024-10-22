@@ -1,7 +1,7 @@
 import { useState } from "react";
 import ProductCard from "./ProductCard";
 
-const ProductCardContainer = ({ title, products }) => {
+const ProductCardContainer = ({ title, products, }) => {
  
 
   return (

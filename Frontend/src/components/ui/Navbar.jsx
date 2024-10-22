@@ -16,7 +16,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const userData = useSelector((store)=>store.user.userDatas)
  
-  console.log("user data logged in navbar",userData)
+ 
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);

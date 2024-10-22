@@ -6,9 +6,14 @@ import { Button } from "../ui/button";
 import { toast } from "sonner";
 import axiosInstance from "@/AxiosConfig";
 import { Link, useNavigate } from "react-router-dom";
-import { GoogleLogin } from "@react-oauth/google";
+
+import { useDispatch, useSelector } from "react-redux";
+import { addAdmin } from "@/store/slice/adminSlice";
+import store from "@/store/store";
 
 function Login() {
+  const dispatch = useDispatch();
+  const userData = useSelector((store) => store.admin.adminDatas);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -20,6 +25,7 @@ function Login() {
         email,
         password,
       });
+      dispatch(addAdmin(response.data.adminData));
       navigate("/admin/product");
       return toast.success(response.data.message);
     } catch (err) {
@@ -27,6 +33,8 @@ function Login() {
         return toast.error(err.response.data.message);
       }
       toast.error("An error occurred. Please try again.");
+      console.log(err);
+      
     }
   };
 

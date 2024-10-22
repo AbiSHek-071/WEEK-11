@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Heart, Minus, Plus, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,10 +6,12 @@ import "../../App.css"
 
 
 
-export default function ProductDetails({ product, averageRating, totalReviews }) {
-  console.log("avg review :",averageRating);
-  console.log("total rev:",totalReviews);
-  
+export default function ProductDetails({
+  product,
+  averageRating,
+  totalReviews,
+ 
+}) {
   const [mainImage, setMainImage] = useState(product.images[0]);
   const [quantity, setQuantity] = useState(1);
 
@@ -53,9 +55,9 @@ export default function ProductDetails({ product, averageRating, totalReviews })
                 <Star
                   key={i}
                   className={`w-5 h-5 ${
-                    i < Math.floor(averageRating) 
+                    i < Math.floor(averageRating)
                       ? "fill-current text-yellow-400"
-                      : i < averageRating 
+                      : i < averageRating
                       ? "fill-current text-yellow-200"
                       : "fill-current text-gray-300"
                   }`}

@@ -1,17 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { DialogClose } from "@radix-ui/react-dialog";
+import { X } from "lucide-react";
 
-export function OTPVerification({ isOpen, onClose, onVerify, email }) {
-  const [otp, setOtp] = useState(['', '', '', '', '']);
+export function OTPVerification({
+  isOpen,
+  onClose,
+  onVerify,
+  email,
+  handleSignUp,
+}) {
+  const [otp, setOtp] = useState(["", "", "", "", ""]);
   const [timer, setTimer] = useState(120);
+  const inputRefs = useRef([]);
 
   useEffect(() => {
     let interval;
@@ -28,25 +32,39 @@ export function OTPVerification({ isOpen, onClose, onVerify, email }) {
       const newOtp = [...otp];
       newOtp[index] = value;
       setOtp(newOtp);
-     
+
+      // Move focus to the next input
+      if (value !== "" && index < 4) {
+        inputRefs.current[index + 1].focus();
+      }
+    }
+  };
+
+  const handleKeyDown = (index, e) => {
+    if (e.key === "Backspace" && index > 0 && otp[index] === "") {
+      // Move focus to the previous input when backspace is pressed on an empty input
+      inputRefs.current[index - 1].focus();
     }
   };
 
   const handleVerify = () => {
-    onVerify(otp.join('')); 
-    
-  };
-
-  const handleResend = () => {
-    setTimer(20);
-    // Add logic to resend OTP
+    onVerify(otp.join(""));
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={() => {}}>
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
           <DialogTitle className='text-center'>Verify OTP</DialogTitle>
+          <DialogClose asChild>
+            <Button
+              variant='ghost'
+              className='absolute right-0 top-0 rounded-sm opacity-0 ring-offset-background transition-opacity '
+              onClick={onClose}>
+              <X className='h-4 w-4' />
+              <span className='sr-only'>Close</span>
+            </Button>
+          </DialogClose>
         </DialogHeader>
         <div className='text-center mb-4'>
           We've sent an email with an activation code to your email {email}
@@ -60,7 +78,9 @@ export function OTPVerification({ isOpen, onClose, onVerify, email }) {
               maxLength={1}
               value={digit}
               onChange={(e) => handleChange(index, e.target.value)}
+              onKeyDown={(e) => handleKeyDown(index, e)}
               className='w-12 h-12 text-center text-lg'
+              ref={(el) => (inputRefs.current[index] = el)}
             />
           ))}
         </div>
@@ -74,7 +94,7 @@ export function OTPVerification({ isOpen, onClose, onVerify, email }) {
               :{(timer % 60).toString().padStart(2, "0")}
             </p>
           ) : (
-            <Button variant='link' onClick={handleResend}>
+            <Button onClick={handleSignUp} variant='link'>
               Resend
             </Button>
           )}

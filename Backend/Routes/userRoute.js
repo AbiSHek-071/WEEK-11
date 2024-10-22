@@ -17,4 +17,5 @@ userRoute.post("/fetchproduct",userController.fetchproduct);
 userRoute.post("/addreviews",userController.addReviews)
 userRoute.get("/fetchreviews:id",userController.fetchReviews);
 userRoute.get("/fetchproductreviewcount:id", userController.fetchAverageRating);
+userRoute.post("/fetchrelatedproducts",userController.fetchRelatedProducts);
 module.exports = userRoute;  

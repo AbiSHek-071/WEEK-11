@@ -20,25 +20,23 @@ export default function ProductCard({ product }) {
     useEffect(() => {
       async function fetchreviewcount(params) {
         try {
-           const response = await axiosInstance.get(
-             `/user/fetchproductreviewcount${product._id}`
-           );
-           
-           
-           setStars(response.data.averageRating);
+          const response = await axiosInstance.get(
+            `/user/fetchproductreviewcount${product._id}`
+          );
+
+          setStars(response.data.averageRating);
         } catch (err) {
           console.log(err);
-          
         }
       }
       fetchreviewcount();
-     
-    }, []);
+    }, [product]);
 
   return (
     <div onClick={()=>{
       console.log("products : ",product)
       navigate(`/user/product/${product._id}`)
+      setfotce
     }} className='group relative bg-white border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-lg'>
       <div className='relative'>
         <img

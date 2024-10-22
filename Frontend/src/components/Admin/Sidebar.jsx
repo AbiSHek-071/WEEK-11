@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   LayoutDashboard,
   Layers,
@@ -12,8 +12,14 @@ import {
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { NavLink } from "react-router-dom"; // Import NavLink for navigation
+import PopupBox from "./PopupBox";
 
 function Sidebar() {
+   const [isPopupOpen, setIsPopupOpen] = useState(false);
+   const handleLogout = () => {
+     console.log("Logout clicked");
+     setIsPopupOpen(true); // This will open the popup
+   };
   return (
     <>
       <aside className='w-64 bg-white shadow-md h-full'>
@@ -44,7 +50,11 @@ function Sidebar() {
               { icon: <Image size={20} />, label: "Banner" },
               { icon: <Ticket size={20} />, label: "Coupon" },
               { icon: <Settings size={20} />, label: "Settings" },
-              { icon: <LogOut size={20} />, label: "Logout" },
+              {
+                icon: <LogOut size={20} />,
+                label: "Logout",
+                onClick: handleLogout,
+              },
             ].map((item, index) => (
               <li key={index}>
                 {/* For specific admin routes, use NavLink */}
@@ -61,7 +71,11 @@ function Sidebar() {
                   </NavLink>
                 ) : (
                   // Keep other sidebar items as buttons
-                  <Button variant='ghost' className='w-full justify-start'>
+                  <Button
+                    variant='ghost'
+                    className='w-full justify-start'
+                    onClick={item.onClick} // Attach the click handler here
+                  >
                     {item.icon}
                     <span className='ml-2'>{item.label}</span>
                   </Button>
@@ -70,6 +84,7 @@ function Sidebar() {
             ))}
           </ul>
         </nav>
+        <PopupBox isOpen={isPopupOpen} setIsPopupOpen={setIsPopupOpen} />
       </aside>
     </>
   );
