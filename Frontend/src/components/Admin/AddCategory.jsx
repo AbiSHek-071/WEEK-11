@@ -49,7 +49,7 @@ export default function AddCategory() {
         if(validate()){
          
          try {
-            const response = await axiosInstance.post("/admin/addcategory", {
+            const response = await axiosInstance.post("/admin/categories", {
               name: cname,
               description,
             });

@@ -9,7 +9,7 @@ function ProductCard({ product, categories, setReload }) {
   const [isListed, setIsListed] = useState(product.listed);
   async function handleToggle(_id, isActive) {
      try {
-       const response = await axiosInstance.put("/admin/toggleproduct", {
+       const response = await axiosInstance.put("/admin/products/status", {
          _id,
          isActive,
        });

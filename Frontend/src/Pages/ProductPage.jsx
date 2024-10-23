@@ -32,7 +32,7 @@ useEffect(() => {
       const response = await axiosInstance.post("/user/fetchproduct", { id });
       setProduct(response.data.product);
       console.log(response.data.product.category);
-      const res = await axiosInstance.post("/user/fetchrelatedproducts", {
+      const res = await axiosInstance.post("/user/products/related", {
         categoryId: response.data.product.category,
       });
       const relatedProduct = res.data.productData.filter((x) => {

@@ -31,9 +31,9 @@ export default function ImprovedProductList() {
     async function fetchProducts() {
       try {
        
-        const response = await axiosInstance.get("/admin/fetchproducts");
+        const response = await axiosInstance.get("/admin/products");
         setProducts(response.data.products);
-        const res = await axiosInstance.get("/admin/getcategory");
+        const res = await axiosInstance.get("/admin/categories/active");
         setCategories(res.data.categories);
         setReload(false);
       } catch (err) {

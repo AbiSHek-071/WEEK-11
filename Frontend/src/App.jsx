@@ -15,7 +15,7 @@ import { ToastContainer } from "react-toastify";
 function App() {
   return (
     <>
-      <Toaster position='top-right' />
+      <Toaster position='bottom-right' />
       <ToastContainer/>
       <GoogleOAuthProvider clientId='495895525105-d4s3eg0u6upjp00irja429ki3rhd1c2o.apps.googleusercontent.com'>
         <Provider store={store}>

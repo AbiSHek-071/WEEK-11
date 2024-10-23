@@ -19,13 +19,13 @@ userRoute.post("/login", userController.login);
 userRoute.post("/googleAuth", userController.googleAuth);
 
 //product controller routes
-userRoute.get("/fetchnewarraivals",userAuth.jwtVerification,productController.fetchnewarraivals);
+userRoute.get("/products/new-arrivals",userAuth.jwtVerification,productController.fetchnewarraivals);
 userRoute.post("/fetchproduct",productController.fetchproduct);
-userRoute.post("/fetchrelatedproducts",productController.fetchRelatedProducts);
+userRoute.post("/products/related", productController.fetchRelatedProducts);
 
 //review controller routes
-userRoute.post("/addreviews",reviewController.addReviews)
-userRoute.get("/fetchreviews:id",reviewController.fetchReviews);
-userRoute.get("/fetchproductreviewcount:id", reviewController.fetchAverageRating);
+userRoute.post("/product/review", reviewController.addReviews);
+userRoute.get("/products/:id/reviews", reviewController.fetchReviews);
+userRoute.get("/products/:id/reviews/average-rating:id", reviewController.fetchAverageRating);
 
 module.exports = userRoute;  

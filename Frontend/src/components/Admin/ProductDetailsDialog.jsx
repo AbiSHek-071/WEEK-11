@@ -204,7 +204,7 @@ function ProductDetailsDialog({ product, categories, setReload }) {
           }
         });
 
-        const result = await axiosInstance.put("/admin/editproduct", {
+        const result = await axiosInstance.put("/admin/product", {
           _id: product._id,
           name: editName,
           description: editDescription,

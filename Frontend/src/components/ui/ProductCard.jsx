@@ -21,7 +21,7 @@ export default function ProductCard({ product }) {
       async function fetchreviewcount(params) {
         try {
           const response = await axiosInstance.get(
-            `/user/fetchproductreviewcount${product._id}`
+            `/user/products/${product._id}/reviews/average-rating`
           );
 
           setStars(response.data.averageRating);

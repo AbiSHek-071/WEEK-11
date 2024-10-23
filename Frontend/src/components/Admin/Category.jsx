@@ -24,7 +24,7 @@ export default function Category() {
 useEffect(() => {
   async function fetchData() {
     try {
-      const response = await axiosInstance.get("/admin/category");
+      const response = await axiosInstance.get("/admin/categories");
       console.log(response.data.categories);
 
       setCategories(response.data.categories);
@@ -46,7 +46,7 @@ useEffect(() => {
     }
     async function handleToggle(_id,isActive){
        try {
-         const response = await axiosInstance.post("/admin/togglecategory",{_id,isActive});
+         const response = await axiosInstance.put("/admin/categories/toggle-status",{_id,isActive});
          toast.success(response.data.message)
          setToggle(toggle?false:true);
        } catch (err) {

@@ -41,7 +41,7 @@ export default function EditCategory() {
   useEffect(() => {
     async function fetchCategoryData() {
       try {
-        const response = await axiosInstance.get(`/admin/editcategory/${id}`);
+        const response = await axiosInstance.get(`/admin/category/${id}`);
         const { name, description } = response.data.categoryData;
         setExistingCategory(response.data.categoryData);
         setName(name);
@@ -60,7 +60,7 @@ export default function EditCategory() {
     if (validate()) {
       // Ensure to call validate()
       try {
-        const response = await axiosInstance.post("/admin/editCategory", {
+        const response = await axiosInstance.put("/admin/category", {
           id,
           name,
           description,

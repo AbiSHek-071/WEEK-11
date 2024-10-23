@@ -30,7 +30,7 @@ export default function Customer() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axiosInstance.get("/admin/userdata");
+        const response = await axiosInstance.get("/admin/users");
        
         setUsers(response.data.users);
       } catch (err) {
@@ -44,10 +44,10 @@ export default function Customer() {
   }, [toggle]);
  async function handleStatus(_id, isActive) {
    try {
-     const response = await axiosInstance.post("/admin/blockuser", {
+     const response = await axiosInstance.put("/admin/users/block", {
        _id,
        isActive,
-       toast
+       toast,
      });
      setToggle(!toggle)
      toast.success(response.data.message);

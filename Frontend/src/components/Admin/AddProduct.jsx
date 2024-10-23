@@ -92,7 +92,7 @@ export default function AddProduct() {
   useEffect(() => {
     async function fetchCat() {
       try {
-        const response = await axiosInstance.get("/admin/getcategory"); 
+        const response = await axiosInstance.get("/admin/categories/active"); 
         setCategories(response.data.categories);
         
       } catch (err) {
@@ -192,7 +192,7 @@ export default function AddProduct() {
          uploadedImageUrls.push(res.data.secure_url);
        }
 
-       const response = await axiosInstance.post("/admin/addproduct", {
+       const response = await axiosInstance.post("/admin/product", {
          name,
          price,
          description,

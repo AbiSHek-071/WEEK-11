@@ -24,7 +24,7 @@ const [message, setMessage] = useState(null);
     async function fetchRevies() {
       try {
         const response = await axiosInstance.get(
-          `/user/fetchreviews${product._id}`
+          `/user/products/${product._id}/reviews`
         );
         setUserReviews(response.data.reviews);
 
@@ -55,7 +55,7 @@ const [message, setMessage] = useState(null);
       if(!userData){
         return toast.error("You need to log in to post a review.");
       }     
-      const response = await axiosInstance.post("/user/addreviews", {
+      const response = await axiosInstance.post("/user/product/review", {
         userId: userData._id,
         productId: product._id,
         rating,
