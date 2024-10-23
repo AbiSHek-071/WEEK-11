@@ -16,8 +16,14 @@ import { toast } from "sonner";
 import { Input } from "../ui/input";
 import { Search } from "lucide-react";
 import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutUser } from "@/store/slice/userSlice";
 
 export default function Customer() {
+  const userData = useSelector((store)=>store.user.userDatas)
+
+  
+  const dispatch = useDispatch()
   const [users,setUsers] = useState([]);
   const [toggle, setToggle] = useState(true);
 
@@ -25,7 +31,7 @@ export default function Customer() {
     async function fetchData() {
       try {
         const response = await axiosInstance.get("/admin/userdata");
-        console.log(response.data.users);
+       
         setUsers(response.data.users);
       } catch (err) {
         if (err.response && err.response.status === 404) {
@@ -45,6 +51,11 @@ export default function Customer() {
      });
      setToggle(!toggle)
      toast.success(response.data.message);
+  
+     
+     
+       dispatch(logoutUser());
+  
    } catch (err) {
      if (err.response && err.response.status === 404) {
        return toast.error(err.response.data.message);

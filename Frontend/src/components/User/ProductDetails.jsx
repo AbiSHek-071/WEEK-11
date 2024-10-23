@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Heart, Minus, Plus, Star } from "lucide-react";
+import { Heart, Minus, Plus, Star,X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import "../../App.css"
+import { AnimatePresence,motion } from "framer-motion";
+
 
 
 
@@ -14,14 +16,54 @@ export default function ProductDetails({
 }) {
   const [mainImage, setMainImage] = useState(product.images[0]);
   const [quantity, setQuantity] = useState(1);
+  const [isZoomModalOpen,setIsZoomModalOpen] = useState(false)
  useEffect(() => {
    if (product && product.images && product.images.length > 0) {
      setMainImage(product.images[0]);
    }
  }, [product]);
 
+ function closeZoomModal(){
+  setIsZoomModalOpen(false)
+ }
   return (
     <div className='container mx-auto px-4 py-8'>
+      <AnimatePresence>
+        {isZoomModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className='fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50'
+            onClick={closeZoomModal}>
+            <motion.div
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.5, opacity: 0 }}
+              transition={{
+                type: "spring",
+                damping: 25,
+                stiffness: 300,
+              }}
+              className='relative max-w-[30vw] max-h-[100vh]'
+              onClick={(e) => e.stopPropagation()}>
+              <Button
+                variant='ghost'
+                size='icon'
+                className='absolute top-2 right-2 text-white hover:text-gray-200 z-10'
+                onClick={closeZoomModal}>
+                <X className='h-6 w-6' />
+              </Button>
+              <img
+                src={mainImage}
+                alt='Zoomed product view'
+                className='w-full h-full object-contain'
+                
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
         <div className='flex flex-col md:flex-row gap-4'>
           <div className='scrollbar h-full order-2 md:order-1 flex md:flex-col gap-2 overflow-x-auto md:overflow-y-auto md:max-h-[900px] md:min-w-[140px]'>
@@ -41,6 +83,9 @@ export default function ProductDetails({
           <div className='order-1 md:order-2 flex-grow'>
             <div className='relative overflow-hidden rounded-lg bg-gray-100 hover:bg-gray-200 transition-all duration-300'>
               <img
+                onClick={()=>{
+                  setIsZoomModalOpen(true)
+                }}
                 src={mainImage}
                 alt='Product Main View'
                 className='w-full h-auto object-cover aspect-[3/4] transform transition-transform duration-300 hover:scale-110'

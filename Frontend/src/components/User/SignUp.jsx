@@ -80,7 +80,10 @@ export default function SignUp() {
   const handleSignUp = async (e) => {
     e.preventDefault();
     if(validate()){
+      
       if (password == confirm) {
+        console.log("asdhasdg");
+
         try {
           toast.success("Generating OTP please Wait");
           const response = await axiosInstance.post("/user/sendotp", { email });
@@ -94,6 +97,8 @@ export default function SignUp() {
           }
           toast.error("An error occurred. Please try again.");
         }
+      }else{
+        toast.error("confirm password do not match")
       }
     }
    

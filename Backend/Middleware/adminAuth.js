@@ -12,8 +12,7 @@ const jwtVerification = async (req, res, next) => {
         accessToken,
         "AccesstokenKeyShouldReplaceLater"
       );
-      console.log("AccessTOKEN verified");
-
+     
       const adminData = await Admin.findById(Accessverified.id).select("-password");
       if (!adminData) {
         return res
@@ -28,7 +27,7 @@ const jwtVerification = async (req, res, next) => {
         refreshToken,
         "RefreshtokenKeyShouldReplaceLater"
       );
-      console.log("Refresh token verified");
+      
 
       const adminData = await Admin.findById(RefreshVerified.id).select("-password");
       if (!adminData) {
@@ -36,10 +35,10 @@ const jwtVerification = async (req, res, next) => {
           .status(401)
           .json({ message: "Unauthorized: Admin not found" });
       }
-      console.log(adminData)
+      
       const newAccessToken = generateAccessToken(adminData._id);
 
-      console.log("new access created");
+      
       res.cookie("adminAccessToken", newAccessToken, {
         httpOnly: true,
         secure: false,

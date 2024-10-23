@@ -3,21 +3,36 @@ const express = require("express");
 const Admin =require("../Models/admin");
 const adminRoute = express.Router();
 
-const adminController = require("../Controller/adminController");
+
+//Controllers Here
+const adminController = require("../Controller/Admin/adminController");
+const productController = require("../Controller/Admin/productController")
+const categoryController = require("../Controller/Admin/categoryController");
+const userController = require("../Controller/Admin/userController")
 const adminAuth = require("../Middleware/adminAuth")
 
+//admin controller routes
 adminRoute.get("/createadmin/:email", adminController.createAdmin);
 adminRoute.post("/login",adminController.login);
-adminRoute.post("/addcategory",adminAuth.jwtVerification,adminController.addCategory);
-adminRoute.get("/category",adminAuth.jwtVerification,adminController.fetchCategory);
-adminRoute.get("/editcategory/:id",adminAuth.jwtVerification,adminController.getCategory);
-adminRoute.post("/editCategory",adminAuth.jwtVerification,adminController.editcategory);
-adminRoute.post("/togglecategory",adminAuth.jwtVerification,adminController.toggleCategory);
-adminRoute.get("/userdata",adminAuth.jwtVerification,adminController.getUsers);
-adminRoute.post("/blockuser",adminAuth.jwtVerification,adminController.blockUser);
-adminRoute.get("/getcategory",adminAuth.jwtVerification,adminController.sendCatgories);
-adminRoute.post("/addproduct",adminAuth.jwtVerification,adminController.addProduct);
-adminRoute.get("/fetchproducts",adminAuth.jwtVerification,adminController.fetchProducts);
-adminRoute.put("/editproduct",adminAuth.jwtVerification,adminController.editProduct);
-adminRoute.put("/toggleproduct",adminAuth.jwtVerification,adminController.toggleProduct);
+
+//category Controller routes 
+adminRoute.post("/addcategory",adminAuth.jwtVerification,categoryController.addCategory);
+adminRoute.get("/category",adminAuth.jwtVerification,categoryController.fetchCategory);
+adminRoute.get("/editcategory/:id",adminAuth.jwtVerification,categoryController.getCategory);
+adminRoute.post("/editCategory",adminAuth.jwtVerification,categoryController.editcategory);
+adminRoute.get("/getcategory",adminAuth.jwtVerification,categoryController.sendCatgories);
+adminRoute.post("/togglecategory",adminAuth.jwtVerification,categoryController.toggleCategory);
+
+//user Controller routes
+adminRoute.get("/userdata",adminAuth.jwtVerification,userController.getUsers);
+adminRoute.post("/blockuser",adminAuth.jwtVerification,userController.blockUser);
+
+
+//products Controller routes
+adminRoute.post("/addproduct",adminAuth.jwtVerification,productController.addProduct);
+adminRoute.get("/fetchproducts",adminAuth.jwtVerification,productController.fetchProducts);
+adminRoute.put("/editproduct",adminAuth.jwtVerification,productController.editProduct);
+adminRoute.put("/toggleproduct",adminAuth.jwtVerification,productController.toggleProduct);
+
+
 module.exports = adminRoute;

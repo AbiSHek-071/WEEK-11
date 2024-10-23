@@ -39,7 +39,7 @@ function LandingPage() {
     <>
       <Navbar />
       <HeroSection />
-      <ShopByCategories />
+      {/* <ShopByCategories /> */}
       <ProductCardContainer title={"New Arraivals"} products={newArraivals} />
       <ProductCardContainer title={"Top Selling"} products={newArraivals} />
 

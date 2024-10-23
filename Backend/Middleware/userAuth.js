@@ -17,7 +17,7 @@ const verifyOtp = async (req, res, next) => {
 
     // Compare the provided OTP with the stored OTP
     if (otp === otpData.otp) {
-      console.log("OTP verified, proceeding to next step.");
+  
       next(); // Proceed to the next middleware (register function)
     } else {
       console.log("Invalid OTP.");
@@ -42,7 +42,7 @@ const jwtVerification = async (req, res, next) => {
         accessToken,
         "AccesstokenKeyShouldReplaceLater"
       );
-      console.log("AccessTOKEN verified");
+    
 
    
       const user = await User.findById(Accessverified.id).select("-password");
@@ -62,7 +62,7 @@ const jwtVerification = async (req, res, next) => {
         refreshToken,
         "RefreshtokenKeyShouldReplaceLater"
       );
-      console.log("Refresh token verified");
+      
 
  
       const user = await User.findById(RefreshVerified.id).select("-password");
@@ -76,7 +76,7 @@ const jwtVerification = async (req, res, next) => {
       const newAccessToken = generateAccessToken(user._id);
 
       
-      console.log("new access created")
+    
       res.cookie("accessToken", newAccessToken, {
         httpOnly: true,
         secure: false, 
