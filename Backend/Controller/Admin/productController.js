@@ -51,11 +51,20 @@ async function addProduct(req, res) {
 
 async function fetchProducts(req, res) {
   try {
-    const products = await Product.find({}).populate({
-      path: "category",
-      match: { isActive: true },
-      select: "name",
-    });
+     const page = parseInt(req.query.page) || 1;
+     const limit = parseInt(req.query.limit) || 5;
+     const skip = (page - 1) * limit;
+     const totalProducts = await Product.countDocuments();
+
+    const products = await Product.find({})
+      .populate({
+        path: "category",
+        match: { isActive: true },
+        select: "name",
+      })
+      .skip(skip)
+      .limit(limit);
+
     const filteredProductData = products.filter(
       (prod) => prod.category !== null
     );
@@ -69,6 +78,9 @@ async function fetchProducts(req, res) {
       success: true,
       message: "Products list fetched Successfully",
       products: filteredProductData,
+      currentPage: page,
+      totalPages: Math.ceil(totalProducts / limit),
+      totalProducts,
     });
   } catch (err) {
     console.log(err);

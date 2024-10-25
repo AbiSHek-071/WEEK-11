@@ -18,8 +18,12 @@ import { Search } from "lucide-react";
 import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "@/store/slice/userSlice";
+import Pagination from "../shared/Pagination";
 
 export default function Customer() {
+  const [page,setPage] = useState(1)
+  const limit = 5
+  const [totalPages,setTotalPages] = useState(0); 
   const userData = useSelector((store)=>store.user.userDatas)
 
   
@@ -30,18 +34,20 @@ export default function Customer() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axiosInstance.get("/admin/users");
-       
+        const response = await axiosInstance.get(`/admin/users?page=${page}&limit=${limit}`);
+        setTotalPages(response.data.totalPages);
         setUsers(response.data.users);
       } catch (err) {
         if (err.response && err.response.status === 404) {
           return toast.error(err.response.data.message);
         }
+        console.log(err);
+        
         toast.error("An error occurred. Please try again.");
       }
     }
     fetchData();
-  }, [toggle]);
+  }, [page,toggle]);
  async function handleStatus(_id, isActive) {
    try {
      const response = await axiosInstance.put("/admin/users/block", {
@@ -128,6 +134,7 @@ export default function Customer() {
             ))}
           </TableBody>
         </Table>
+        <Pagination page={page} setPage={setPage} totalPages={totalPages} />
       </div>
     </div>
   );

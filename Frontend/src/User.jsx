@@ -11,6 +11,7 @@ import { Provider } from "react-redux";
 import store from "./store/store";
 import ProtectedLogin from "./private/ProtectedLogin";
 import ProtectedHome from "./private/ProtectedHome";
+import UserProfile from "./components/User/Profile/UserProfile";
 
 
 function User() {
@@ -26,14 +27,10 @@ function User() {
           </ProtectedLogin>
         }
       />
-      <Route
-        path='/home'
-        element={
-            <LandingPage />
-        }
-      />
+      <Route path='/home' element={<LandingPage />} />
       <Route path='/product/:id' element={<ProductPage />} />
       <Route path='/shop' element={<ShopPage />} />
+      <Route path='/profile/*' element={<UserProfile />} />
     </Routes>
   );
 }

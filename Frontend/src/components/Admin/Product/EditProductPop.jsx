@@ -1,8 +1,6 @@
-import React, { useCallback, useState } from "react";
-
+import React, { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { getCroppedImg } from "../../util/CropImage";
+import { getCroppedImg } from "../../../util/CropImage";
 import {
   Dialog,
   DialogContent,
@@ -31,9 +29,16 @@ import axiosInstance from "@/AxiosConfig";
 import { toast } from "sonner";
 import { DialogClose } from "@radix-ui/react-dialog";
 
-function ProductDetailsDialog({ product, categories, setReload }) {
+function EditProductPop({ product, categories, setReload }) {
+
+  useEffect(()=>{
+
+  },[])
+
+  
+  
   const [sizes, setSizes] = useState(product.sizes || []);
-  const [catName, setCatName] = useState(product.category.name);
+  
 
   const [editName, setEditName] = useState(product.name);
   const [editDescription, setEditDescription] = useState(product.description);
@@ -42,8 +47,7 @@ function ProductDetailsDialog({ product, categories, setReload }) {
   const [editSleeve, setEditSleeve] = useState(product.sleeve);
   const [editSizes, setEditSizes] = useState(product.sizes);
   const [editImages, setEditImages] = useState(product.images);
-  const [isActive, setIsActive] = useState(product.isActive);
-  const [myArray, setMyArray] = useState(new Array(5).fill(false));
+
 
   const navigate = useNavigate();
   const [images, setImages] = useState([]);
@@ -76,17 +80,10 @@ function ProductDetailsDialog({ product, categories, setReload }) {
      error.description = "Description must be at least 3 words";
    } else if (/^\d/.test(editDescription.trim())) {
      error.description = "Description cannot start with a number";
-   } 
-
-  
+   }   
    if (!croppedImages || !Array.isArray(croppedImages) || croppedImages.length + editImages.length < 3) {
      error.croppedImages = "At least 3 images are required";
-   }
-   console.log("cropped",croppedImages);
-   console.log("edited",editImages);
-   
-   
-
+   }   
     setError(error);
     if (Object.keys(error).length == 0) {
       return true;
@@ -215,7 +212,7 @@ function ProductDetailsDialog({ product, categories, setReload }) {
           images: imagesEdit,
         });
 
-        setReload(true);
+        // setReload(true);
         toast.success(result.data.message);
       } catch (err) {
         if (err.result && err.result.status === 404) {
@@ -227,10 +224,22 @@ function ProductDetailsDialog({ product, categories, setReload }) {
     }
   }
 
-  function handleRemoveImage(deleteImage) {
-     const updatedImage = editImages.filter((x) => x != deleteImage);
-     setEditImages(updatedImage); 
-  }
+ function handleRemoveImage(deleteImage) {
+   // First, check if the image is part of the fetched editImages
+   const updatedEditImages = editImages.filter(
+     (image) => image !== deleteImage
+   );
+
+   // Then, check if the image is part of the newly cropped images
+   const updatedCroppedImages = croppedImages.filter(
+     (image) => image !== deleteImage
+   );
+
+   // Update the states accordingly
+   setEditImages(updatedEditImages);
+   setCroppedImages(updatedCroppedImages);
+ }
+ const allImages = [...editImages, ...croppedImages];
 
   return (
     <Dialog>
@@ -246,6 +255,7 @@ function ProductDetailsDialog({ product, categories, setReload }) {
           <DialogDescription>View and edit product details</DialogDescription>
         </DialogHeader>
 
+        {/* cropper */}
         {images.map(
           (image, index) =>
             image && (
@@ -375,15 +385,11 @@ function ProductDetailsDialog({ product, categories, setReload }) {
               </div>
             </div>
             <div className='flex flex-col absolute bottom-5 border p-5'>
-              <span className='text-red-700 '>
-                {error && error.name}
-              </span>
+              <span className='text-red-700 '>{error && error.name}</span>
               <span className='text-red-700 '>
                 {error && error.description}
               </span>
-              <span className='text-red-700 '>
-                {error && error.price}
-              </span>
+              <span className='text-red-700 '>{error && error.price}</span>
               <span className='text-red-700 '>
                 {error && error.croppedImages}
               </span>
@@ -424,29 +430,20 @@ function ProductDetailsDialog({ product, categories, setReload }) {
                 <div
                   key={index}
                   className='border-2 h-56 w-36 aspect-square border-dashed border-gray-300 rounded-lg p-2 text-center flex items-center justify-center flex-col relative'>
-                  {croppedImages[index] ? (
+                  {croppedImages[index] || editImages[index] ? (
                     <>
                       <img
-                        src={croppedImages[index]}
-                        alt={`Cropped Product Image ${index + 1}`}
-                        layout='fill'
-                        objectFit='cover'
-                        className='rounded-lg'
-                      />
-                      <span>Remove</span>
-                    </>
-                  ) : editImages[index] ? (
-                    <>
-                      <img
-                        src={editImages[index]}
+                        src={croppedImages[index] || editImages[index]}
                         alt={`Product Image ${index + 1}`}
-                        layout='fill'
-                        objectFit='cover'
-                        className='rounded-lg'
+                        className='rounded-lg h-full w-full object-cover'
                       />
                       <span
-                        onClick={() => handleRemoveImage(editImages[index])}
-                        className='my-2'>
+                        onClick={() =>
+                          handleRemoveImage(
+                            croppedImages[index] || editImages[index]
+                          )
+                        }
+                        className='my-2 cursor-pointer text-red-500 hover:underline'>
                         Remove
                       </span>
                     </>
@@ -455,7 +452,7 @@ function ProductDetailsDialog({ product, categories, setReload }) {
                   )}
                   <input
                     style={{ height: "80%" }}
-                    className='absolute inset-0 w-full  opacity-0 cursor-pointer'
+                    className='absolute inset-0 w-full opacity-0 cursor-pointer upload-area'
                     type='file'
                     accept='image/*'
                     onChange={(e) => handleImageUpload(e, index)}
@@ -463,6 +460,7 @@ function ProductDetailsDialog({ product, categories, setReload }) {
                 </div>
               ))}
             </div>
+
             <span className='text-red-700 absolute bottom-5  mt-10 ms-2'></span>
           </div>
         </div>
@@ -475,4 +473,4 @@ function ProductDetailsDialog({ product, categories, setReload }) {
   );
 }
 
-export default ProductDetailsDialog;
+export default React.memo(EditProductPop);

@@ -22,7 +22,7 @@ function App() {
           <Router>
             <Routes>
               <Route path='/' element={<LandingPage />} />
-              <Route path='/user/*' element={<User />} />
+              <Route path='/*' element={<User />} />
               <Route path='/admin/*' element={<Admin />} />
               <Route
                 path='/admin/login'

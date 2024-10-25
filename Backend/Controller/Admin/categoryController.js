@@ -25,7 +25,12 @@ async function addCategory(req, res) {
 }
 async function fetchCategory(req, res) {
   try {
-    const categories = await Category.find({});
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
+    const totalCategory = await Category.countDocuments();
+
+    const categories = await Category.find({}).skip(skip).limit(limit);;
     if (!categories) {
       return res
         .status(404)
@@ -35,6 +40,9 @@ async function fetchCategory(req, res) {
       success: true,
       message: "Category fetched successfully",
       categories,
+      currentPage: page,
+      totalPages: Math.ceil(totalCategory / limit),
+      totalCategory,
     });
   } catch (err) {
     console.log(err);

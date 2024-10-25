@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { getCroppedImg } from "../../util/CropImage";
+import { getCroppedImg } from "../../../util/CropImage";
 import Cropper from "react-easy-crop";
 import axios from "axios";
 import {

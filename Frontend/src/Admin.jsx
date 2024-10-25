@@ -1,13 +1,13 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import Login from "./components/Admin/Login";
-import ProductManagement from "./components/Admin/ProductManagement";
+import ProductManagement from "./components/Admin/Product/ProductManagement";
 import Sidebar from "./components/Admin/Sidebar";
-import Category from "./components/Admin/Category";
-import AddCategory from "./components/Admin/AddCategory";
-import EditCategory from "./components/Admin/EditCategory";
+import Category from "./components/Admin/Category/Category";
+import AddCategory from "./components/Admin/Category/AddCategory";
+import EditCategory from "./components/Admin/Category/EditCategory";
 import Customer from "./components/Admin/Customer";
-import AddProduct from "./components/Admin/AddProduct";
+import AddProduct from "./components/Admin/Product/AddProduct";
 import { Provider } from "react-redux";
 import store from "./store/store";
 import ProtectedAdminHome from "./private/ProtectedAdminHome"

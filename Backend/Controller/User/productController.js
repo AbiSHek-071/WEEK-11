@@ -5,11 +5,21 @@ const product = require("../../Models/product");
 
 async function fetchnewarraivals(req, res) {
   try {
-    const productData = await product.find({ isActive: true }).populate({
-      path: "category",
-      match: { isActive: true },
-      select: "name",
-    });
+     const page = parseInt(req.query.page) || 1;
+     const limit = parseInt(req.query.limit) || 5;
+     const skip = (page - 1) * limit;
+     const totalProduct = await product.countDocuments();
+
+
+    const productData = await product
+      .find({ isActive: true })
+      .populate({
+        path: "category",
+        match: { isActive: true },
+        select: "name",
+      })
+      .skip(skip)
+      .limit(limit);;
     const filteredProductData = productData.filter(
       (prod) => prod.category !== null
     );
@@ -23,6 +33,9 @@ async function fetchnewarraivals(req, res) {
       message: "products fetched successfully",
       success: true,
       productData: filteredProductData,
+      currentPage: page,
+      totalPages: Math.ceil(totalProduct / limit),
+      totalProduct,
     });
   } catch (err) {
     console.log(err);

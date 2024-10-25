@@ -3,7 +3,16 @@ const User = require("../../Models/UserModel");
 
 async function getUsers(req, res) {
   try {
-    const userData = await User.find();
+     const page = parseInt(req.query.page) || 1; 
+     const limit = parseInt(req.query.limit) || 5;
+     const skip = (page - 1) * limit;
+     const totalUsers = await User.countDocuments();
+     
+      const userData = await User.find()
+        .skip(skip) 
+        .limit(limit);
+
+  
     if (!userData) {
       return res
         .status(404)
@@ -13,11 +22,16 @@ async function getUsers(req, res) {
       success: true,
       message: "Users fetched successfully",
       users: userData,
+      currentPage: page,
+      totalPages: Math.ceil(totalUsers / limit),
+      totalUsers,
     });
   } catch (err) {
     console.log(err);
   }
 }
+
+
 async function blockUser(req, res) {
   try {
     const { _id, isActive } = req.body;

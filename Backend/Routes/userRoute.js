@@ -17,6 +17,7 @@ userRoute.post("/sendotp", userController.sendOtp);
 userRoute.post("/register", userAuth.verifyOtp, userController.register);
 userRoute.post("/login", userController.login);
 userRoute.post("/googleAuth", userController.googleAuth);
+userRoute.post("/edit",userController.editUser);
 
 //product controller routes
 userRoute.get("/products/new-arrivals",userAuth.jwtVerification,productController.fetchnewarraivals);
@@ -24,8 +25,8 @@ userRoute.post("/fetchproduct",productController.fetchproduct);
 userRoute.post("/products/related", productController.fetchRelatedProducts);
 
 //review controller routes
-userRoute.post("/product/review", reviewController.addReviews);
+userRoute.post("/product/review",userAuth.checkUserBlocked, reviewController.addReviews);
 userRoute.get("/products/:id/reviews", reviewController.fetchReviews);
-userRoute.get("/products/:id/reviews/average-rating:id", reviewController.fetchAverageRating);
+userRoute.get("/products/:id/reviews/average-rating", reviewController.fetchAverageRating);
 
 module.exports = userRoute;  

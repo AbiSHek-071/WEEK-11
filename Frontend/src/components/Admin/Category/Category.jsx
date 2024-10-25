@@ -11,20 +11,24 @@ import {
 import { PlusCircle, Pencil, Eye, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "@/AxiosConfig";
-import { Switch } from "../ui/switch";
+import { Switch } from "../../ui/switch";
 import { toast } from "sonner";
-
+import Pagination from "../../shared/Pagination";
 
 
 
 export default function Category() {
   const [categories, setCategories] = useState([]);
   const [toggle,setToggle] = useState(true);
+  const [page,setPage] = useState(1);
+  const [totalPages,setTotalPages] = useState(0)
+  const limit = 5;
   
 useEffect(() => {
   async function fetchData() {
     try {
-      const response = await axiosInstance.get("/admin/categories");
+      const response = await axiosInstance.get(`/admin/categories?page=${page}&limit=${limit}`);
+      setTotalPages(response.data.totalPages)
       console.log(response.data.categories);
 
       setCategories(response.data.categories);
@@ -36,7 +40,7 @@ useEffect(() => {
     }
   }
   fetchData();
-}, [toggle]);
+}, [toggle,page]);
     const navigate = useNavigate()
     function handleEdit(id){
         console.log(id);
@@ -77,7 +81,6 @@ useEffect(() => {
           <TableRow>
             <TableHead className='w-[200px]'>Category Name</TableHead>
             <TableHead>Sold</TableHead>
-            <TableHead>Stock</TableHead>
             <TableHead>Added</TableHead>
             <TableHead className='text-ledt'>Status</TableHead>
             <TableHead className='text-right'>Action</TableHead>
@@ -87,7 +90,6 @@ useEffect(() => {
           {categories.map((category, index) => (
             <TableRow key={category._id}>
               <TableCell className='font-medium'>{category.name}</TableCell>
-              <TableCell className='font-medium'>Not yet set</TableCell>
               <TableCell className='font-medium'>Not yet set</TableCell>
               <TableCell className='font-medium'>
                 {category.createdAt}
@@ -116,6 +118,7 @@ useEffect(() => {
           ))}
         </TableBody>
       </Table>
+      <Pagination page={page} setPage={setPage} totalPages={totalPages} />
     </div>
   );
 }

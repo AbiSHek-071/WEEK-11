@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import ProductDetailsDialog from './ProductDetailsDialog';
-import { Card, CardContent } from '../ui/card';
+import EditProductPop from "./EditProductPop";
+import { Card, CardContent } from '../../ui/card';
 import { Switch } from "@/components/ui/switch";
 import { toast } from 'sonner';
 import axiosInstance from '@/AxiosConfig';
@@ -53,7 +53,7 @@ function ProductCard({ product, categories, setReload }) {
             </div>
           </div>
           <div className='flex justify-between items-center mt-4'>
-            <ProductDetailsDialog
+            <EditProductPop
               product={product}
               categories={categories}
               setReload={setReload}
@@ -77,4 +77,4 @@ function ProductCard({ product, categories, setReload }) {
   );
 }
 
-export default ProductCard
+export default React.memo(ProductCard)

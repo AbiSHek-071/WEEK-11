@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Star, ChevronDown, Filter } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,23 +8,29 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-import { Badge } from '@/components/ui/badge'
+
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import FilterSidebar from './FilterSidebar'
 import ProductCardContainer from '../ui/ProductCardContainer'
 import SearchComponent from '../ui/SearchComponent'
 import { toast } from 'sonner'
 import axiosInstance from '@/AxiosConfig'
+import Pagination from '../shared/Pagination'
 
 
 
 const ShopNow = () => {
+    const [page,setPage] = useState(1);
+    const limit = 4;
+    const [totalPages, setTotalPages] = useState(0); 
     const [products, setProducts] = useState([]);
 
     useEffect(() => {
       async function fetchNewArraivals() {
         try {
-          const response = await axiosInstance.get("/user/fetchnewarraivals");
+          const response = await axiosInstance.get(`/user/products/new-arrivals?page=${page}&limit=${limit}`);
+           setTotalPages(response.data.totalPages);
+
           setProducts(response.data.productData);
        
         } catch (err) {
@@ -34,11 +39,13 @@ const ShopNow = () => {
           if (err.response && err.response.status === 400) {
             return toast.error(err.response.data.message);
           }
-          toast.error("An error occurred. Please try again.");
+          console.log(err);
+          
+          toast.error("An error occurred. Please try again.");        
         }
       }
       fetchNewArraivals();
-    }, []);
+    }, [page]);
   const [sortBy, setSortBy] = useState("featured");
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 8;
@@ -104,6 +111,7 @@ const ShopNow = () => {
           <ProductCardContainer products={products} />
         </div>
       </div>
+      <Pagination page={page} setPage={setPage} totalPages={totalPages} />
     </div>
   );
 };

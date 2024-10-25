@@ -155,6 +155,19 @@ const googleAuth = async (req, res) => {
     return res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+async function editUser(req,res) {  
+  try {
+    const {userId,name,email,phone} = req.body;
+    const update = await User.findByIdAndUpdate({_id:userId},{name,email,phone},{new:true});
+    if(!update){
+      return res.status(400).json({success:false,message:"Unable to update Profile"});
+    }
+    return res.status(200).json({success:true,message:"Profile Updated",update})
+    
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 
 module.exports = {
@@ -162,4 +175,5 @@ module.exports = {
     register,
     login,
     googleAuth,
+    editUser,
 };

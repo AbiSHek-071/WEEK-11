@@ -1,11 +1,9 @@
 import axiosInstance from '@/AxiosConfig';
-import AddProduct from '@/components/Admin/AddProduct';
-import ProductManagement from '@/components/Admin/ProductManagement';
 import Footer from '@/components/ui/Footer';
 import Navbar from '@/components/ui/Navbar';
 import ProductCardContainer from '@/components/ui/ProductCardContainer';
 import HeroSection from '@/components/User/HeroSection';
-import ShopByCategories from '@/components/User/ShopByCategories';
+
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { toast } from 'sonner';
@@ -39,7 +37,6 @@ function LandingPage() {
     <>
       <Navbar />
       <HeroSection />
-      {/* <ShopByCategories /> */}
       <ProductCardContainer title={"New Arraivals"} products={newArraivals} />
       <ProductCardContainer title={"Top Selling"} products={newArraivals} />
 

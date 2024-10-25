@@ -62,10 +62,16 @@ const [message, setMessage] = useState(null);
         review,
       });
       setReload(true)
+      setReview("");
+      setRating(0)
+   
       return toast.success(response.data.message);
     } catch (err) {
       console.log(err);
         if (err.response && err.response.status === 400) {
+          return toast.error(err.response.data.message);
+        }
+        if (err.response && err.response.status === 403) {
           return toast.error(err.response.data.message);
         }
       if (err.response && err.response.status === 404) {
