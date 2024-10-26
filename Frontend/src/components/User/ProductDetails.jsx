@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Heart, Minus, Plus, Star,X } from "lucide-react";
+import { Heart, Minus, Plus, Slash, SquareSlash, Star,X, XCircleIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import "../../App.css"
 import { AnimatePresence,motion } from "framer-motion";
+import axiosInstance from "@/AxiosConfig";
+import { useSelector } from "react-redux";
+import { toast } from "sonner";
 
 
 
@@ -15,8 +18,11 @@ export default function ProductDetails({
  
 }) {
   const [mainImage, setMainImage] = useState(product.images[0]);
-  const [quantity, setQuantity] = useState(1);
   const [isZoomModalOpen,setIsZoomModalOpen] = useState(false)
+   const userData = useSelector((store)=>store.user.userDatas)
+
+  const [size,setSize] = useState(null);
+
  useEffect(() => {
    if (product && product.images && product.images.length > 0) {
      setMainImage(product.images[0]);
@@ -26,6 +32,38 @@ export default function ProductDetails({
  function closeZoomModal(){
   setIsZoomModalOpen(false)
  }
+
+ async function handleAddCart() {
+   console.log("clicked");
+
+   try {
+     const productData = {
+       productId: product._id,
+       price: product.price,
+       salePrice:product.salePrice,
+       size:size.size,
+       stock:size.stock,
+       salesPrice: product.salesPrice,
+       qty: 1,
+     };
+     console.log(productData);
+
+     const response = await axiosInstance.post("/user/cart", {
+       userId: userData._id,
+       product: productData,
+     });
+
+     toast.success(response.data.message);
+   } catch (err) {
+    console.log(err);
+    
+     if (err.response) {
+       return toast.error(err.response.data.message);
+     }
+   }
+ }
+
+
   return (
     <div className='container mx-auto px-4 py-8'>
       <AnimatePresence>
@@ -58,7 +96,6 @@ export default function ProductDetails({
                 src={mainImage}
                 alt='Zoomed product view'
                 className='w-full h-full object-contain'
-                
               />
             </motion.div>
           </motion.div>
@@ -83,8 +120,8 @@ export default function ProductDetails({
           <div className='order-1 md:order-2 flex-grow'>
             <div className='relative overflow-hidden rounded-lg bg-gray-100 hover:bg-gray-200 transition-all duration-300'>
               <img
-                onClick={()=>{
-                  setIsZoomModalOpen(true)
+                onClick={() => {
+                  setIsZoomModalOpen(true);
                 }}
                 src={mainImage}
                 alt='Product Main View'
@@ -96,9 +133,7 @@ export default function ProductDetails({
         <Card className='p-6'>
           <CardContent className='space-y-6'>
             <h1 className='text-3xl font-bold'>{product.name}</h1>
-            <p className='text-xl font-semibold'>
-              Men's winter hoodie collection
-            </p>
+            <p className='text-xl font-semibold'>Men's Exclusive collection</p>
             <div className='flex items-center space-x-1'>
               {/* Loop through the star ratings (up to 5 stars) */}
               {[...Array(5)].map((_, i) => (
@@ -117,43 +152,52 @@ export default function ProductDetails({
                 {averageRating.toFixed(1)} ({totalReviews})
               </span>
             </div>
+            <p className='text-lg font-semibold text-gray-500 line-through'>
+              INR {product.price}
+            </p>
+            <p className='text-2xl font-bold text-black'>
+              INR {product.salePrice}
+            </p>
 
-            <p className='text-2xl font-bold'>INR {product.price}</p>
             <p className='text-gray-600'>{product.description}</p>
             <div>
               <h3 className='text-lg font-semibold mb-2'>Size</h3>
               <div className='flex space-x-2'>
                 {product.sizes.map((s) => {
-                  if(s.stock>0){
-                   return (
-                     <Button
-                      key={s.size}
-                      variant='outline'
-                      className='w-10 h-10'>
-                      {s.size}
-                    </Button>
-                   )
-                  }
+                  if (s.stock > 0) {
+                    return (
+                      <Button
+                        onClick={() => setSize(s)}
+                        key={s.size}
+                        className={`w-10 h-10 ${
+                          size === s
+                            ? "bg-black text-white"
+                            : "bg-gray-200 text-black hover:bg-gray-300"
+                        }`}>
+                        {s.size}
+                      </Button>
+                    );
+                  } 
+                    return (
+                      <div className='relative'>
+                        <Button
+                          key={s.size}
+                          disabled
+                          className='w-10 h-10 bg-gray-300  text-gray-500 cursor-not-allowed'>
+                          {s.size}
+                        </Button>
+                        <Slash className='absolute top-0 left-0 w-full h-full text-red-200' />
+                        
+                      </div>
+                    );
+                  
                 })}
               </div>
             </div>
             <div className='flex items-center space-x-4'>
-              <div className='flex items-center border rounded-md'>
-                <Button
-                  variant='ghost'
-                  size='icon'
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}>
-                  <Minus className='h-4 w-4' />
-                </Button>
-                <span className='px-4'>{quantity}</span>
-                <Button
-                  variant='ghost'
-                  size='icon'
-                  onClick={() => setQuantity(quantity + 1)}>
-                  <Plus className='h-4 w-4' />
-                </Button>
-              </div>
-              <Button className='flex-1'>Add to Cart</Button>
+              <Button onClick={handleAddCart} className='flex-1'>
+                Add to Cart 
+              </Button>
               <Button variant='outline' size='icon'>
                 <Heart className='h-4 w-4' />
               </Button>

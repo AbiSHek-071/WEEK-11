@@ -8,7 +8,7 @@ const userController = require("../Controller/User/userController");
 const productController = require("../Controller/User/productController");
 const reviewController = require("../Controller/User/reviewController");
 const addressController = require("../Controller/User/addressController");
-
+const cartController = require("../Controller/User/cartController")
 //authentications
 const userAuth = require("../Middleware/userAuth");
 
@@ -35,5 +35,8 @@ userRoute.post("/address",userAuth.checkUserBlocked,addressController.addAddress
 userRoute.get("/address/:id",addressController.fetchAddress);
 userRoute.post("/address/edit",addressController.editAddress);
 userRoute.delete("/address/:id",addressController.deleteAddress);
+
+//cart controller routes
+userRoute.post("/cart", cartController.addToCart);
 
 module.exports = userRoute;  

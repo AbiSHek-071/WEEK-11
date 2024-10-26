@@ -12,6 +12,7 @@ import store from "./store/store";
 import ProtectedLogin from "./private/ProtectedLogin";
 import ProtectedHome from "./private/ProtectedHome";
 import UserProfile from "./components/User/Profile/UserProfile";
+import CartPage from "./Pages/CartPage";
 
 
 function User() {
@@ -31,6 +32,7 @@ function User() {
       <Route path='/product/:id' element={<ProductPage />} />
       <Route path='/shop' element={<ShopPage />} />
       <Route path='/profile/*' element={<UserProfile />} />
+      <Route path='/cart' element={<CartPage/>} />
     </Routes>
   );
 }

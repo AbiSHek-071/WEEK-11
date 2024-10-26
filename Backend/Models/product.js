@@ -17,6 +17,17 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+     salePrice: {
+          type: Number,
+          required: true,
+          min: 0,
+          validate: {
+            validator: function (value) {
+              return value <= this.price;
+            },
+            message: "Sale price should not be greater than the regular price.",
+          },
+        },
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",

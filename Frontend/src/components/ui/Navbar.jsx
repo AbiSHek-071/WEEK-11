@@ -51,10 +51,10 @@ export default function Navbar() {
         <div className='text-2xl font-bold'>Stitchers</div>
         <div className='hidden md:flex flex-grow justify-center'>
           <div className='space-x-6'>
-            <Link to='/user/home' className='hover:text-gray-700'>
+            <Link to='/home' className='hover:text-gray-700'>
               Home
             </Link>
-            <Link to='/user/shop' className='hover:text-gray-700'>
+            <Link to='/shop' className='hover:text-gray-700'>
               Shop
             </Link>
             <Link href='#' className='hover:text-gray-700'>
@@ -84,7 +84,7 @@ export default function Navbar() {
           ) : (
             <Button
               onClick={() => {
-                navigate("/user/login");
+                navigate("/login");
               }}
               className='bg-black text-white hidden md:inline-flex hover:scale-105'>
               Login

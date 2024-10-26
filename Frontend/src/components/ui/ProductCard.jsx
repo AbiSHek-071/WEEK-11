@@ -35,7 +35,7 @@ export default function ProductCard({ product }) {
   return (
     <div onClick={()=>{
       console.log("products : ",product)
-      navigate(`/user/product/${product._id}`)
+      navigate(`/product/${product._id}`)
       window.scrollTo({
         top: 0,
         behavior: "smooth",

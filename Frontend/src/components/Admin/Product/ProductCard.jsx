@@ -42,7 +42,7 @@ function ProductCard({ product, categories, setReload }) {
             </p>
             <div className='flex justify-between items-center mb-2'>
               <span className='font-bold text-lg'>
-                Rs.{product.price.toFixed(2)}
+                Rs.{product.salePrice.toFixed(2)}
               </span>
               <span className='text-sm px-2 py-1 bg-gray-100 rounded-full'>
                 {product.category.name}

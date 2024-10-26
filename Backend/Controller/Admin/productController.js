@@ -6,6 +6,7 @@ async function addProduct(req, res) {
     const {
       name,
       price,
+      salePrice,
       description,
       sizes,
       addInfo,
@@ -28,6 +29,7 @@ async function addProduct(req, res) {
       description,
       information: addInfo,
       price,
+      salePrice,
       category: catId,
       sleeve,
       sizes,
@@ -89,7 +91,7 @@ async function fetchProducts(req, res) {
 
 async function editProduct(req, res) {
   try {
-    const { _id, name, description, price, category, sleeve, sizes, images } =
+    const { _id, name, description, price,salePrice, category, sleeve, sizes, images } =
       req.body;
 
     let totalStock = 0;
@@ -104,7 +106,17 @@ async function editProduct(req, res) {
 
     const updateData = await Product.findByIdAndUpdate(
       { _id },
-      { name, description, price, category, sleeve, totalStock, sizes, images },
+      {
+        name,
+        description,
+        price,
+        salePrice,
+        category,
+        sleeve,
+        totalStock,
+        sizes,
+        images,
+      },
       { new: true }
     );
 

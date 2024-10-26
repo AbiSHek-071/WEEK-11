@@ -44,6 +44,7 @@ function EditProductPop({ product, categories, setReload }) {
   const [editDescription, setEditDescription] = useState(product.description);
   const [editCategory, setEditCategory] = useState(product.category._id);
   const [editPrice, setEditPrice] = useState(product.price);
+  const [editSalePrice,setEditSalePrice] = useState(product.salePrice);
   const [editSleeve, setEditSleeve] = useState(product.sleeve);
   const [editSizes, setEditSizes] = useState(product.sizes);
   const [editImages, setEditImages] = useState(product.images);
@@ -206,6 +207,7 @@ function EditProductPop({ product, categories, setReload }) {
           name: editName,
           description: editDescription,
           price: editPrice,
+          salePrice:editSalePrice,
           category: editCategory,
           sleeve: editSleeve,
           sizes: editSizes,
@@ -329,6 +331,20 @@ function EditProductPop({ product, categories, setReload }) {
               />
               <span className='text-red-700 absolute bottom-5  mt-10 ms-2'></span>
             </div>
+            <div className='grid grid-cols-4 items-center gap-4'>
+              <Label htmlFor='price' className='text-right'>
+                Sale Price
+              </Label>
+
+              <Input
+                id='salePrice'
+                onChange={(e) => setEditSalePrice(e.target.value)}
+                value={editSalePrice}
+                className='col-span-3'
+              />
+              <span className='text-red-700 absolute bottom-5  mt-10 ms-2'></span>
+            </div>
+
             <div className='grid grid-cols-4 items-start gap-4'>
               <Label htmlFor='description' className='text-right pt-2'>
                 Description
@@ -412,13 +428,11 @@ function EditProductPop({ product, categories, setReload }) {
                       <SelectValue placeholder={item.stock} />
                     </SelectTrigger>
                     <SelectContent>
-                      {Array.from({ length: 30 }, (_, i) => i ).map(
-                        (num) => (
-                          <SelectItem key={num} value={num.toString()}>
-                            {num}
-                          </SelectItem>
-                        )
-                      )}
+                      {Array.from({ length: 30 }, (_, i) => i).map((num) => (
+                        <SelectItem key={num} value={num.toString()}>
+                          {num}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>

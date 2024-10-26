@@ -1,0 +1,81 @@
+const mongoose = require("mongoose");
+
+const cartSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    items: [
+      {
+        productId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Product",
+          required: true,
+        },
+        size: {
+          type: String,
+          required: true,
+        },
+        stock: {
+          type: Number,
+          required: true,
+          min: 0,
+        },
+        price: {
+          type: Number,
+          required: true,
+          min: 0,
+        },
+        salePrice: {
+          type: Number,
+          min: 0,
+          validate: {
+            validator: function (value) {
+              return value <= this.price;
+            },
+            message:
+              "Sales price should be less than or equal to the regular price",
+          },
+        },
+        discount: {
+          type: Number,
+          default: function () {
+            return ((this.price - this.salePrice) / this.price) * 100;
+          },
+        },
+        qty: {
+          type: Number,
+          required: true,
+          min: 1,
+          default: 1,
+        },
+        totalProductPrice: {
+          type: Number,
+          required: true,
+          default: function () {
+            return this.salesPrice * this.qty;
+          },
+        },
+      },
+    ],
+    totalCartPrice: {
+      type: Number,
+      required: true,
+      default: function () {
+        return this.items.reduce(
+          (acc, item) => acc + item.totalProductPrice,
+          0
+        );
+      },
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+const Cart = mongoose.model("Cart", cartSchema);
+
+module.exports = Cart;

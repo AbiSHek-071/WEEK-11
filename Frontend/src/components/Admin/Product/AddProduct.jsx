@@ -29,6 +29,7 @@ export default function AddProduct() {
 
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
+   const [salePrice, setSalePrice] = useState(0);
   const [description, setDescription] = useState("");
   const [sizes, setSizes] = useState([
     { size: "S", stock: 0 },
@@ -195,6 +196,7 @@ export default function AddProduct() {
        const response = await axiosInstance.post("/admin/product", {
          name,
          price,
+         salePrice,
          description,
          sizes,
          addInfo,
@@ -348,10 +350,11 @@ export default function AddProduct() {
                   <span className='text-red-700  mt-10 ms-2'>
                     {error && error.price}
                   </span>
-                  {/* <Input
+                  <Input
+                    onChange={(e) => setSalePrice(e.target.value)}
                     placeholder='Enter Sale Price here...'
                     className='mt-4'
-                  /> */}
+                  />
                 </div>
               </div>
 
