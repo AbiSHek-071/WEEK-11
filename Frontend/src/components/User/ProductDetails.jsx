@@ -67,7 +67,7 @@ export default function ProductDetails({
       <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
         <div className='flex flex-col md:flex-row gap-4'>
           <div className='scrollbar h-full order-2 md:order-1 flex md:flex-col gap-2 overflow-x-auto md:overflow-y-auto md:max-h-[900px] md:min-w-[140px]'>
-            {product.images.slice(1).map((img, index) => (
+            {product.images.map((img, index) => (
               <button
                 key={index}
                 className='flex-shrink-0 w-20 h-28 md:w-full md:h-52 rounded-md overflow-hidden focus:outline-none focus:ring-2 focus:ring-blue-500'
@@ -123,11 +123,18 @@ export default function ProductDetails({
             <div>
               <h3 className='text-lg font-semibold mb-2'>Size</h3>
               <div className='flex space-x-2'>
-                {product.sizes.map((s) => (
-                  <Button key={s.size} variant='outline' className='w-10 h-10'>
-                    {s.size}
-                  </Button>
-                ))}
+                {product.sizes.map((s) => {
+                  if(s.stock>0){
+                   return (
+                     <Button
+                      key={s.size}
+                      variant='outline'
+                      className='w-10 h-10'>
+                      {s.size}
+                    </Button>
+                   )
+                  }
+                })}
               </div>
             </div>
             <div className='flex items-center space-x-4'>

@@ -12,6 +12,7 @@ import {
 import { Button } from "../../ui/button";
 import { NavLink } from "react-router-dom";
 import PopupBox from "../../Admin/PopupBox";
+import {SquareChevronLeftIcon} from "lucide-react"
 
 function UserSidebar() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -41,6 +42,7 @@ const topMenuItems = [
   ];
 
   const renderMenuItem = (item, index) => (
+    
     <li key={index} className='w-full'>
       {item.path ? (
         <NavLink

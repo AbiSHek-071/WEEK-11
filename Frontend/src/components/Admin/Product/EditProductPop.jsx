@@ -412,7 +412,7 @@ function EditProductPop({ product, categories, setReload }) {
                       <SelectValue placeholder={item.stock} />
                     </SelectTrigger>
                     <SelectContent>
-                      {Array.from({ length: 30 }, (_, i) => i + 1).map(
+                      {Array.from({ length: 30 }, (_, i) => i ).map(
                         (num) => (
                           <SelectItem key={num} value={num.toString()}>
                             {num}
