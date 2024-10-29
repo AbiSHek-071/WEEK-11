@@ -48,15 +48,11 @@ const cartSchema = new mongoose.Schema(
         qty: {
           type: Number,
           required: true,
-          min: 1,
           default: 1,
         },
         totalProductPrice: {
           type: Number,
           required: true,
-          default: function () {
-            return this.salesPrice * this.qty;
-          },
         },
       },
     ],
@@ -65,7 +61,7 @@ const cartSchema = new mongoose.Schema(
       required: true,
       default: function () {
         return this.items.reduce(
-          (acc, item) => acc + item.totalProductPrice,
+          (total, item) => total + item.totalProductPrice,
           0
         );
       },

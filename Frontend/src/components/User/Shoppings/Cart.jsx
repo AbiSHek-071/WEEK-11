@@ -1,45 +1,82 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ChevronRight, Minus, Plus, Tag, X } from "lucide-react";
+import { toast } from "sonner";
+import axiosInstance from "@/AxiosConfig";
+import { useSelector } from "react-redux";
+import { toast as reactToast, ToastContainer } from "react-toastify";
 
 export default function Cart() {
-  const cartItems = [
-    {
-      id: 1,
-      name: "Glitter Black Hoodie",
-      price: 1699.0,
-      quantity: 1,
-      size: "L",
-      image:
-        "https://res.cloudinary.com/dneqndzyc/image/upload/v1729309566/br2yb1fuozrzj0e1uud9.jpg",
-    },
-    {
-      id: 2,
-      name: "Glitter Black Hoodie",
-      price: 1699.0,
-      quantity: 1,
-      size: "L",
-      image:
-        "https://res.cloudinary.com/dneqndzyc/image/upload/v1729309566/br2yb1fuozrzj0e1uud9.jpg",
-    },
-    {
-      id: 3,
-      name: "Glitter Black Hoodie",
-      price: 1699.0,
-      quantity: 1,
-      size: "L",
-      image:
-        "https://res.cloudinary.com/dneqndzyc/image/upload/v1729309566/br2yb1fuozrzj0e1uud9.jpg",
-    },
-  ];
-
-  const subtotal = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
-  const discount = 539;
-  const deliveryFee = 40;
+  const userData = useSelector((store) => store.user.userDatas);
+  const [cartItems, setCartItems] = useState([]);
+  const [subtotal,setSubtota] = useState(0)
+  const [reload,setReload] = useState(false);
+  const discount = 0;
+  const deliveryFee = 0;
   const total = subtotal - discount + deliveryFee;
 
+
+  async function fetchCartItems() {
+    try {
+      const response = await axiosInstance.get(`/user/cart/${userData._id}`);
+      setCartItems(response.data.cartItems.items);
+      console.log(response.data.cartItems);
+      
+      setSubtota(response.data.cartItems.totalCartPrice);
+
+    } catch (err) {
+      console.log(err);
+      if(err.response){
+        return toast.error(err.response.data.message);
+      }
+    }
+  }
+  async function handelMinus(item) {
+    try {
+      const response = await axiosInstance.patch(
+        `/user/cart/min/${item._id}/${userData._id}`
+      );
+      console.log(response.data);
+      setReload(true);
+    } catch (err) {
+     if(err.response){
+        toast.error(err.response.data.message);
+      }
+      console.log(err);
+    }
+  }
+
+  async function handelPlus(item) {
+    try {
+      const response =await axiosInstance.patch(`/user/cart/add/${item._id}/${userData._id}`);
+      console.log(response.data);
+      setReload(true);
+     
+    } catch (err) {
+       if(err.response){
+        reactToast.error(err.response.data.message);
+      }
+      console.log(err);
+    }
+  }
+
+  async function handleRemove(item) {
+     try {
+      const response =await axiosInstance.delete(`/user/cart/${item._id}/${userData._id}`);
+      setReload(true);
+      return toast.success(response.data.message)
+    } catch (err) {
+      if(err.response){
+        toast.error(err.response.data.message);
+      }
+      console.log(err);
+    }
+  }
+  
+
+  useEffect(()=>{
+    fetchCartItems();
+    setReload(false)
+  },[reload])
   return (
     <div className='min-h-screen lg:flex flex-col justify-center items-start bg-gray-100 text-black'>
       <header>
@@ -57,44 +94,55 @@ export default function Cart() {
                   <span className='text-center'>Size</span>
                   <span className='text-center'>Price</span>
                   <span className='text-center'>Quantity</span>
-                  
                 </div>
                 <div className='space-y-8'>
                   {cartItems.map((item) => (
                     <div
-                      key={item.id}
-                      className='grid grid-cols-6 items-center py-8 border-b border-gray-200'>
-                      {/* Product column with image and name */}
+                      key={item._id}
+                      className={`relative grid grid-cols-6 items-center py-8 border-b border-gray-200 ${
+                        item.qty === 0 ? "pointer-events-none opacity-40" : ""
+                      }`}>
+                      {/* {item.qty === 0 && (
+                        <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-20 rounded-lg text-white font-semibold'>
+                          <span className="">Currently Unavailable</span>
+                        </div>
+                      )} */}
                       <div className='col-span-2 flex items-center space-x-6'>
                         <img
-                          src={item.image}
-                          alt={item.name}
-                          className='w-20 h-20 object-cover rounded-md'
+                          src={item?.productId?.images[0]}
+                          alt={item?.productId?.images[1]}
+                          className='w-40 h-60 object-cover rounded-sm'
                         />
-                        <h3 className='text-lg font-semibold'>{item.name}</h3>
+                        <h3 className='text-lg font-semibold'>
+                          {item.productId.name}
+                        </h3>
                       </div>
 
-                      {/* Size column */}
                       <p className='text-center'>{item.size}</p>
 
-                      {/* Price column */}
                       <p className='text-center font-semibold'>
-                        INR {item.price.toFixed(2)}
+                        INR {item.salePrice.toFixed(2)}
                       </p>
 
-                      {/* Quantity column */}
-                      <div className='flex items-center justify-center space-x-2'>
-                        <button className='px-2 py-1 text-gray-600 hover:bg-gray-100 transition duration-200'>
-                          <Minus size={16} />
-                        </button>
-                        <span className='px-3'>{item.quantity}</span>
-                        <button className='px-2 py-1 text-gray-600 hover:bg-gray-100 transition duration-200'>
-                          <Plus size={16} />
-                        </button>
+                      <div className='flex flex-col items-center'>
+                        <div className='flex items-center justify-center space-x-2'>
+                          <button
+                            onClick={() => handelMinus(item)}
+                            className='px-2 py-1 text-gray-600 hover:bg-gray-100 transition duration-200'>
+                            <Minus />
+                          </button>
+                          <span className='px-3'>{item.qty}</span>
+                          <button
+                            onClick={() => handelPlus(item)}
+                            className='px-2 py-1 text-gray-600 hover:bg-gray-100 transition duration-200'>
+                            <Plus />
+                          </button>
+                        </div>
                       </div>
 
-                      {/* Remove button column */}
-                      <button className='text-gray-600 hover:text-gray-800 transition duration-200 text-center'>
+                      <button
+                        onClick={() => handleRemove(item)}
+                        className='text-gray-600 hover:text-gray-800 transition duration-200 text-center'>
                         <X size={20} />
                       </button>
                     </div>
@@ -117,7 +165,7 @@ export default function Cart() {
                     </span>
                   </div>
                   <div className='flex justify-between text-red-600'>
-                    <span>Discount (-20%)</span>
+                    <span>Discount (-0%)</span>
                     <span>-INR {discount.toFixed(2)}</span>
                   </div>
                   <div className='flex justify-between'>
@@ -151,7 +199,12 @@ export default function Cart() {
                     </button>
                   </div>
                   <button className='w-full flex justify-center items-center space-x-2 bg-black text-white py-3 rounded-md hover:bg-gray-800 transition duration-300 ease-in-out'>
-                    <span>Go to Checkout</span>
+                    <span
+                      onClick={() => {
+                        console.log(cartItem);
+                      }}>
+                      Go to Checkout
+                    </span>
                     <ChevronRight size={20} />
                   </button>
                 </div>

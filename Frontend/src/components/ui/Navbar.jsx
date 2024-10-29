@@ -12,7 +12,6 @@ import PopupBox from "./PopupBox";
 export default function Navbar() {
    const [isPopupOpen, setIsPopupOpen] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
   const userData = useSelector((store)=>store.user.userDatas)
  
@@ -23,30 +22,12 @@ export default function Navbar() {
   };
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 0) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    
   }, []);
 
   return (
     <nav
-      className={`text-black bg-white p-4 fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "shadow-md" : ""
-      }`}
-      style={{
-        transform: isScrolled ? "translateY(0)" : "translateY(-100%)",
-        opacity: isScrolled ? 1 : 0,
-      }}>
+      className={`text-black bg-white p-4  z-50 transition-all duration-300 drop-shadow-xl`}>
       <div className='container mx-auto flex items-center justify-between'>
         <div className='text-2xl font-bold'>Stitchers</div>
         <div className='hidden md:flex flex-grow justify-center'>
@@ -71,7 +52,9 @@ export default function Navbar() {
           <Button variant='ghost' size='icon'>
             <Heart className='h-5 w-5' />
           </Button>
-          <Button variant='ghost' size='icon'>
+          <Button onClick={()=>{
+            navigate("/cart")
+          }} variant='ghost' size='icon'>
             <ShoppingCart className='h-5 w-5' />
           </Button>
           {userData ? (

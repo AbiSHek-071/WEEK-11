@@ -16,7 +16,7 @@ function App() {
   return (
     <>
       <Toaster position='bottom-right' />
-      <ToastContainer/>
+      <ToastContainer position='bottom-right' />
       <GoogleOAuthProvider clientId='495895525105-d4s3eg0u6upjp00irja429ki3rhd1c2o.apps.googleusercontent.com'>
         <Provider store={store}>
           <Router>

@@ -4,17 +4,18 @@ import axiosInstance from "@/AxiosConfig";
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
 
-export default function Address() {
+export default function Address({selectedAddress,setSelectedAddress}) {
   const userData = useSelector((store) => store.user.userDatas);
   const [addresses, setAddresses] = useState([]);
   const [reload,setReload] = useState(false);
+  
   async function fetchAddress() {
     try {
       const response =await axiosInstance.get(`/user/address/${userData._id}`);
       console.log(response.data.address);
       
       setAddresses(response.data.address);
-      
+     
     } catch (err) {
       if(err.response){
         return toast.error(err.response.data.message);
@@ -157,18 +158,29 @@ export default function Address() {
       <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
         {addresses.map((address) => (
           <div
+            onClick={
+              setSelectedAddress ? () => setSelectedAddress(address) : undefined
+            }
             key={address._id}
-            className='bg-gray-50 border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow'>
+            className={`bg-gray-50 border ${
+              selectedAddress === address ? "border-black" : "border-gray-200"
+            } rounded-lg p-4 hover:shadow-md transition-shadow`}>
             <div className='flex justify-between items-start mb-2'>
               <h3 className='font-semibold text-lg'>{address.name}</h3>
               <div className='flex space-x-2'>
                 <button
                   className='text-gray-500 hover:text-gray-700'
-                  onClick={() => handleEditAddress(address)}>
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEditAddress(address);
+                  }}>
                   <Edit size={18} />
                 </button>
                 <button
-                  onClick={() => handleDeleteAddress(address)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteAddress(address);
+                  }}
                   className='text-gray-500 hover:text-gray-700'>
                   <Trash2 size={18} />
                 </button>

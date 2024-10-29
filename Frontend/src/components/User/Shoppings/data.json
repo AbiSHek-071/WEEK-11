@@ -1,0 +1,52 @@
+{
+  "discount": 0.05,
+  "price": 2000,
+  "productId": {
+    "category": "670cbebefbb305a59665782c",
+    "createdAt": "2024-10-16T07:24:36.647Z",
+    "description": "The Pink Slim Fit Shirt offers a stylish and modern look, perfect for both casual and semi-formal occasions. Made from high-quality, breathable fabric, this shirt features a slim, tailored cut that accentuates your physique while ensuring comfort.",
+    "images": [
+      "https://res.cloudinary.com/dneqndzyc/image/upload/v1729309566/br2yb1fuozrzj0e1uud9.jpg",
+      "https://res.cloudinary.com/dneqndzyc/image/upload/v1729590580/xj4ae1yef32uhz43fgdj.jpg",
+      "https://res.cloudinary.com/dneqndzyc/image/upload/v1729849915/roeaxwxqiabcs4eq5oaj.jpg"
+    ],
+    "information": "super shirt",
+    "isActive": true,
+    "name": "Pink Slim Fit shirt",
+    "price": 2000,
+    "salePrice": 1999,
+    "sizes": [
+      {
+        "size": "S",
+        "stock": 10,
+        "_id": "670f6a3464381227523a93a4"
+      },
+      {
+        "size": "M",
+        "stock": 0,
+        "_id": "670f6a3464381227523a93a5"
+      },
+      {
+        "size": "L",
+        "stock": 0,
+        "_id": "670f6a3464381227523a93a6"
+      },
+      {
+        "size": "XL",
+        "stock": 10,
+        "_id": "670f6a3464381227523a93a7"
+      }
+    ],
+    "sleeve": "long",
+    "totalStock": 20,
+    "updatedAt": "2024-10-26T06:53:57.983Z",
+    "__v": 0,
+    "_id": "670f6a3464381227523a93a3"
+  },
+  "qty": 1,
+  "salePrice": 1999,
+  "size": "XL",
+  "stock": 10,
+  "totalProductPrice": 1999,
+  "_id": "671d0a443b6bfa7d529e3dc8"
+}

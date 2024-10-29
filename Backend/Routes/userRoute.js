@@ -38,5 +38,9 @@ userRoute.delete("/address/:id",addressController.deleteAddress);
 
 //cart controller routes
 userRoute.post("/cart", cartController.addToCart);
-
+userRoute.get("/cart/:id",cartController.fetchCart);
+userRoute.patch("/cart/add/:cart_id/:user_id",cartController.plusCartItem);
+userRoute.patch("/cart/min/:cart_id/:user_id", cartController.minusCartItem);
+userRoute.delete("/cart/:cart_id/:user_id", cartController.removeCartItem);
+userRoute.get("/size/:product_id/:user_id/:selected", cartController.fetchSize);
 module.exports = userRoute;  
