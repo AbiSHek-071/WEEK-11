@@ -9,6 +9,7 @@ const productController = require("../Controller/User/productController");
 const reviewController = require("../Controller/User/reviewController");
 const addressController = require("../Controller/User/addressController");
 const cartController = require("../Controller/User/cartController")
+const orderController = require("../Controller/User/orderController");
 //authentications
 const userAuth = require("../Middleware/userAuth");
 
@@ -43,4 +44,8 @@ userRoute.patch("/cart/add/:cart_id/:user_id",cartController.plusCartItem);
 userRoute.patch("/cart/min/:cart_id/:user_id", cartController.minusCartItem);
 userRoute.delete("/cart/:cart_id/:user_id", cartController.removeCartItem);
 userRoute.get("/size/:product_id/:user_id/:selected", cartController.fetchSize);
+
+//order controller routes
+userRoute.post("/order",orderController.createOrder);
+
 module.exports = userRoute;  

@@ -4,8 +4,10 @@ import { toast } from "sonner";
 import axiosInstance from "@/AxiosConfig";
 import { useSelector } from "react-redux";
 import { toast as reactToast, ToastContainer } from "react-toastify";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export default function Cart() {
+  const navigate = useNavigate()
   const userData = useSelector((store) => store.user.userDatas);
   const [cartItems, setCartItems] = useState([]);
   const [subtotal,setSubtota] = useState(0)
@@ -198,13 +200,12 @@ export default function Cart() {
                       Apply
                     </button>
                   </div>
-                  <button className='w-full flex justify-center items-center space-x-2 bg-black text-white py-3 rounded-md hover:bg-gray-800 transition duration-300 ease-in-out'>
-                    <span
-                      onClick={() => {
-                        console.log(cartItem);
-                      }}>
-                      Go to Checkout
-                    </span>
+                  <button
+                    onClick={() => {
+                      navigate("/checkout");
+                    }}
+                    className='w-full flex justify-center items-center space-x-2 bg-black text-white py-3 rounded-md hover:bg-gray-800 transition duration-300 ease-in-out'>
+                    <span>Go to Checkout</span>
                     <ChevronRight size={20} />
                   </button>
                 </div>

@@ -176,14 +176,16 @@ export default function Address({selectedAddress,setSelectedAddress}) {
                   }}>
                   <Edit size={18} />
                 </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteAddress(address);
-                  }}
-                  className='text-gray-500 hover:text-gray-700'>
-                  <Trash2 size={18} />
-                </button>
+                {setSelectedAddress ?"":
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteAddress(address);
+                    }}
+                    className='text-gray-500 hover:text-gray-700'>
+                    <Trash2 size={18} />
+                  </button>
+                }
               </div>
             </div>
             <div className='space-y-1 text-sm'>

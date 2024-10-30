@@ -91,10 +91,8 @@ async function fetchCart(req, res) {
 
       const product = item.productId;
       const sizeData = product.sizes.find((s) => s.size === item.size);
-
-      console.log(sizeData);
       
-    
+
       if (sizeData) {
 
         if (item.qty > sizeData.stock) {
@@ -131,7 +129,7 @@ async function plusCartItem(req,res) {
     const user_id = req.params.user_id;
     let updated = false;
     let cart = await Cart.findOne({userId:user_id}).populate("items.productId");
-    console.log(cart);
+
     
     
 cart.items.forEach((item) => {
@@ -229,12 +227,6 @@ async function removeCartItem(req,res) {
 async function fetchSize(req, res) {
   try {
     const { selected, product_id, user_id } = req.params;
-
-    console.log("Size:", selected);
-    console.log("Product ID:", product_id);
-    console.log("User ID:", user_id);
-
-   
     const cart = await Cart.findOne({ userId: user_id });
 
     if (!cart) {
