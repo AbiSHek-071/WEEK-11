@@ -35,11 +35,10 @@ function LandingPage() {
   },[])
   return (
     <>
-      <Navbar />
+      <Navbar  />
       <HeroSection />
       <ProductCardContainer title={"New Arraivals"} products={newArraivals} />
       <ProductCardContainer title={"Top Selling"} products={newArraivals} />
-
       <Footer />
     </>
   );

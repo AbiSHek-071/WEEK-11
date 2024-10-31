@@ -33,7 +33,7 @@ function Login() {
        });
 
        dispatch(addUser(response.data.userData));
-       navigate("/user/home");
+       navigate("/home");
        return toast.success(response.data.message);
      } catch (err) {
        if (err.response && err.response.status === 401) {
@@ -110,7 +110,7 @@ function Login() {
           <div className='text-sm text-center'>
             Don't Have an Account?{" "}
             <Link
-              to='/user/signup'
+              to='/signup'
               className='font-medium text-primary hover:underline'>
               Signup
             </Link>

@@ -8,26 +8,20 @@ import SearchComponent from "./SearchComponent";
 import { useSelector } from "react-redux";
 import PopupBox from "./PopupBox";
 
-
 export default function Navbar() {
-   const [isPopupOpen, setIsPopupOpen] = useState(false)
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const userData = useSelector((store)=>store.user.userDatas)
- 
- 
+  const userData = useSelector((store) => store.user.userDatas);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  useEffect(() => {
-    
-  }, []);
+  useEffect(() => {}, []);
 
   return (
-    <nav
-      className={`text-black bg-white p-4  z-50 transition-all duration-300 drop-shadow-xl`}>
+    <nav className='text-black bg-white p-4 z-[1000] relative transition-all duration-300 drop-shadow-xl'>
       <div className='container mx-auto flex items-center justify-between'>
         <div className='text-2xl font-bold'>Stitchers</div>
         <div className='hidden md:flex flex-grow justify-center'>
@@ -52,9 +46,12 @@ export default function Navbar() {
           <Button variant='ghost' size='icon'>
             <Heart className='h-5 w-5' />
           </Button>
-          <Button onClick={()=>{
-            navigate("/cart")
-          }} variant='ghost' size='icon'>
+          <Button
+            onClick={() => {
+              navigate("/cart");
+            }}
+            variant='ghost'
+            size='icon'>
             <ShoppingCart className='h-5 w-5' />
           </Button>
           {userData ? (
@@ -85,41 +82,42 @@ export default function Navbar() {
       </div>
 
       {/* Mobile Menu Overlay */}
-      <div
-        className={` fixed inset-0 bg-black bg-opacity-50  transition-opacity duration-300 ${
-          isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
-        onClick={toggleMenu}>
+      {isMenuOpen && (
         <div
-          className={`fixed right-0 top-0 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out ${
-            isMenuOpen ? "translate-x-0" : "translate-x-full"
-          }`}
-          onClick={(e) => e.stopPropagation()}>
-          <div className='p-4 bg-white h-full'>
-            <Button
-              variant='ghost'
-              size='icon'
-              className='absolute top-4 right-4'
-              onClick={toggleMenu}>
-              <X className='h-5 w-5' />
-            </Button>
-            <div className='bg-white mt-8 flex flex-col space-y-4'>
-              <a href='#' className='text-black hover:text-gray-700'>
-                Home
-              </a>
-              <a href='#' className='text-black hover:text-gray-700'>
-                Shop
-              </a>
-              <a href='#' className='text-black hover:text-gray-700'>
-                Our Story
-              </a>
-              <a href='#' className='text-black hover:text-gray-700'>
-                Contact us
-              </a>
+          className='fixed inset-0 bg-black bg-opacity-50 z-[2000] transition-opacity duration-300'
+          onClick={toggleMenu}>
+          <div
+            className={`fixed right-0 top-0 h-screen w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-[3000] ${
+              isMenuOpen ? "translate-x-0" : "translate-x-full"
+            }`}
+            onClick={(e) => e.stopPropagation()}>
+            <div className='p-4 bg-white h-full'>
+              <Button
+                variant='ghost'
+                size='icon'
+                className='absolute top-4 right-4'
+                onClick={toggleMenu}>
+                <X className='h-5 w-5' />
+              </Button>
+              <div className='bg-white mt-8 flex flex-col space-y-4'>
+                <Link to='/home' className='text-black hover:text-gray-700'>
+                  Home
+                </Link>
+                <Link to='/shop' className='text-black hover:text-gray-700'>
+                  Shop
+                </Link>
+                <Link to='#' className='text-black hover:text-gray-700'>
+                  Our Story
+                </Link>
+                <Link to='#' className='text-black hover:text-gray-700'>
+                  Contact us
+                </Link>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
+
       <PopupBox isOpen={isPopupOpen} setIsPopupOpen={setIsPopupOpen} />
     </nav>
   );

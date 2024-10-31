@@ -255,6 +255,8 @@ export default function SignUp() {
           <GoogleLogin
             onSuccess={async (credentialResponse) => {
               try {
+                console.log(credentialResponse);
+                
                 const decodeData = jwtDecode(credentialResponse.credential);
                 
                 setGoogleData(decodeData);
@@ -270,7 +272,7 @@ export default function SignUp() {
                  
                   dispatch(addUser(response.data.userData)); 
                   toast.success(response.data.message);
-                  navigate("/user/home");
+                  navigate("/home");
                 }
               } catch (err) {
                 if (err.response && err.response.status === 401) {

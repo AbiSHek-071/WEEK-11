@@ -5,20 +5,49 @@ import { useSelector } from "react-redux";
 import visa from "../../../assets/visa.png"
 import master from "../../../assets/master.png";
 import rupya from "../../../assets/rupya.png";
+import verify from "../../../assets/verify.svg";
+
 import { toast as reactToast, ToastContainer } from "react-toastify";
 import { toast } from "sonner";
+import { Button } from "@nextui-org/react";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+} from "@nextui-org/react";
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "@nextui-org/react";
+import { useNavigate } from "react-router-dom";
+
 
 export default function Checkout() {
     const userData = useSelector((store) => store.user.userDatas);
     const [selectedAddress, setSelectedAddress] = useState(null);
-     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
-      const [cartItems, setCartItems] = useState([]);
-      const [subtotal, setSubtota] = useState(0);
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
+    const [cartItems, setCartItems] = useState([]);
+    const [subtotal, setSubtota] = useState(0);
+    const [cart_id,setCart_id]= useState()
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [orderDetails, setOrderDetails] = useState({});
+    const [deliveryDate,setDeliveryDate] = useState(null);
+    const [placedAt,setPlacedAt] = useState(null)
+    const [placedTime,setPlacedTime] = useState(null)
+    const navigate = useNavigate()
+
     async function fetchCartItems() {
       try {
         const response = await axiosInstance.get(`/user/cart/${userData._id}`);
         setCartItems(response.data.cartItems.items);
-        console.log(response.data.cartItems);
+        setCart_id(response.data.cartItems._id); 
 
         setSubtota(response.data.cartItems.totalCartPrice);
       } catch (err) {
@@ -34,6 +63,7 @@ export default function Checkout() {
        setSelectedPaymentMethod(event.target.value);
      };
      
+     
      async function handlePlaceOrder() {
       try {
         if(!selectedAddress){
@@ -42,20 +72,58 @@ export default function Checkout() {
         if(!selectedPaymentMethod){
           return reactToast.warn("select an Payment before proceeds");
         }
-        console.log(cartItems);
-        const response = axiosInstance.post("/user/order", {
+        const response = await axiosInstance.post("/user/order", {
           user: userData._id,
           cartItems,
           subtotal,
           shipping_address: selectedAddress._id,
-          payment_method:selectedPaymentMethod,
+          payment_method: selectedPaymentMethod,
+          cart_id,
+        }); 
+        setOrderDetails(response?.data?.order);
+        //SETTING DELIVERY DATE
+        const formattedDate = new Date(
+          response.data.order.delivery_by
+        ).toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
         });
+        setDeliveryDate(formattedDate);
+
+        //SETTING PLACED AT DATE 
+        const formattedPlaceDate = new Date(
+          response.data.order.delivery_by
+        ).toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        });
+        setPlacedAt(formattedPlaceDate);
+        const formattedTime = new Date(
+          response.data.order.delivery_by
+        ).toLocaleTimeString("en-GB", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true, 
+        });
+        setPlacedTime(formattedTime);
+
+        onOpen()
         return toast.success(response.data.message)
         
       } catch (err) {
         console.log(err);
-        return toast.error(err.response.data.message)
+        const errorMessage =
+          err.response?.data?.message || "An unexpected error occurred";
+  
       }
+     }
+     function onExit(){
+        navigate("/");
+     }
+     function onViewOrder(){
+        navigate("/profile/orders")
      }
 
     useEffect(()=>{
@@ -63,6 +131,70 @@ export default function Checkout() {
     },[])
   return (
     <div className='container mx-auto px-4 py-8'>
+      <Modal
+        backdrop='blur'
+        isOpen={isOpen}
+        onClose={onExit}
+        className='bg-white border shadow-lg '>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className='mx-auto'>Order Summary</ModalHeader>
+              <ModalBody>
+                <div className=' flex flex-col items-center '>
+                  <img src={verify} alt='' className='h-20 my-5' />
+                  <h2 className='flex'>Payment successfully Completed</h2>
+                  <Table
+                    aria-label='Example static collection table'
+                    className='my-7'>
+                    <TableHeader>
+                      <TableColumn>OrderId</TableColumn>
+                      <TableColumn className='text-right'>
+                        {orderDetails?.order_id}
+                      </TableColumn>
+                    </TableHeader>
+                    <TableBody>
+                      <TableRow key='1'>
+                        <TableCell>Date</TableCell>
+                        <TableCell className='text-right'>{placedAt}</TableCell>
+                      </TableRow>
+                      <TableRow key='2'>
+                        <TableCell>Time</TableCell>
+                        <TableCell className='text-right'>{placedTime}</TableCell>
+                      </TableRow>
+                      <TableRow key='3'>
+                        <TableCell>Payment Method</TableCell>
+                        <TableCell className='text-right'>
+                          {orderDetails?.payment_method}
+                        </TableCell>
+                      </TableRow>
+                      <TableRow key='4'>
+                        <TableCell>Amount</TableCell>
+                        <TableCell className='text-right'>
+                          INR {orderDetails.total_amount}.00
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+
+                  <h1 className='text-green-700 font-bold'>
+                    Arriving By {deliveryDate}
+                  </h1>
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <Button color='danger' variant='light' onPress={onExit}>
+                  Continue Shopping
+                </Button>
+                <Button color='primary' onPress={onViewOrder}>
+                  View Order
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
       <h1 className='text-3xl font-bold mb-6'>Billing Details</h1>
       <div className='flex flex-col lg:flex-row gap-8'>
         <div className='w-full lg:w-2/3'>
@@ -79,6 +211,7 @@ export default function Checkout() {
           </section>
           <section>
             <h2 className='text-xl font-semibold mb-4'>Payment Method</h2>
+
             <p className='mb-2'>Select any payment method</p>
             <div className='space-y-2'>
               {/* Card */}
@@ -192,11 +325,14 @@ export default function Checkout() {
                 Apply Coupon
               </button>
             </div>
-            <button
+            <Button
               onClick={handlePlaceOrder}
-              className='mt-4 w-full bg-gray-900 text-white py-3 rounded-md'>
+              // onPress={onOpen}
+              className='mt-4 w-full h-16 rounded-md'
+              color='primary'>
+              {" "}
               Place Order
-            </button>
+            </Button>
           </div>
         </div>
       </div>

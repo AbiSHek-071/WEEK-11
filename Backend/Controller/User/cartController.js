@@ -100,6 +100,9 @@ async function fetchCart(req, res) {
         }
         item.totalProductPrice = item.qty * item.salePrice; 
       }
+      if(item.qty == 0 && sizeData.stock>1){
+        item.qty = 1;
+      }
     });
 
     
