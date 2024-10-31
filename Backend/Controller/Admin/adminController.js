@@ -4,7 +4,6 @@ const generateAccessToken = require("../../utils/genarateAccessToken");
 const generateRefreshToken = require("../../utils/genarateRefreshToken");
 
 async function createAdmin(req, res) {
-  console.log("esd");
   try {
     const adminPassword = "admin";
     const hashedPassword = await bcrypt.hash(adminPassword, 10);
@@ -48,9 +47,7 @@ async function login(req, res) {
     }
     const accessToken = generateAccessToken(adminData._id);
     const refreshToken = generateRefreshToken(adminData._id);
-    console.log("admin A", accessToken);
-    console.log("admin R", refreshToken);
-
+    
     res.cookie("adminAccessToken", accessToken, {
       httpOnly: true,
       secure: false,

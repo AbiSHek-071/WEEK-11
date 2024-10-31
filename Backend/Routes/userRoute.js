@@ -22,7 +22,7 @@ userRoute.post("/googleAuth", userController.googleAuth);
 userRoute.post("/edit",userController.editUser);
 
 //product controller routes
-userRoute.get("/products/new-arrivals",userAuth.jwtVerification,productController.fetchnewarraivals);
+userRoute.get("/products/new-arrivals",productController.fetchnewarraivals);
 userRoute.post("/fetchproduct",productController.fetchproduct);
 userRoute.post("/products/related", productController.fetchRelatedProducts);
 

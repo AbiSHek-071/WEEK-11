@@ -14,26 +14,26 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_ORIGIN,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
   })
 );
 app.use(cookieParser());
 
-mongoose.connect("mongodb://localhost:27017/Stitchers", {
+mongoose.connect(process.env.DATABASE_ORIGIN, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
 
-const userRoute = require("./Routes/userRoute");  // Correct import
+const userRoute = require("./Routes/userRoute");  
 const adminRoute = require("./Routes/adminRoute");
 
 
-app.use("/user", userRoute);  // Use the correct router
+app.use("/user", userRoute);  
 app.use("/admin", adminRoute);
 
-app.listen(3050, () => {
-  console.log(`App running on ${process.env.PORT}`);
+app.listen(process.env.BACKEND_PORT, () => {
+  console.log(`App running on ${process.env.BACKEND_PORT}`);
 });

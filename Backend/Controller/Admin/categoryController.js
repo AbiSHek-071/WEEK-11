@@ -3,8 +3,6 @@ const Category = require("../../Models/category");
 
 async function addCategory(req, res) {
   try {
-    console.log("recived");
-
     const { name, description } = req.body;
     const category = new Category({
       name,

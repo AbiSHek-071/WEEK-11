@@ -2,19 +2,18 @@ const nodemailer = require("nodemailer");
 const mailSender = async (email,title,body)=>{
     try{
         let transpoter = nodemailer.createTransport({
-            host:"smtp.gmail.com",
-            auth:{
-                user:"personalabhishek654@gmail.com",
-                pass:"khyz lrwb fhsu ufoz"
-            }
-        })
+          host: "smtp.gmail.com",
+          auth: {
+            user: process.env.EMAIL_SENDER,
+            pass: process.env.APP_PASSWORD,
+          },
+        });
         let info= await transpoter.sendMail({
             from :"Abhishek P",
             to:email,
-            subject:"working or what",
+            subject:"OTP VERIFICATION FROM STICHERS",
             html:body,
         });
-        console.log("email info",info);
         return info;
         
     }catch(err){

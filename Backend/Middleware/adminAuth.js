@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 const generateAccessToken = require("../utils/genarateAccessToken");
 const Admin = require("../Models/admin");
 
@@ -10,7 +11,8 @@ const jwtVerification = async (req, res, next) => {
     if (accessToken) {
       const Accessverified = jwt.verify(
         accessToken,
-        "AccesstokenKeyShouldReplaceLater"
+        process.env.ACCESS_TOKEN_KEY
+        // "AccesstokenKeyShouldReplaceLater"
       );
      
       const adminData = await Admin.findById(Accessverified.id).select("-password");
@@ -25,7 +27,8 @@ const jwtVerification = async (req, res, next) => {
     } else if (refreshToken) {
       const RefreshVerified = jwt.verify(
         refreshToken,
-        "RefreshtokenKeyShouldReplaceLater"
+        process.env.REFRESH_TOKEN_KEY
+        // "RefreshtokenKeyShouldReplaceLater"
       );
       
 

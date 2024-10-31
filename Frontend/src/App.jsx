@@ -17,7 +17,7 @@ function App() {
     <>
       <Toaster richColors position='bottom-right' />
       <ToastContainer position='bottom-right' />
-      <GoogleOAuthProvider clientId='495895525105-d4s3eg0u6upjp00irja429ki3rhd1c2o.apps.googleusercontent.com'>
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
         <Provider store={store}>
           <Router>
             <Routes>
