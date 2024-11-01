@@ -1,5 +1,6 @@
 const Cart = require("../../Models/Cart");
-const Order = require("../../Models/order")
+const Order = require("../../Models/order");
+const Product = require("../../Models/product");
 
 async function createOrder(req,res) {
     try {
@@ -52,7 +53,8 @@ async function createOrder(req,res) {
    });
     cart.items = updatedCartItems;
     await cart.save();
-
+   
+    manageProductQty(order.order_items)
 
       return res
         .status(201)
@@ -63,6 +65,24 @@ async function createOrder(req,res) {
     }
 } 
 
+async function manageProductQty(order_items) {
+ for (const item of order_items) {
+   try {
+      const product = await Product.findById(item.product);
+      const sizeObject = product.sizes.find((size) => size.size === item.size);
+
+        if (sizeObject) {
+         sizeObject.stock -= item.qty; 
+         await product.save(); 
+       } else {
+         console.warn(`Size ${item.size} not found for product ${product._id}`);
+       }
+   } catch (error) {
+     console.error(`Error fetching product ${item.product}:`, error);
+   }
+ }
+
+}
 
 module.exports = {
     createOrder,

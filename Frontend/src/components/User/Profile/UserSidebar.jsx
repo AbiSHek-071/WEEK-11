@@ -8,28 +8,30 @@ import {
   Key,
   Trash2,
   LogOut,
+  Menu,
+  X,
 } from "lucide-react";
 import { Button } from "../../ui/button";
-import { NavLink } from "react-router-dom";
-import PopupBox from "../../Admin/PopupBox";
-import {SquareChevronLeftIcon} from "lucide-react"
+import { NavLink, useNavigate } from "react-router-dom";
+import PopupBox from "../../ui/PopupBox";
+import { SquareChevronLeftIcon } from "lucide-react";
 
 function UserSidebar() {
+  const navigate = useNavigate()
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   const handleLogout = () => {
     console.log("Logout clicked");
     setIsPopupOpen(true);
   };
 
-const topMenuItems = [
-  { path: "myprofile", icon: User, label: "My Profile" },
-  { path: "address", icon: MapPin, label: "Address" },
-  { path: "orders", icon: ShoppingBag, label: "Orders" },
-  { path: "wallet", icon: Wallet, label: "My Wallet" },
-  { path: "coupons", icon: Ticket, label: "Coupons" },
-];
-
-
+  const topMenuItems = [
+    { path: "myprofile", icon: User, label: "My Profile" },
+    { path: "orders", icon: ShoppingBag, label: "Orders" },
+    { path: "wallet", icon: Wallet, label: "My Wallet" },
+    { path: "coupons", icon: Ticket, label: "Coupons" },
+  ];
 
   const bottomMenuItems = [
     {
@@ -42,7 +44,6 @@ const topMenuItems = [
   ];
 
   const renderMenuItem = (item, index) => (
-    
     <li key={index} className='w-full'>
       {item.path ? (
         <NavLink
@@ -53,7 +54,8 @@ const topMenuItems = [
                 ? "text-black bg-gray-300"
                 : "text-gray-600 hover:bg-gray-100"
             } transition-colors duration-200`
-          }>
+          }
+          onClick={() => setIsMobileMenuOpen(false)}>
           <item.icon size={24} />
           <span className='ml-4'>{item.label}</span>
         </NavLink>
@@ -61,7 +63,10 @@ const topMenuItems = [
         <Button
           variant='ghost'
           className='w-full justify-start p-4 text-lg text-gray-800 hover:bg-gray-100'
-          onClick={item.onClick}>
+          onClick={() => {
+            item.onClick();
+            setIsMobileMenuOpen(false);
+          }}>
           <item.icon size={24} />
           <span className='ml-4'>{item.label}</span>
         </Button>
@@ -71,9 +76,19 @@ const topMenuItems = [
 
   return (
     <>
-      <aside className='bg-white shadow-md h-full flex flex-col transition-all duration-300 ease-in-out overflow-hidden w-full sm:w-80 md:w-96'>
+      <button
+        className='md:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-md shadow-md'
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
+      <aside
+        className={`bg-white flex flex-col transition-all duration-300 ease-in-out overflow-hidden w-full sm:w-80 md:w-96 h-full ${
+          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+        } md:translate-x-0 fixed md:static top-0 left-0 z-40`}>
         <div className='p-6 border-b flex items-center justify-center'>
-          <div className='w-24 h-24 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 text-3xl font-bold'>
+          <div onClick={()=>{
+            navigate("/home")
+          }} className='w-24 h-24 cursor-pointer bg-gray-300 rounded-full flex items-center justify-center text-gray-600 text-3xl font-bold'>
             AP
           </div>
         </div>
@@ -87,6 +102,11 @@ const topMenuItems = [
         </div>
         <PopupBox isOpen={isPopupOpen} setIsPopupOpen={setIsPopupOpen} />
       </aside>
+      {isMobileMenuOpen && (
+        <div
+          className='md:hidden fixed inset-0 bg-black bg-opacity-50 z-30'
+          onClick={() => setIsMobileMenuOpen(false)}></div>
+      )}
     </>
   );
 }

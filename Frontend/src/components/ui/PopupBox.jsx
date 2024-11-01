@@ -26,7 +26,7 @@ export default function PopupBox({ isOpen,setIsPopupOpen}) {
         Cookies.remove("refreshToken"); 
       }
         dispatch(logoutUser());
-        navigate("/user/home");
+        navigate("/");
         setIsPopupOpen(false);
     }
   return (
@@ -37,12 +37,11 @@ export default function PopupBox({ isOpen,setIsPopupOpen}) {
       }}>
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
-          <DialogTitle>Development Notice</DialogTitle>
-          <DialogDescription>
-            The User Profile Components are under development.
-          </DialogDescription>
+          <DialogTitle>Log Out</DialogTitle>
+          <DialogDescription>Please confirm your action.</DialogDescription>
         </DialogHeader>
-        <div className='py-4'>If you want, you can log out from here.</div>
+        <div className='py-4'>Are you sure you want to log out?</div>
+
         <DialogFooter className='sm:justify-start'>
           <Button
             variant='outline'
@@ -51,7 +50,7 @@ export default function PopupBox({ isOpen,setIsPopupOpen}) {
             }}>
             Cancel
           </Button>
-          <Button onClick={handleLogout} >Logout</Button>
+          <Button onClick={handleLogout}>Logout</Button>
         </DialogFooter>
         <button
           onClick={() => {

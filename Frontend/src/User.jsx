@@ -14,6 +14,7 @@ import ProtectedHome from "./private/ProtectedHome";
 import UserProfile from "./components/User/Profile/UserProfile";
 import CartPage from "./Pages/CartPage";
 import CheckoutPage from "./Pages/CheckoutPage";
+import Navbar from "./components/ui/Navbar";
 
 
 
@@ -33,9 +34,16 @@ function User() {
       <Route path='/home' element={<LandingPage />} />
       <Route path='/product/:id' element={<ProductPage />} />
       <Route path='/shop' element={<ShopPage />} />
-      <Route path='/profile/*' element={<UserProfile />} />
+      <Route
+        path='/profile/*'
+        element={
+          <>
+             <UserProfile /> 
+          </>
+        }
+      />
       <Route path='/cart' element={<CartPage />} />
-      <Route path='/checkout' element={<CheckoutPage/>} />
+      <Route path='/checkout' element={<CheckoutPage />} />
     </Routes>
   );
 }

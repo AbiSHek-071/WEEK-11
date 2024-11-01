@@ -38,13 +38,19 @@ function MyProfie() {
     // })
 
   return (
-    <div className='p-8 '>
-      <div className='flex flex-col justify-between gap-3'>
-        <h1 className='text-3xl font-bold'>My Profile</h1>
-        <p className='text-gray-500'>Profile &gt; MyProfile</p>
+    <div className='container mx-auto px-4 py-8 max-w-6xl'>
+      <div className='flex flex-col justify-between '>
+        <h1 className='text-2xl md:text-3xl font-bold mb-4'>My Profile</h1>
+        <div className='flex items-center gap-2 text-xs md:text-sm text-gray-600 mb-6 md:mb-8'>
+          <span>home</span>
+          <span className='text-gray-300'>/</span>
+          <span>profile</span>
+          <span className='text-gray-300'>/</span>
+          <span className='font-medium text-black'>My Profile</span>
+        </div>
       </div>
       <div className='flex justify-start items-start h-full w-ful'>
-        <div className='bg-white border mt-12 border-gray-200 rounded-lg shadow-md p-10 w-full max-w-4xl'>
+        <div className='bg-white border border-gray-200 rounded-lg shadow-md p-6 w-full max-w-6xl mt-5'>
           <div className='flex flex-col md:flex-row justify-between items-start md:items-center mb-6'>
             <h2 className='text-2xl font-bold text-gray-800 mb-4 md:mb-0'>
               Details
@@ -151,7 +157,7 @@ function MyProfie() {
           </div>
         </div>
       </div>
-        <Address/>
+      <Address />
     </div>
   );
 }

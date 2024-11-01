@@ -56,8 +56,10 @@ export default function Navbar() {
           </Button>
           {userData ? (
             <div
-              onClick={() => setIsPopupOpen(true)}
-              className='flex items-center justify-center bg-gray-300 text-black rounded-full w-10 h-10 font-bold'>
+              onClick={()=>{
+                navigate("/profile/myprofile");
+              }}
+              className='flex items-center cursor-pointer justify-center bg-gray-300 text-black rounded-full w-10 h-10 font-bold'>
               {userData.name.charAt(0).toUpperCase()}
               {userData.name.charAt(userData.name.length - 1).toUpperCase()}
             </div>
