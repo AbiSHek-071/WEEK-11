@@ -6,6 +6,7 @@ import store from "@/store/store";
 import { Route, Routes } from "react-router-dom";
 import MyProfie from "./MyProfie";
 import OrdersComponent from "./OrdersComponent";
+import ViewOrderDetails from "./ViewOrderDetails";
 
 function UserProfile() {
   return (
@@ -18,11 +19,15 @@ function UserProfile() {
           <Routes>
             {/* Define routes relative to /user/profile */}
             <Route path='myprofile' element={<MyProfie />} />
-            <Route path='orders' element={<OrdersComponent/>} />
+            <Route path='orders' element={<OrdersComponent />} />
+            <Route path='vieworder/:id' element={<ViewOrderDetails />} />
             {/* <Route path='address' element={<div>Address Component</div>} /> */}
             <Route path='wallet' element={<div>wallet Component</div>} />
             <Route path='coupons' element={<div>coupons Component</div>} />
-            <Route path='changepassword' element={<div>changepassword Component</div>} />
+            <Route
+              path='changepassword'
+              element={<div>changepassword Component</div>}
+            />
             <Route path='delete' element={<div>delete Component</div>} />
             {/* Add more routes for other menu items */}
           </Routes>

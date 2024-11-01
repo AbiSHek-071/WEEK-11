@@ -47,5 +47,8 @@ userRoute.get("/size/:product_id/:user_id/:selected", cartController.fetchSize);
 
 //order controller routes
 userRoute.post("/order",orderController.createOrder);
+userRoute.get("/orders/:_id",orderController.fetchOrders);
+userRoute.get("/order/:id", orderController.fetchOrderDetails);
+
 
 module.exports = userRoute;  

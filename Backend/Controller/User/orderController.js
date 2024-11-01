@@ -24,7 +24,6 @@ async function createOrder(req,res) {
             price: item.salePrice,
             discount: 0,
             total_price: item.salePrice,
-            order_status: "Pending",
           });
         }
       });
@@ -32,6 +31,7 @@ async function createOrder(req,res) {
       const order = await Order.create({
         user,
         order_items: products,
+        order_status: "Pending",
         total_amount: subtotal,
         shipping_address,
         payment_method,
@@ -84,6 +84,49 @@ async function manageProductQty(order_items) {
 
 }
 
-module.exports = {
-    createOrder,
+async function fetchOrders(req,res) {
+  try {
+    const { _id } = req.params;
+    const orders = await Order.find({ user: _id })
+      .populate("user") 
+      .populate("shipping_address") 
+      .populate("order_items.product"); 
+
+    if (!orders) {
+      return res
+        .status(404)
+        .json({ success: true, message: "Order Fetch failed" });
+    }
+    return res
+      .status(200)
+      .json({ success: true, message: "Order Fetched Successfully", orders });
+  } catch (err) {
+    console.log(err);
+    
+  }
 }
+
+async function fetchOrderDetails(req,res) {
+  try {
+    const {id} = req.params;
+    const order = await Order.findOne({ order_id: id })
+      .populate("user")
+      .populate("shipping_address")
+      .populate("order_items.product"); ;
+    if(!order){
+      res
+        .status(404)
+        .json({ success: false, message: "Details fetch failed" });
+    }    
+    res.status(200).json({success:true,message:"Details fetched succesfully",order})
+  } catch (err) {
+    console.log(err);
+    
+  }
+}
+
+module.exports = {
+  createOrder,
+  fetchOrders,
+  fetchOrderDetails,
+};

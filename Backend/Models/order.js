@@ -3,7 +3,7 @@ const mongoose = require("mongoose")
 const order_schema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "user",
+    ref: "User",
     required: true,
   },
   order_id: {
@@ -40,14 +40,14 @@ const order_schema = new mongoose.Schema({
         type: Number,
         required: true,
       },
-      order_status: {
-        type: String,
-        required: true,
-        enum: ["Pending", "Shipped", "Delivered", "Cancelled"],
-        default: "Pending",
-      },
     },
   ],
+  order_status: {
+    type: String,
+    required: true,
+    enum: ["Pending", "Shipped", "Delivered", "Cancelled"],
+    default: "Pending",
+  },
   total_amount: {
     type: Number,
     required: true,
@@ -55,7 +55,7 @@ const order_schema = new mongoose.Schema({
   },
   shipping_address: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "address",
+    ref: "Address",
     required: true,
   },
   payment_method: {
@@ -118,7 +118,7 @@ order_schema.pre("save", function (next) {
 });
 order_schema.pre("save", function (next) {
   if (!this.order_id) {
-    const uniqueId = `COZ${Date.now()}${Math.floor(Math.random() * 1000)}`;
+    const uniqueId = `STC${Date.now()}${Math.floor(Math.random() * 1000)}`;
     this.order_id = uniqueId;
   }
   next();
