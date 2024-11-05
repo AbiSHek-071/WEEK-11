@@ -9,6 +9,7 @@ const adminController = require("../Controller/Admin/adminController");
 const productController = require("../Controller/Admin/productController")
 const categoryController = require("../Controller/Admin/categoryController");
 const userController = require("../Controller/Admin/userController")
+const orderController = require("../Controller/Admin/orderController");
 const adminAuth = require("../Middleware/adminAuth")
 
 //...........ROUTES................
@@ -35,6 +36,11 @@ adminRoute.post("/product",adminAuth.jwtVerification,productController.addProduc
 adminRoute.get("/products",adminAuth.jwtVerification,productController.fetchProducts);
 adminRoute.put("/product",adminAuth.jwtVerification,productController.editProduct);
 adminRoute.put("/products/status",adminAuth.jwtVerification,productController.toggleProduct);
+
+//orders Controller routes
+adminRoute.get("/orders", orderController.fetchOrders);
+adminRoute.patch("/status/:orderId/:newStatus", orderController.switchStatus);
+
 
 
 module.exports = adminRoute;

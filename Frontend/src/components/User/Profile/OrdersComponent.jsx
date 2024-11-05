@@ -1,4 +1,5 @@
 import axiosInstance from "@/AxiosConfig";
+import ConfirmationModal from "@/components/shared/confirmationModal";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +11,14 @@ export default function OrdersComponent() {
   const userData = useSelector((store) => store.user.userDatas);
   const [orders, setorders] = useState([])
   const [expandedOrders, setExpandedOrders] = useState([]);
+  const [reload, setreload] = useState(false)
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [modalContent, setModalContent] = useState({
+    title: "",
+    message: "",
+    onConfirm: null,
+  });
 
 
   const toggleOrderExpansion = (orderId) => {
@@ -27,7 +36,6 @@ export default function OrdersComponent() {
         console.log(order.order_items);
         
       });
-      toast.success(response.data.message);
     } catch (err) {
       if(err.response){
         console.log(err);
@@ -36,9 +44,62 @@ export default function OrdersComponent() {
       } 
     }
   }
+
+  const handleCancel =  (order_id) => {
+    setModalContent({
+      title: "Cancel Order",
+      message: "Are you sure you want to cancel this order?",
+      onConfirm: async () => {
+        try {
+          console.log(order_id);
+          
+          const response = await axiosInstance.patch(
+            `/user/order/cancel/${order_id}`
+          );
+          setreload(true);
+         return toast.success(response.data.message);
+        } catch (err) {
+          if (err.response) {
+            console.log(err);
+
+            toast.error(err.response.data.message);
+          } 
+          
+        }
+      },
+    });
+    setIsOpen(true);
+  };
+
+  const handleReturn = async(order_id) => {
+    setModalContent({
+      title: "Return Order",
+      message: "Are you sure you want to return this order?",
+      onConfirm: async () => {
+        try {
+          console.log(order_id);
+
+          const response = await axiosInstance.patch(
+            `/user/order/return/${order_id}`
+          );
+          setreload(true);
+          return toast.success(response.data.message)
+          
+        } catch (err) {
+          console.log(err);
+          if(err.response){
+          return toast.error(err.response.data.message);
+          }
+        }
+
+      },
+    });
+    setIsOpen(true);
+  };
   useEffect(()=>{
     fetchOrders();
-  },[])
+    setreload(false)
+  },[reload])
   return (
     <div className='container mx-auto px-4 py-8 max-w-6xl'>
       <h1 className='text-2xl md:text-3xl font-bold mb-4'>My Order</h1>
@@ -164,15 +225,42 @@ export default function OrdersComponent() {
             </div>
 
             <div className='px-4 md:px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end items-center'>
-              <button onClick={()=>{
-                navigate(`/profile/vieworder/${order.order_id}`);
-              }} className='px-3 py-2 md:px-4 md:py-2 bg-black text-white text-xs md:text-sm rounded-md hover:bg-gray-800 transition-colors'>
+              {order.order_status !== "Cancelled" &&
+                order.order_status !== "Returned" &&
+                order.order_status !== "Delivered" && (
+                  <button
+                    onClick={() => handleCancel(order._id)}
+                    className='px-3 py-2 md:px-4 md:py-2 border-2 border-black text-black mr-5 text-xs md:text-sm rounded-md hover:bg-black hover:text-white transition-colors'>
+                    Cancel Order
+                  </button>
+                )}
+
+              {order.order_status === "Delivered" && (
+                <button
+                  onClick={() => handleReturn(order._id)}
+                  className='px-3 py-2 md:px-4 md:py-2 border-2 border-black text-black mr-5 text-xs md:text-sm rounded-md hover:bg-black hover:text-white transition-colors'>
+                  Return Order
+                </button>
+              )}
+
+              <button
+                onClick={() => {
+                  navigate(`/profile/vieworder/${order.order_id}`);
+                }}
+                className='px-3 py-2 md:px-4 md:py-2 bg-black text-white text-xs md:text-sm rounded-md hover:bg-gray-800 transition-colors'>
                 View Order Details
               </button>
             </div>
           </div>
         ))}
       </div>
+      <ConfirmationModal
+        isOpen={isOpen}
+        onOpenChange={setIsOpen}
+        title={modalContent.title}
+        message={modalContent.message}
+        onConfirm={modalContent.onConfirm}
+      />
     </div>
   );
 }

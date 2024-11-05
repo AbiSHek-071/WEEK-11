@@ -33,7 +33,7 @@ function Login() {
        });
 
        dispatch(addUser(response.data.userData));
-       navigate("/home");
+       navigate("/");
        return toast.success(response.data.message);
      } catch (err) {
        if (err.response && err.response.status === 401) {
@@ -115,9 +115,15 @@ function Login() {
               Signup
             </Link>
           </div>
+
           <Button type='submit' className='w-full'>
             Login
           </Button>
+          <div onClick={()=>{
+            navigate("/forget-password");
+          }} className='text-sm text-primary hover:underline cursor-pointer'>
+            Forgot password ?
+          </div>
         </form>
         <div className='relative'>
           <div className='absolute inset-0 flex items-center'>
@@ -134,7 +140,7 @@ function Login() {
             onSuccess={async (credentialResponse) => {
               try {
                 const decodeData = jwtDecode(credentialResponse.credential);
-                
+
                 setGoogleData(decodeData);
 
                 const response = await axiosInstance.post("/user/googleAuth", {
@@ -143,18 +149,17 @@ function Login() {
                   email: decodeData.email,
                 });
 
-                
                 if (response.data.success) {
                   toast.success(response.data.message);
-                   dispatch(addUser(response.data.userData)); 
-                  navigate("/home");
+                  dispatch(addUser(response.data.userData));
+                  navigate("/");
                 }
               } catch (err) {
                 if (err.response && err.response.status === 401) {
                   return toast.error(err.response.data.message);
                 }
                 console.log(err);
-                
+
                 toast.error("An error occurred. Please try again.");
               }
             }}

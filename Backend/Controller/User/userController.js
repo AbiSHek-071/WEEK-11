@@ -10,6 +10,7 @@ const otpEmailTemplate = require("../../utils/emailTemplate");
 //functions
 const generateAccessToken = require("../../utils/genarateAccessToken");
 const generateRefreshToken = require("../../utils/genarateRefreshToken");
+const { status } = require("express/lib/response");
 
 
 const sendOtp = async (req, res) => {
@@ -53,6 +54,87 @@ const register = async (req, res) => {
     console.log(err);
   }
 };
+
+
+//sending otp
+
+async function forgetPassword(req,res) {
+ try {
+   const { email } = req.body;
+   const checkExist = await User.findOne({ email });
+   if (!checkExist) {
+     return res
+       .status(404)
+       .json({ success: false, message: "E-mail Does not  Exist" });
+   }
+   const otp = otpGenerator.generate(5, {
+     upperCaseAlphabets: false,
+     lowerCaseAlphabets: false,
+     specialChars: false,
+   });
+   await otpSchema.create({ email, otp });
+   const { subject, htmlContent } = otpEmailTemplate(otp);
+
+   const mailRes = await mailSender(email, subject, htmlContent);
+
+   return res
+     .status(200)
+     .json({ success: true, message: "OTP Send Successfully", otp });
+ } catch (err) {
+   console.log(err);
+ }
+}
+
+
+// sending user id back after otp verification
+async function forgotPasswordOtpVerification(req,res) {
+  try {
+    const { email } = req.body;
+    const userData = await User.findOne({ email });
+    if (!userData) {
+      return res
+        .status(404)
+        .json({ success: false, message: "E-mail Does not  Exist" });
+    }
+
+    return res.status(200).json({success:true,message:"OTP verified Successfully",_id:userData._id})
+
+  } catch (err) {
+    console.log();
+    
+  }
+}
+
+//resetting password 
+async function resetPassword(req,res) {
+  try {
+    const { newPassword, confirmPassword, _id } = req.body;
+    
+    if(newPassword !== confirmPassword){
+      return res.status(400).json({success:false,message:"Confirm password Do not Match"});
+    }
+     const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    const updatedData =await User.findByIdAndUpdate({_id},{password:hashedPassword},{new:true});
+
+    if(!updatedData){
+      return res
+        .status(404)
+        .json({ success: false, message: "Unable to reset password" });
+    }
+    return res.status(200).json({success:true,message:"Password reseted successfully"});
+
+  } catch (err) {
+    console.log(err);
+      return res.status(500).json({
+        success: false,
+        message: "An error occurred while resetting the password.",
+      });
+    
+  } 
+}
+
+
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -171,9 +253,12 @@ async function editUser(req,res) {
 
 
 module.exports = {
-    sendOtp,
-    register,
-    login,
-    googleAuth,
-    editUser,
+  sendOtp,
+  register,
+  login,
+  googleAuth,
+  editUser,
+  forgetPassword,
+  forgotPasswordOtpVerification,
+  resetPassword,
 };

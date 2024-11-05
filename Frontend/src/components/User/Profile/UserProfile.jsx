@@ -6,7 +6,7 @@ import store from "@/store/store";
 import { Route, Routes } from "react-router-dom";
 import MyProfie from "./MyProfie";
 import OrdersComponent from "./OrdersComponent";
-import ViewOrderDetails from "./ViewOrderDetails";
+import ViewOrderDetails from "../../shared/ViewOrderDetails";
 
 function UserProfile() {
   return (

@@ -1,13 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import _ from "lodash";
 
-export default function SearchComponent() {
+export default function SearchComponent({ setsearch }) {
   const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [tempSearch, setTempSearch] = useState("");
 
   const toggleSearch = () => {
     setIsSearchVisible(!isSearchVisible);
+  };
+
+  
+  const debouncedSetSearch = useMemo(
+    () => _.debounce((value) => setsearch(value), 500),
+    [setsearch]
+  );
+
+  
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setTempSearch(value); 
+    debouncedSetSearch(value); 
   };
 
   return (
@@ -20,6 +35,8 @@ export default function SearchComponent() {
           type='search'
           placeholder='Search...'
           className='w-full h-10 pl-3 pr-10'
+          value={tempSearch}
+          onChange={handleSearchChange}
         />
       </div>
       <Button
@@ -30,7 +47,6 @@ export default function SearchComponent() {
         className='relative z-10'>
         <Search className='h-4 w-4' />
       </Button>
-      
     </div>
   );
 }

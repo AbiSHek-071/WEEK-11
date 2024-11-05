@@ -6,7 +6,7 @@ function ProtectedLogin({ children }) {
     const userData = useSelector((state) => state?.user?.userDatas);
 
     if (userData) {
-        return <Navigate to={"/user/home"} />;
+        return <Navigate to={"/home"} />;
     }
     return children;
 }

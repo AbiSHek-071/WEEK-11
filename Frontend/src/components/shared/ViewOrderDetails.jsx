@@ -1,8 +1,11 @@
 import axiosInstance from "@/AxiosConfig";
+import store from "@/store/store";
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
 export default function ViewOrderDetails() {
+  const adminData = useSelector(store=>store.admin.adminDatas);
   const { id } = useParams();
   const [orderData, setorderData] = useState(null);
 
@@ -29,15 +32,24 @@ export default function ViewOrderDetails() {
     <div className='container mx-auto px-4 py-8 max-w-7xl'>
       <h1 className='text-2xl md:text-3xl font-bold mb-6'>Order Details</h1>
 
-      <div className='flex items-center gap-2 text-sm md:text-base text-gray-600 mb-8'>
-        <span>home</span>
-        <span className='text-gray-300'>/</span>
-        <span>profile</span>
-        <span className='text-gray-300'>/</span>
-        <span>orders</span>
-        <span className='text-gray-300'>/</span>
-        <span className='font-medium text-black'>Order Details</span>
-      </div>
+      {adminData ? (
+        <div className='flex items-center gap-2 text-sm md:text-base text-gray-600 mb-8'>
+         
+          <span>orders</span>
+          <span className='text-gray-300'>/</span>
+          <span className='font-medium text-black'>Order Details</span>
+        </div>
+      ) : (
+        <div className='flex items-center gap-2 text-sm md:text-base text-gray-600 mb-8'>
+          <span>home</span>
+          <span className='text-gray-300'>/</span>
+          <span>profile</span>
+          <span className='text-gray-300'>/</span>
+          <span>orders</span>
+          <span className='text-gray-300'>/</span>
+          <span className='font-medium text-black'>Order Details</span>
+        </div>
+      )}
 
       <div className='bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden'>
         <div className='bg-gray-50 border-b border-gray-200 p-6 md:p-8'>
@@ -137,7 +149,7 @@ export default function ViewOrderDetails() {
                   <img
                     src={item?.product?.images?.[0] || ""}
                     alt={item?.product?.name || "Product Image"}
-                    className='w-32 h-32 object-cover rounded-md'
+                    className='w-32 h-52 object-cover rounded-md'
                   />
                   <div className='flex-grow'>
                     <h4 className='text-lg font-medium'>
@@ -151,9 +163,7 @@ export default function ViewOrderDetails() {
                     </p>
                   </div>
                   <div className='text-right'>
-                    <p className='text-lg font-medium'>
-                        Price:
-                    </p>
+                    <p className='text-lg font-medium'>Price:</p>
                     <p className='text-base text-gray-600'>
                       ₹{item?.total_price?.toFixed(2) || "0.00"}
                     </p>

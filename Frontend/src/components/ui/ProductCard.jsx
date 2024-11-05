@@ -30,17 +30,21 @@ export default function ProductCard({ product }) {
         }
       }
       fetchreviewcount();
+      console.log("total Stock",totalStock);
+      
     }, [product]);
 
   return (
-    <div onClick={()=>{
-      console.log("products : ",product)
-      navigate(`/product/${product._id}`)
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-    }} className='group relative bg-white border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-lg'>
+    <div
+      onClick={() => {
+        console.log("products : ", product);
+        navigate(`/product/${product._id}`);
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }}
+      className='group relative bg-white border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-lg'>
       <div className='relative'>
         <img
           src={images[0]}

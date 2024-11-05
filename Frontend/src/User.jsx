@@ -15,6 +15,8 @@ import UserProfile from "./components/User/Profile/UserProfile";
 import CartPage from "./Pages/CartPage";
 import CheckoutPage from "./Pages/CheckoutPage";
 import Navbar from "./components/ui/Navbar";
+import ForgotPassword from "./components/User/ForgotPassword";
+import ResetPassword from "./components/User/ResetPassword";
 
 
 
@@ -31,6 +33,24 @@ function User() {
           </ProtectedLogin>
         }
       />
+
+      <Route
+        path='/forget-password'
+        element={
+          <ProtectedLogin>
+            <ForgotPassword />
+          </ProtectedLogin>
+        }
+      />
+      <Route
+        path='/reset-password/:id'
+        element={
+          <ProtectedLogin>
+            <ResetPassword/>
+          </ProtectedLogin>
+        }
+      />
+
       <Route path='/home' element={<LandingPage />} />
       <Route path='/product/:id' element={<ProductPage />} />
       <Route path='/shop' element={<ShopPage />} />
@@ -38,7 +58,7 @@ function User() {
         path='/profile/*'
         element={
           <>
-             <UserProfile /> 
+            <UserProfile />
           </>
         }
       />

@@ -11,6 +11,9 @@ import AddProduct from "./components/Admin/Product/AddProduct";
 import { Provider } from "react-redux";
 import store from "./store/store";
 import ProtectedAdminHome from "./private/ProtectedAdminHome"
+import OrdersComponent from "./components/User/Profile/OrdersComponent";
+import AdminOrdersComponent from "./components/Admin/AdminOrdersComponent";
+import ViewOrderDetails from "./components/shared/ViewOrderDetails";
 
 function Admin() {
   return (
@@ -63,6 +66,22 @@ function Admin() {
               element={
                 <ProtectedAdminHome>
                   <Customer />
+                </ProtectedAdminHome>
+              }
+            />
+            <Route
+              path='/orders'
+              element={
+                <ProtectedAdminHome>
+                  <AdminOrdersComponent />
+                </ProtectedAdminHome>
+              }
+            />
+            <Route
+              path='orderdetails/:id'
+              element={
+                <ProtectedAdminHome>
+                 <ViewOrderDetails/>
                 </ProtectedAdminHome>
               }
             />

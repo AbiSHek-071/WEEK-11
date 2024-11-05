@@ -108,25 +108,78 @@ async function fetchOrders(req,res) {
 
 async function fetchOrderDetails(req,res) {
   try {
-    const {id} = req.params;
+    const {id} = req.params; 
     const order = await Order.findOne({ order_id: id })
       .populate("user")
       .populate("shipping_address")
       .populate("order_items.product"); ;
     if(!order){
-      res
+      return res
         .status(404)
         .json({ success: false, message: "Details fetch failed" });
     }    
-    res.status(200).json({success:true,message:"Details fetched succesfully",order})
+    return res.status(200).json({success:true,message:"Details fetched succesfully",order})
   } catch (err) {
     console.log(err);
     
   }
 }
 
+async function returnOrder(req, res) {
+  try {
+    const { order_id } = req.params;
+    console.log(order_id);
+
+    const updatedData = await Order.findByIdAndUpdate(
+      { _id: order_id },
+      { order_status: "Returned" },
+      { new: true }
+    );
+    if (!updatedData) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Unable to return your order" });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Your order has been successfully returned",
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+}
+
+async function cancelOrder(req, res) {
+  try {
+    const { order_id } = req.params;
+    console.log(order_id);
+
+    const updatedData = await Order.findByIdAndUpdate(
+      { _id: order_id },
+      { order_status: "Cancelled" },
+      { new: true }
+    );
+    if (!updatedData) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Unable to cancel your order" });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Your order has been successfully cancelled",
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+}
+
+
 module.exports = {
   createOrder,
   fetchOrders,
   fetchOrderDetails,
+  cancelOrder,
+  returnOrder,
 };

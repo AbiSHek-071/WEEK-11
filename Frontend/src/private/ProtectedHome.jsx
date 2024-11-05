@@ -6,7 +6,7 @@ function ProtectedHome({ children }) {
   const userData = useSelector((state) => state?.user?.userDatas);
 
   if (!userData) {
-    return <Navigate to={"/user/login"} />;
+    return <Navigate to={"/login"} />;
   }
   return children;
 }

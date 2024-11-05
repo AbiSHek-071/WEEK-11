@@ -19,7 +19,7 @@ function LandingPage() {
   useEffect(()=>{
     async function fetchNewArraivals() {
       try {
-        const response = await axiosInstance.get("/user/products/new-arrivals");
+        const response = await axiosInstance.get("/user/products/");
         setNewArraivals(response.data.productData);
       } catch (err) {
         if (err.response && err.response.status === 400) {

@@ -1,101 +1,89 @@
 import React, { useEffect, useState } from "react";
-import { Heart, Minus, Plus, Slash, SquareSlash, Star,X, XCircleIcon } from "lucide-react";
+import { Heart, Minus, Plus, Slash, Star, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import "../../App.css"
-import { AnimatePresence,motion } from "framer-motion";
+import "../../App.css";
+import { AnimatePresence, motion } from "framer-motion";
 import axiosInstance from "@/AxiosConfig";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
-import { Navigate, useNavigate } from "react-router-dom";
-
-
-
+import { useNavigate } from "react-router-dom";
 
 export default function ProductDetails({
   product,
   averageRating,
   totalReviews,
- 
 }) {
-  const Navigate = useNavigate()
+  const navigate = useNavigate();
   const [mainImage, setMainImage] = useState(product.images[0]);
-  const [isZoomModalOpen,setIsZoomModalOpen] = useState(false)
-   const userData = useSelector((store)=>store.user.userDatas)
+  const [isZoomModalOpen, setIsZoomModalOpen] = useState(false);
+  const userData = useSelector((store) => store.user.userDatas);
 
-  const [size,setSize] = useState(null);
-  const [error,setError] = useState("")
-  const [exist,setExist] = useState(false);
-  
-
-  
+  const [size, setSize] = useState(null);
+  const [error, setError] = useState("");
+  const [exist, setExist] = useState(false);
 
   async function handleSelectSize(s) {
     try {
-      setSize(s)
-      setError("")
+      setSize(s);
+      setError("");
       console.log(s.size);
-      
-       const response = await axiosInstance.get(`/user/size/${product._id}/${userData._id}/${s.size}`);
-        setExist(response.data.success)
-         
+
+      const response = await axiosInstance.get(
+        `/user/size/${product._id}/${userData._id}/${s.size}`
+      );
+      setExist(response.data.success);
     } catch (err) {
-      
+      console.error(err);
     }
   }
 
+  function closeZoomModal() {
+    setIsZoomModalOpen(false);
+  }
 
+  async function handleAddCart() {
+    if (!size) {
+      setError("Select a size before adding to cart");
+    } else {
+      try {
+        const stock = product.sizes.find((s) => s.size === size.size);
+        console.log(stock);
 
- function closeZoomModal(){
-  setIsZoomModalOpen(false)
- }
+        const productData = {
+          productId: product._id,
+          price: product.price,
+          salePrice: product.salePrice,
+          size: size.size,
+          stock: stock.stock,
+          salesPrice: product.salesPrice,
+          qty: 1,
+        };
+        console.log(productData);
 
- async function handleAddCart() {
-   if (!size){
-      setError("Select A size before adding to cart");
-   }else{
- try {
+        const response = await axiosInstance.post("/user/cart", {
+          userId: userData._id,
+          product: productData,
+        });
 
- const stock = product.sizes.find((s) => s.size == size.size);
-  console.log(stock);
-  
-  
-   const productData = {
-     productId: product._id,
-     price: product.price,
-     salePrice: product.salePrice,
-     size: size.size,
-     stock:stock.stock,
-     salesPrice: product.salesPrice,
-     qty: 1,
-   };
-   console.log(productData);
+        setExist(true);
+        if (response && response.data && response.data.message) {
+          toast.success(response.data.message);
+        }
+      } catch (err) {
+        console.error(err);
+        if (err.response && err.response.data && err.response.data.message) {
+          toast.error(err.response.data.message);
+        }
+      }
+    }
+  }
 
-   const response = await axiosInstance.post("/user/cart", {
-     userId: userData._id,
-     product: productData,
-   });
- 
-    setExist(true)
-   toast.success(response.data.message);
-
- 
- } catch (err) {
-   console.log(err);
-
-   if (err.response) {
-     return toast.error(err.response.data.message);
-   }
- }
-   }
-    
- }
   useEffect(() => {
     if (product && product.images && product.images.length > 0) {
       setMainImage(product.images[0]);
     }
-    
-  }, [product, size]);
+  }, [product]);
 
   return (
     <div className='container mx-auto px-4 py-8'>
@@ -166,9 +154,8 @@ export default function ProductDetails({
         <Card className='p-6'>
           <CardContent className='space-y-6'>
             <h1 className='text-3xl font-bold'>{product.name}</h1>
-            <p className='text-xl font-semibold'>Men's Exclusive collection</p>
+            <p className='text-xl font-semibold'>Men's Exclusive Collection</p>
             <div className='flex items-center space-x-1'>
-              {/* Loop through the star ratings (up to 5 stars) */}
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
@@ -212,11 +199,10 @@ export default function ProductDetails({
                     );
                   }
                   return (
-                    <div className='relative'>
+                    <div key={s.size} className='relative'>
                       <Button
-                        key={s.size}
                         disabled
-                        className='w-10 h-10 bg-gray-300  text-gray-500 cursor-not-allowed'>
+                        className='w-10 h-10 bg-gray-300 text-gray-500 cursor-not-allowed'>
                         {s.size}
                       </Button>
                       <Slash className='absolute top-0 left-0 w-full h-full text-red-200' />
@@ -224,14 +210,27 @@ export default function ProductDetails({
                   );
                 })}
               </div>
+              {product.totalStock <= 15 && product.totalStock > 1 && (
+                <h6 className='mt-5 text-red-500'>
+                  Total Stock Left :{product.totalStock}
+                </h6>
+              )}
+              {product.totalStock == 0  &&  (
+                <h6 className='mt-5 text-red-500'>
+                  Out of Stock
+                </h6>
+              )}
             </div>
+            <span className='text-red-500 mt-5'>{error}</span>
             <div>
               {error && <span className='text-red-500'>{error}</span>}
               <div className='flex items-center space-x-4'>
                 {exist ? (
-                  <Button onClick={()=>{
-                    Navigate("/cart")
-                  }} className='flex-1 bg-gray-800'>
+                  <Button
+                    onClick={() => {
+                      navigate("/cart");
+                    }}
+                    className='flex-1 bg-gray-800'>
                     Go to Cart
                   </Button>
                 ) : (

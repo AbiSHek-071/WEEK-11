@@ -46,7 +46,12 @@ function Sidebar() {
                 icon: <Users size={20} />,
                 label: "Customers",
               },
-              { icon: <ShoppingCart size={20} />, label: "Orders" },
+              {
+                path: "/admin/orders",
+                icon: <ShoppingCart size={20} />,
+                label: "Orders",
+              },
+              
               { icon: <Image size={20} />, label: "Banner" },
               { icon: <Ticket size={20} />, label: "Coupon" },
               { icon: <Settings size={20} />, label: "Settings" },
