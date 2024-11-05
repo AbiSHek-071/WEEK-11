@@ -73,6 +73,7 @@ async function manageProductQty(order_items) {
 
         if (sizeObject) {
          sizeObject.stock -= item.qty; 
+         product.totalStock -=item.qty;
          await product.save(); 
        } else {
          console.warn(`Size ${item.size} not found for product ${product._id}`);
@@ -82,6 +83,25 @@ async function manageProductQty(order_items) {
    }
  }
 
+}
+
+async function manageProductQtyAfterCancel(order_items) {
+  for (const item of order_items) {
+    try {
+      const product = await Product.findById(item.product);
+      const sizeObject = product.sizes.find((size) => size.size === item.size);
+
+      if (sizeObject) {
+        sizeObject.stock += item.qty;
+        product.totalStock += item.qty;
+        await product.save();
+      } else {
+        console.warn(`Size ${item.size} not found for product ${product._id}`);
+      }
+    } catch (error) {
+      console.error(`Error fetching product ${item.product}:`, error);
+    }
+  }
 }
 
 async function fetchOrders(req,res) {
@@ -153,6 +173,9 @@ async function returnOrder(req, res) {
 async function cancelOrder(req, res) {
   try {
     const { order_id } = req.params;
+    const {order_items} = req.body;
+    console.log(order_items);
+    
     console.log(order_id);
 
     const updatedData = await Order.findByIdAndUpdate(
@@ -160,6 +183,7 @@ async function cancelOrder(req, res) {
       { order_status: "Cancelled" },
       { new: true }
     );
+    manageProductQtyAfterCancel(order_items);
     if (!updatedData) {
       return res
         .status(404)

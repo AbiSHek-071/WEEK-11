@@ -34,7 +34,6 @@ export default function ViewOrderDetails() {
 
       {adminData ? (
         <div className='flex items-center gap-2 text-sm md:text-base text-gray-600 mb-8'>
-         
           <span>orders</span>
           <span className='text-gray-300'>/</span>
           <span className='font-medium text-black'>Order Details</span>
@@ -91,19 +90,22 @@ export default function ViewOrderDetails() {
                   Payment Information
                 </h3>
                 <p>Method: {orderData?.payment_method || "N/A"}</p>
-                <p>Status: {orderData?.payment_status || "N/A"}</p>
+                <p>Status: {orderData?.order_status || "N/A"}</p>
               </div>
+                {
+              orderData?.order_status != "Cancelled" &&
               <div>
                 <h3 className='text-xl font-semibold mb-3'>
                   Delivery Information
                 </h3>
-                <p>
-                  Expected Delivery:{" "}
-                  {orderData?.delivery_by
-                    ? new Date(orderData.delivery_by).toLocaleDateString()
-                    : "N/A"}
-                </p>
+                  <p>
+                    Expected Delivery:{" "}
+                    {orderData?.delivery_by
+                      ? new Date(orderData.delivery_by).toLocaleDateString()
+                      : "N/A"}
+                  </p>
               </div>
+                }
             </div>
             <div>
               <h3 className='text-xl font-semibold mb-3'>Order Summary</h3>

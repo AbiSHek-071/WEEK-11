@@ -45,26 +45,26 @@ export default function OrdersComponent() {
     }
   }
 
-  const handleCancel =  (order_id) => {
+  const handleCancel = (order_id, order_items) => {
     setModalContent({
       title: "Cancel Order",
       message: "Are you sure you want to cancel this order?",
       onConfirm: async () => {
         try {
           console.log(order_id);
-          
-          const response = await axiosInstance.patch(
-            `/user/order/cancel/${order_id}`
+
+          const response = await axiosInstance.put(
+            `/user/order/cancel/${order_id}`,
+            { order_items }
           );
           setreload(true);
-         return toast.success(response.data.message);
+          return toast.success(response.data.message);
         } catch (err) {
           if (err.response) {
             console.log(err);
 
             toast.error(err.response.data.message);
-          } 
-          
+          }
         }
       },
     });
@@ -229,7 +229,7 @@ export default function OrdersComponent() {
                 order.order_status !== "Returned" &&
                 order.order_status !== "Delivered" && (
                   <button
-                    onClick={() => handleCancel(order._id)}
+                    onClick={() => handleCancel(order._id, order.order_items)}
                     className='px-3 py-2 md:px-4 md:py-2 border-2 border-black text-black mr-5 text-xs md:text-sm rounded-md hover:bg-black hover:text-white transition-colors'>
                     Cancel Order
                   </button>

@@ -2,9 +2,11 @@ const Order = require("../../Models/order");
 
 async function fetchOrders(req,res) {
     try {
-        const orders = await Order.find().populate("user")
-      .populate("shipping_address")
-      .populate("order_items.product"); ;;
+        const orders = await Order.find()
+          .populate("user")
+          .populate("shipping_address")
+          .populate("order_items.product")
+          .sort({placed_at:-1}); 
         res.status(200).json({sucess:true,orders})
     } catch (err) {
         console.log(err);

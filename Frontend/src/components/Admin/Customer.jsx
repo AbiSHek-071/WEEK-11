@@ -19,6 +19,7 @@ import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "@/store/slice/userSlice";
 import Pagination from "../shared/Pagination";
+import ConfirmationModal from "../shared/confirmationModal";
 
 export default function Customer() {
   const [page,setPage] = useState(1)
@@ -26,6 +27,12 @@ export default function Customer() {
   const [totalPages,setTotalPages] = useState(0); 
   const userData = useSelector((store)=>store.user.userDatas)
 
+  const [isOpen, setIsOpen] = useState(false);
+  const [modalContent, setModalContent] = useState({
+    title: "",
+    message: "",
+    onConfirm: null,
+  });
   
   const dispatch = useDispatch()
   const [users,setUsers] = useState([]);
@@ -49,29 +56,41 @@ export default function Customer() {
     fetchData();
   }, [page,toggle]);
  async function handleStatus(_id, isActive) {
-   try {
-     const response = await axiosInstance.put("/admin/users/block", {
-       _id,
-       isActive,
-       toast,
-     });
-     setToggle(!toggle)
-     toast.success(response.data.message);
-  
-     
-     
+
+  setModalContent({
+    title: "Block User",
+    message: `Are you sure you want to ${isActive ? "Block" : "Unblock"} this User?`,
+    onConfirm: async () => {
+     try {
+       const response = await axiosInstance.put("/admin/users/block", {
+         _id,
+         isActive,
+         toast,
+       });
+       setToggle(!toggle);
+       toast.success(response.data.message);
        dispatch(logoutUser());
-  
-   } catch (err) {
-     if (err.response && err.response.status === 404) {
-       return toast.error(err.response.data.message);
+     } catch (err) {
+       if (err.response && err.response.status === 404) {
+         return toast.error(err.response.data.message);
+       }
+       toast.error("An error occurred. Please try again.");
      }
-     toast.error("An error occurred. Please try again.");
-   }
+    },
+  });
+  setIsOpen(true);
+   
  }
 
   return (
     <div className='p-8 bg-gray-50'>
+      <ConfirmationModal
+        isOpen={isOpen}
+        onOpenChange={setIsOpen}
+        title={modalContent.title}
+        message={modalContent.message}
+        onConfirm={modalContent.onConfirm}
+      />
       <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4'>
         <div>
           <h1 className='text-3xl font-bold text-gray-900'>Consumers List</h1>

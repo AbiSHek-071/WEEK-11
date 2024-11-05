@@ -3,21 +3,6 @@ import { toast } from "sonner";
 import axiosInstance from "@/AxiosConfig";
 import Pagination from "../../shared/Pagination";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Eye, Edit, Tag } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@radix-ui/react-select";
 import ProductCard from "./ProductCard";
 import { useNavigate } from "react-router-dom";
 

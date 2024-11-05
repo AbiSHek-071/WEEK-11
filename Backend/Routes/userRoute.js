@@ -58,7 +58,7 @@ userRoute.post("/order",orderController.createOrder);
 userRoute.get("/orders/:_id",orderController.fetchOrders);
 userRoute.get("/order/:id", orderController.fetchOrderDetails);
 userRoute.patch("/order/return/:order_id", orderController.returnOrder);
-userRoute.patch("/order/cancel/:order_id", orderController.cancelOrder);
+userRoute.put("/order/cancel/:order_id", orderController.cancelOrder);
 
 
 module.exports = userRoute;  

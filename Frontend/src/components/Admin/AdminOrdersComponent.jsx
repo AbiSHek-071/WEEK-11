@@ -13,6 +13,7 @@ import {
 import axiosInstance from "@/AxiosConfig";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import ConfirmationModal from "../shared/confirmationModal";
 
 const statusOptions = [
   "Pending",
@@ -21,6 +22,8 @@ const statusOptions = [
   "Cancelled",
   "Returned",
 ];
+
+ 
 
 const statusColors = {
   Pending: "bg-yellow-100 text-yellow-800",
@@ -31,6 +34,12 @@ const statusColors = {
 };
 
 export default function AdminOrdersComponent() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [modalContent, setModalContent] = useState({
+    title: "",
+    message: "",
+    onConfirm: null,
+  });
   const [orders, setOrders] = useState([]);
   const [expandedOrder, setExpandedOrder] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -38,24 +47,47 @@ export default function AdminOrdersComponent() {
   const [permenent, setpermenent] = useState("");
   const [reload, setreload] = useState(false)
 
-  const handleStatusChange = async(orderId, newStatus) => {
-   try {
-       console.log(newStatus);
-       console.log(orderId);
-       const response = await axiosInstance.patch(
-         `/admin/status/${orderId}/${newStatus}`
-       );
-       setreload(true);
-       return toast.success(response.data.message);
+  const handleStatusChange = async (orderId, newStatus, order_items) => {
+    if (newStatus === "Cancelled") {
+      setModalContent({
+        title: "Cancel Order",
+        message: "Are you sure you want to cancel this order?",
+        onConfirm: async () => {
+          try {
+            console.log(orderId);
 
-   } catch (error) {
-    console.log(error);
-    if(error.response){
-      toast.error(error.response.data.message);
+            const response = await axiosInstance.put(
+              `/user/order/cancel/${orderId}`,
+              { order_items }
+            );
+            setreload(true);
+            return toast.success(response.data.message);
+          } catch (err) {
+            if (err.response) {
+              console.log(err);
+
+              toast.error(err.response.data.message);
+            }
+          }
+        },
+      });
+      setIsOpen(true);
+    } else {
+      try {
+        console.log(newStatus);
+        console.log(orderId);
+        const response = await axiosInstance.patch(
+          `/admin/status/${orderId}/${newStatus}`
+        );
+        setreload(true);
+        return toast.success(response.data.message);
+      } catch (error) {
+        console.log(error);
+        if (error.response) {
+          toast.error(error.response.data.message);
+        }
+      }
     }
-    
-   }
-    
   };
 
   const toggleOrderExpansion = (orderId) => {
@@ -91,6 +123,13 @@ export default function AdminOrdersComponent() {
 
   return (
     <div className='container mx-auto px-4 py-8'>
+      <ConfirmationModal
+        isOpen={isOpen}
+        onOpenChange={setIsOpen}
+        title={modalContent.title}
+        message={modalContent.message}
+        onConfirm={modalContent.onConfirm}
+      />
       <h1 className='text-3xl font-bold mb-6'> Orders Dashboard</h1>
       <div className='mb-6'>
         <div className='relative'>
@@ -171,7 +210,11 @@ export default function AdminOrdersComponent() {
                         <select
                           value={order.order_status}
                           onChange={(e) =>
-                            handleStatusChange(order._id, e.target.value)
+                            handleStatusChange(
+                              order._id,
+                              e.target.value,
+                              order.order_items
+                            )
                           }
                           className={`text-sm rounded-full px-3 py-1 font-semibold ${
                             statusColors[order.order_status]

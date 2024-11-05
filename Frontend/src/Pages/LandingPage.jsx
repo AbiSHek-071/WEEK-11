@@ -3,6 +3,7 @@ import Footer from '@/components/ui/Footer';
 import Navbar from '@/components/ui/Navbar';
 import ProductCardContainer from '@/components/ui/ProductCardContainer';
 import HeroSection from '@/components/User/HeroSection';
+import { sortBy } from 'lodash';
 
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
@@ -19,7 +20,8 @@ function LandingPage() {
   useEffect(()=>{
     async function fetchNewArraivals() {
       try {
-        const response = await axiosInstance.get("/user/products/");
+        const sortBy = "newest";
+        const response = await axiosInstance.get("/user/products/",{params:{sortBy}});
         setNewArraivals(response.data.productData);
       } catch (err) {
         if (err.response && err.response.status === 400) {

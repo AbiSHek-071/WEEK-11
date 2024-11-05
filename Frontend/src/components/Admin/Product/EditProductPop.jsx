@@ -58,6 +58,8 @@ function EditProductPop({ product, categories, setReload }) {
   const [zooms, setZooms] = useState([1]);
   const[error,setError] = useState({})
 
+  // const [isLoading,setIsLoading] =useState(false);
+
   function validate() {
     const error = {};
 
@@ -304,6 +306,8 @@ function EditProductPop({ product, categories, setReload }) {
               </div>
             )
         )}
+
+        
         <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
           <div className='space-y-4'>
             <div className='grid grid-cols-4 items-center gap-4'>
