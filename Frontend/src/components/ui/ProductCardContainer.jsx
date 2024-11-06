@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ProductCard from "./ProductCard";
-
+import PropTypes from "prop-types";
 const ProductCardContainer = ({ title, products, }) => {
  
 
@@ -19,6 +19,12 @@ const ProductCardContainer = ({ title, products, }) => {
       </div>
     </section>
   );
+};
+
+// Define PropTypes
+ProductCardContainer.propTypes = {
+  title: PropTypes.string, 
+  products: PropTypes.array,
 };
 
 export default ProductCardContainer;

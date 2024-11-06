@@ -107,6 +107,8 @@ export default function AdminOrdersComponent() {
       order.user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  console.log(filteredOrders)
+
   async function fetchOrders() {
     try {
       const response = await axiosInstance.get("admin/orders");
@@ -174,7 +176,7 @@ export default function AdminOrdersComponent() {
                         <User className='flex-shrink-0 h-6 w-6 text-gray-400 mr-2' />
                         <div>
                           <div className='text-sm font-medium text-gray-900'>
-                            {order.shipping_address.name}
+                            {order.shipping_address?.name}
                           </div>
                           <div className='text-sm text-gray-500'>
                             {order.user.email}

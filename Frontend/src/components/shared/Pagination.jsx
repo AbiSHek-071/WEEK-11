@@ -1,8 +1,10 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 
 
 export default function Pagination({ page, setPage, totalPages }) {
+  
   // Function to handle previous page click
   const handlePrevious = () => {
     if (page > 1) {
@@ -78,4 +80,10 @@ export default function Pagination({ page, setPage, totalPages }) {
       </div>
     </div>
   );
+  
 }
+Pagination.propTypes = {
+  page: PropTypes.number.isRequired,
+  setPage: PropTypes.func.isRequired,
+  totalPages: PropTypes.number.isRequired,
+};

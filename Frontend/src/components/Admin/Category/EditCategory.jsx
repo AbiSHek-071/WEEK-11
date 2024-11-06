@@ -6,6 +6,7 @@ import { ChevronRight } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "@/AxiosConfig";
 import { toast } from "sonner";
+import { validateCategory } from "@/util/ValidationFunctions";
 
 export default function EditCategory() {
   const { id } = useParams();
@@ -15,28 +16,6 @@ export default function EditCategory() {
   const navigate = useNavigate();
   const [error, setError] = useState({});
 
-  function validate() {
-    const error = {};
-
-    if (!name?.trim()) {
-      error.name = "Category name is required";
-    } else if (name.trim().length < 4) {
-      error.name = "Category name must be at least 4 characters long";
-    } else if (!/^[a-zA-Z\s]+$/.test(name.trim())) {
-      error.name = "Category name can only contain letters and spaces";
-    }
-
-    if (!description?.trim()) {
-      error.description = "Description is required";
-    } else if (description.trim().split(/\s+/).length < 3) {
-      error.description = "Description must be at least 3 words";
-    } else if (/^\d/.test(description.trim())) {
-      error.description = "Description cannot start with a number";
-    } 
-
-    setError(error);
-    return Object.keys(error).length === 0;
-  }
 
   useEffect(() => {
     async function fetchCategoryData() {
@@ -57,7 +36,8 @@ export default function EditCategory() {
   }, [id]);
 
   async function handleEditCategory(e) {
-    if (validate()) {
+    const validate = validateCategory(name, description, setError);
+    if (validate) {
       // Ensure to call validate()
       try {
         const response = await axiosInstance.put("/admin/category", {

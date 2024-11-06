@@ -46,7 +46,7 @@ function User() {
         path='/reset-password/:id'
         element={
           <ProtectedLogin>
-            <ResetPassword/>
+            <ResetPassword />
           </ProtectedLogin>
         }
       />
@@ -58,12 +58,29 @@ function User() {
         path='/profile/*'
         element={
           <>
-            <UserProfile />
+            <ProtectedHome>
+              {" "}
+              <UserProfile />
+            </ProtectedHome>
           </>
         }
       />
-      <Route path='/cart' element={<CartPage />} />
-      <Route path='/checkout' element={<CheckoutPage />} />
+      <Route
+        path='/cart'
+        element={
+          <ProtectedHome>
+            <CartPage />
+          </ProtectedHome>
+        }
+      />
+      <Route
+        path='/checkout'
+        element={
+          <ProtectedHome>
+            <CheckoutPage />
+          </ProtectedHome>
+        }
+      />
     </Routes>
   );
 }

@@ -8,6 +8,7 @@ import axiosInstance from "@/AxiosConfig";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 
 export default function ProductDetails({
   product,
@@ -25,10 +26,13 @@ export default function ProductDetails({
 
   async function handleSelectSize(s) {
     try {
+       if (!userData) {
+         return toast.warning("You should Login first to add Item to Cart");
+       }
       setSize(s);
       setError("");
       console.log(s.size);
-
+     
       const response = await axiosInstance.get(
         `/user/size/${product._id}/${userData._id}/${s.size}`
       );
@@ -221,7 +225,6 @@ export default function ProductDetails({
                 </h6>
               )}
             </div>
-            <span className='text-red-500 mt-5'>{error}</span>
             <div>
               {error && <span className='text-red-500'>{error}</span>}
               <div className='flex items-center space-x-4'>
@@ -249,3 +252,9 @@ export default function ProductDetails({
     </div>
   );
 }
+
+ProductDetails.propTypes = {
+  product: PropTypes.object.isRequired,        // Basic object type without specifying structure
+  averageRating: PropTypes.number.isRequired,
+  totalReviews: PropTypes.number.isRequired,
+};

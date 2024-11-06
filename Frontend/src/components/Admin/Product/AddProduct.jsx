@@ -16,6 +16,7 @@ import { Upload } from "lucide-react";
 import axiosInstance from "@/AxiosConfig";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import {validateProduct} from "../../../util/ValidationFunctions.jsx"
 
 export default function AddProduct() {
   const navigate = useNavigate();
@@ -42,52 +43,7 @@ export default function AddProduct() {
   const [catId,setCatId] = useState(null);
   const [error,setError] = useState({})
 
-  function validate() {
-    const error = {};
-
-   if (!name?.trim()) {
-     error.name = "Product name is required";
-   } else if (name.trim().length < 4) {
-     error.name = "Product name must be at least 4 characters long";
-   } else if (!/^[a-zA-Z\s]+$/.test(name.trim())) {
-     error.name = "Product name can only contain letters and spaces";
-   }
-
-   if (!price) {
-     error.price = "Price is required";
-   } else if (isNaN(price) || price <= 0) {
-     error.price = "Price must be a positive number";
-   }
-
-   if (!description?.trim()) {
-     error.description = "Description is required";
-   } else if (description.trim().split(/\s+/).length < 3) {
-     error.description = "Description must be at least 3 words";
-   } else if (/^\d/.test(description.trim())) {
-     error.description = "Description cannot start with a number";
-   } 
-
-   if (!addInfo?.trim()) {
-     error.addInfo = "Additional information is required";
-   } else if (addInfo.trim().split(/\s+/).length < 3) {
-     error.addInfo = "Additional information must be at least 3 words";
-   } 
-
-   if (
-     !croppedImages ||
-     !Array.isArray(croppedImages) ||
-     croppedImages.length < 3
-   ) {
-     error.croppedImages = "At least 3 images are required";
-   }
-
-    setError(error);
-    if (Object.keys(error).length == 0) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+  
 
 
   useEffect(() => {
@@ -158,7 +114,15 @@ export default function AddProduct() {
   };
 
   async function handleAddProduct() {
-   if(validate()){
+    const validate = validateProduct(
+      name,
+      price,
+      description,
+      addInfo,
+      croppedImages,
+      setError
+    );
+   if(validate){
      try {
        const convertBlobUrlToFile = async (blobUrl) => {
          const response = await fetch(blobUrl);

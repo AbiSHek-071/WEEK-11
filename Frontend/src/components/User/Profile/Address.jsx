@@ -3,7 +3,8 @@ import { MapPin, Phone, Mail, Edit, Trash2, Plus, X } from "lucide-react";
 import axiosInstance from "@/AxiosConfig";
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
-
+import { validateAddress } from "@/util/ValidationFunctions";
+import PropTypes from "prop-types";
 export default function Address({selectedAddress,setSelectedAddress}) {
   const userData = useSelector((store) => store.user.userDatas);
   const [addresses, setAddresses] = useState([]);
@@ -37,9 +38,23 @@ export default function Address({selectedAddress,setSelectedAddress}) {
   const [city, setCity] = useState("");
   const [district, setDistrict] = useState("");
   const [state, setState] = useState("");
+  const [error,setError]= useState({})
 
   const handleAddAddress = async () => {
-    try {
+    const validate = validateAddress(
+      name,
+      email,
+      phone,
+      address,
+      pincode,
+      landmark,
+      city,
+      district,
+      state,
+      setError
+    );
+    if(validate){
+      try {
       const newAddress = {
         user: userData._id,
         name,
@@ -60,6 +75,7 @@ export default function Address({selectedAddress,setSelectedAddress}) {
     } catch (err) {
       console.log(err);
         return toast.error(err.response.data.message);
+    }
     }
   };
 
@@ -176,7 +192,9 @@ export default function Address({selectedAddress,setSelectedAddress}) {
                   }}>
                   <Edit size={18} />
                 </button>
-                {setSelectedAddress ?"":
+                {setSelectedAddress ? (
+                  ""
+                ) : (
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -185,7 +203,7 @@ export default function Address({selectedAddress,setSelectedAddress}) {
                     className='text-gray-500 hover:text-gray-700'>
                     <Trash2 size={18} />
                   </button>
-                }
+                )}
               </div>
             </div>
             <div className='space-y-1 text-sm'>
@@ -216,69 +234,122 @@ export default function Address({selectedAddress,setSelectedAddress}) {
             {editingId ? "Edit Address" : "Add New Address"}
           </h3>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-            <input
-              type='text'
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder='Full Name'
-              className='w-full px-3 py-2 border border-gray-300 rounded-md'
-            />
-            <input
-              type='email'
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder='Email'
-              className='w-full px-3 py-2 border border-gray-300 rounded-md'
-            />
-            <input
-              type='tel'
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder='Phone Number'
-              className='w-full px-3 py-2 border border-gray-300 rounded-md'
-            />
-            <input
-              type='text'
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              placeholder='Address'
-              className='w-full px-3 py-2 border border-gray-300 rounded-md'
-            />
-            <input
-              type='text'
-              value={landmark}
-              onChange={(e) => setLandmark(e.target.value)}
-              placeholder='Landmark'
-              className='w-full px-3 py-2 border border-gray-300 rounded-md'
-            />
-            <input
-              type='text'
-              value={pincode}
-              onChange={(e) => setPincode(e.target.value)}
-              placeholder='Pincode'
-              className='w-full px-3 py-2 border border-gray-300 rounded-md'
-            />
-            <input
-              type='text'
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              placeholder='City'
-              className='w-full px-3 py-2 border border-gray-300 rounded-md'
-            />
-            <input
-              type='text'
-              value={district}
-              onChange={(e) => setDistrict(e.target.value)}
-              placeholder='District'
-              className='w-full px-3 py-2 border border-gray-300 rounded-md'
-            />
-            <input
-              type='text'
-              value={state}
-              onChange={(e) => setState(e.target.value)}
-              placeholder='State'
-              className='w-full px-3 py-2 border border-gray-300 rounded-md'
-            />
+            <div className='flex flex-col'>
+              <input
+                type='text'
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder='Full Name'
+                className='w-full px-3 py-2 border border-gray-300 rounded-md'
+              />
+              {error.name && (
+                <span className='text-red-500 text-sm mt-1'>{error.name}</span>
+              )}
+            </div>
+            <div className='flex flex-col'>
+              <input
+                type='email'
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder='Email'
+                className='w-full px-3 py-2 border border-gray-300 rounded-md'
+              />
+              {error.email && (
+                <span className='text-red-500 text-sm mt-1'>{error.email}</span>
+              )}
+            </div>
+            <div className='flex flex-col'>
+              <input
+                type='tel'
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder='Phone Number'
+                className='w-full px-3 py-2 border border-gray-300 rounded-md'
+              />
+              {error.phone && (
+                <span className='text-red-500 text-sm mt-1'>{error.phone}</span>
+              )}
+            </div>
+            <div className='flex flex-col'>
+              <input
+                type='text'
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder='Address'
+                className='w-full px-3 py-2 border border-gray-300 rounded-md'
+              />
+              {error.address && (
+                <span className='text-red-500 text-sm mt-1'>
+                  {error.address}
+                </span>
+              )}
+            </div>
+            <div className='flex flex-col'>
+              <input
+                type='text'
+                value={landmark}
+                onChange={(e) => setLandmark(e.target.value)}
+                placeholder='Landmark'
+                className='w-full px-3 py-2 border border-gray-300 rounded-md'
+              />
+              {error.landmark && (
+                <span className='text-red-500 text-sm mt-1'>
+                  {error.landmark}
+                </span>
+              )}
+            </div>
+            <div className='flex flex-col'>
+              <input
+                type='text'
+                value={pincode}
+                onChange={(e) => setPincode(e.target.value)}
+                placeholder='Pincode'
+                className='w-full px-3 py-2 border border-gray-300 rounded-md'
+              />
+              {error.pincode && (
+                <span className='text-red-500 text-sm mt-1'>
+                  {error.pincode}
+                </span>
+              )}
+            </div>
+            <div className='flex flex-col'>
+              <input
+                type='text'
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                placeholder='City'
+                className='w-full px-3 py-2 border border-gray-300 rounded-md'
+              />
+              {error.city && (
+                <span className='text-red-500 text-sm mt-1'>{error.city}</span>
+              )}
+            </div>
+            <div className='flex flex-col'>
+              <input
+                type='text'
+                value={district}
+                onChange={(e) => setDistrict(e.target.value)}
+                placeholder='District'
+                className='w-full px-3 py-2 border border-gray-300 rounded-md'
+              />
+              {error.district && (
+                <span className='text-red-500 text-sm mt-1'>
+                  {error.district}
+                </span>
+              )}
+            </div>
+            <div className='flex flex-col'>
+              <input
+                type='text'
+                value={state}
+                onChange={(e) => setState(e.target.value)}
+                placeholder='State'
+                className='w-full px-3 py-2 border border-gray-300 rounded-md'
+              />
+              {error.state && (
+                <span className='text-red-500 text-sm mt-1'>{error.state}</span>
+              )}
+            </div>
           </div>
           <div className='mt-6 flex justify-end space-x-4'>
             <button
@@ -297,3 +368,7 @@ export default function Address({selectedAddress,setSelectedAddress}) {
     </div>
   );
 }
+Address.propTypes = {
+  selectedAddress: PropTypes.object,
+  setSelectedAddress: PropTypes.func,
+};

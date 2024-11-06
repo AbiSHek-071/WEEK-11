@@ -33,12 +33,15 @@ const verifyOtp = async (req, res, next) => {
 
 
 const jwtVerification = async (req, res, next) => {
+
+  
   try {
     const accessToken = req.cookies.accessToken;
     const refreshToken = req.cookies.refreshToken;
 
   
     if (accessToken) {
+      
       const Accessverified = jwt.verify(
         accessToken,
         process.env.ACCESS_TOKEN_KEY
@@ -48,7 +51,9 @@ const jwtVerification = async (req, res, next) => {
 
    
       const user = await User.findById(Accessverified.id).select("-password");
+      
       if (!user) {
+        console.log("no user");
         return res
           .status(401)
           .json({ message: "Unauthorized: User not found" });
@@ -70,6 +75,8 @@ const jwtVerification = async (req, res, next) => {
  
       const user = await User.findById(RefreshVerified.id).select("-password");
       if (!user) {
+        console.log("no user");
+        
         return res
           .status(401)
           .json({ message: "Unauthorized: User not found" });
@@ -92,7 +99,7 @@ const jwtVerification = async (req, res, next) => {
       return next();
     }
 
-    
+    console.log("no user");
     return res
       .status(401)
       .json({ message: "Unauthorized: No valid tokens found" });
@@ -105,23 +112,25 @@ const jwtVerification = async (req, res, next) => {
 };
 async function checkUserBlocked(req, res, next) {
   try {
-    const { userId } = req.body;
-    const user = await User.findById(userId);
+    const { user } = req;
+    
+    const userData = await User.findById(user._id);
 
-    if (!user) {
+    if (!userData) {
       return res.status(404).json({
         success: false,
         message: "User not found",
       });
     }
 
-    if (!user.isActive) {
+    if (!userData.isActive) {
       return res.status(403).json({
         success: false,
         message: "User account is inactive or blocked",
       });
     }
-
+    console.log("berfore next");
+    
     next();
   } catch (err) {
     console.log(err);

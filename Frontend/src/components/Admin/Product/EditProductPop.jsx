@@ -27,7 +27,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import axiosInstance from "@/AxiosConfig";
 import { toast } from "sonner";
-import { DialogClose } from "@radix-ui/react-dialog";
+import {validateEditProduct} from "../../../util/ValidationFunctions"
 
 function EditProductPop({ product, categories, setReload }) {
 
@@ -60,40 +60,8 @@ function EditProductPop({ product, categories, setReload }) {
 
   // const [isLoading,setIsLoading] =useState(false);
 
-  function validate() {
-    const error = {};
-
-   if (!editName?.trim()) {
-     error.name = "Product name is required";
-   } else if (editName.trim().length < 4) {
-     error.name = "Product name must be at least 4 characters long";
-   } else if (!/^[a-zA-Z\s]+$/.test(editName.trim())) {
-     error.name = "Product name can only contain letters and spaces";
-   }
-
-   if (!editPrice) {
-     error.price = "Price is required";
-   } else if (isNaN(editPrice) || editPrice <= 0) {
-     error.price = "Price must be a positive number";
-   }
-
-   if (!editDescription?.trim()) {
-     error.description = "Description is required";
-   } else if (editDescription.trim().split(/\s+/).length < 3) {
-     error.description = "Description must be at least 3 words";
-   } else if (/^\d/.test(editDescription.trim())) {
-     error.description = "Description cannot start with a number";
-   }   
-   if (!croppedImages || !Array.isArray(croppedImages) || croppedImages.length + editImages.length < 3) {
-     error.croppedImages = "At least 3 images are required";
-   }   
-    setError(error);
-    if (Object.keys(error).length == 0) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+ 
+  
 
   const handleImageUpload = (e, index) => {
     const file = e.target.files[0];
@@ -149,7 +117,13 @@ function EditProductPop({ product, categories, setReload }) {
   };
 
   async function handleEdit() {
-    if (validate()) {
+     const validate = validateEditProduct(
+       editName,
+       editPrice,
+       editDescription,
+       setError,
+     );
+    if (validate) {
       try {
         const convertBlobUrlToFile = async (blobUrl) => {
           const response = await fetch(blobUrl);
@@ -216,7 +190,7 @@ function EditProductPop({ product, categories, setReload }) {
           images: imagesEdit,
         });
 
-        // setReload(true);
+        setReload(true);
         toast.success(result.data.message);
       } catch (err) {
         if (err.result && err.result.status === 404) {
@@ -411,7 +385,7 @@ function EditProductPop({ product, categories, setReload }) {
               </span>
               <span className='text-red-700 '>{error && error.price}</span>
               <span className='text-red-700 '>
-                {error && error.croppedImages}
+                {/* {error && error.croppedImages} */}
               </span>
             </div>
           </div>

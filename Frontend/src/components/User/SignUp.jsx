@@ -13,7 +13,7 @@ import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { addUser } from "@/store/slice/userSlice";
 import { useDispatch } from "react-redux";
-
+import {validateSignup} from "../../util/ValidationFunctions";
 
 
 export default function SignUp() {
@@ -31,59 +31,14 @@ export default function SignUp() {
    const [error, setError] = useState({});
    const dispatch = useDispatch()
 
-  function validate() {
-    const error = {};
-
   
-    if (!name?.trim()) {
-      error.name = "Name is required";
-    } else if (/^\d/.test(name.trim())) {
-      error.name = "Name should not start with a number";
-    } else if (!/^[a-zA-Z0-9\s]+$/.test(name.trim())) {
-      error.name = "Name can only contain letters, numbers, and spaces";
-    }
-
-  
-    if (!email?.trim()) {
-      error.email = "Email is required";
-    } else if (/^\d/.test(email.trim())) {
-      error.email = "Email should not start with a number";
-    } else if (
-      !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email.trim())
-    ) {
-      error.email = "Invalid email format";
-    }
-
-    
-    if (!phone?.trim()) {
-      error.phone = "Phone number is required";
-    } else if (!/^\d{10}$/.test(phone.trim())) {
-      error.phone = "Phone number should be 10 digits";
-    }
-
-    
-    if (!password?.trim()) {
-      error.password = "Password is required";
-    } else if (!/^[a-zA-Z0-9]{8,}$/.test(password.trim())) {
-      error.password =
-        "Password must be at least 8 characters long and contain only letters and numbers";
-    }
-
-    setError(error);
-    if (Object.keys(error).length == 0) {
-      return true;
-    } else {
-      return false;
-    }
-  }
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    if(validate()){
+    const validate = validateSignup(name, email, phone, password, setError);
+    if(validate){
       
       if (password == confirm) {
-        console.log("asdhasdg");
-
         try {
           toast.success("Generating OTP please Wait");
           const response = await axiosInstance.post("/user/sendotp", { email });
@@ -115,7 +70,7 @@ export default function SignUp() {
          otp,
        });
       
-       navigate("/user/login");
+       navigate("/login");
       setIsOTPDialogOpen(false);
       return toast.success(response.data.message)
 

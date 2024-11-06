@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { addUser } from "@/store/slice/userSlice";
 import { toast } from 'sonner';
 import Address from './Address';
+import { validateUserDetails } from '@/util/ValidationFunctions';
 function MyProfie() {
     //redux
     const userData = useSelector((store) => store.user.userDatas);
@@ -14,21 +15,27 @@ function MyProfie() {
     const [isEditing, setIsEditing] = useState(false);
     const [name,setName] = useState(userData.name);
     const [phone,setPhone] = useState(userData.phone)
+    const [error,setError] = useState({})
 
     //FUNCTIONS
     async function handleUpdate() {
-        console.log(name);
-            console.log(phone);
-        try {
-            const response = await axiosInstance.post("/user/edit", { userId:userData._id,name,phone });
-            dispatch(addUser(response.data.update));
-            setIsEditing(false)
-            toast.success(response.data.message);
-        } catch (err) {
-            if(err.response){
-                return toast.error(err.response.data.message); 
-            }
-        }
+      const validate = validateUserDetails(name, phone, setError);
+      if(validate){
+         try {
+           const response = await axiosInstance.post("/user/edit", {
+             userId: userData._id,
+             name,
+             phone,
+           });
+           dispatch(addUser(response.data.update));
+           setIsEditing(false);
+           toast.success(response.data.message);
+         } catch (err) {
+           if (err.response) {
+             return toast.error(err.response.data.message);
+           }
+         }
+      }
     }
   
     
@@ -72,16 +79,23 @@ function MyProfie() {
                 Name
               </label>
               {isEditing ? (
-                <input
-                  type='text'
-                  id='name'
-                  name='name'
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                  }}
-                  className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500'
-                />
+                <div className='flex flex-col'>
+                  <input
+                    type='text'
+                    id='name'
+                    name='name'
+                    value={name}
+                    onChange={(e) => {
+                      setName(e.target.value);
+                    }}
+                    className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500'
+                  />
+                  {error.name && (
+                    <span className='text-red-500 text-sm mt-1'>
+                      {error.name}
+                    </span>
+                  )}
+                </div>
               ) : (
                 <p className='text-lg text-gray-900'>{userData.name}</p>
               )}
@@ -93,16 +107,23 @@ function MyProfie() {
                 Phone
               </label>
               {isEditing ? (
-                <input
-                  type='tel'
-                  id='phone'
-                  name='phone'
-                  value={phone}
-                  onChange={(e) => {
-                    setPhone(e.target.value);
-                  }}
-                  className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500'
-                />
+                <div className='flex flex-col'>
+                  <input
+                    type='text'
+                    id='phone'
+                    name='phone'
+                    value={phone}
+                    onChange={(e) => {
+                      setPhone(e.target.value);
+                    }}
+                    className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500'
+                  />
+                  {error.phone && (
+                    <span className='text-red-500 text-sm mt-1'>
+                      {error.phone}
+                    </span>
+                  )}
+                </div>
               ) : (
                 <p className='text-lg text-gray-900'>{userData.phone}</p>
               )}

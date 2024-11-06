@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 function AdditionalProductInfo({ product, averageRating, totalReviews }) {
   return (
@@ -100,5 +101,9 @@ function AdditionalProductInfo({ product, averageRating, totalReviews }) {
     </div>
   );
 }
-
+AdditionalProductInfo.propTypes = {
+  product: PropTypes.object.isRequired, // Array of objects
+  averageRating: PropTypes.number.isRequired,
+  totalReviews: PropTypes.number.isRequired,
+};
 export default React.memo(AdditionalProductInfo);

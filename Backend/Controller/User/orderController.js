@@ -14,6 +14,8 @@ async function createOrder(req,res) {
       } = req.body;
       const products = [];
 
+      console.log("shipping address:", shipping_address);
+      
       //creating product array
       cartItems.forEach((item) => {
         if (item.qty >= 1) {

@@ -8,6 +8,8 @@ async function fetchOrders(req,res) {
           .populate("order_items.product")
           .sort({placed_at:-1}); 
         res.status(200).json({sucess:true,orders})
+        console.log(orders);
+        
     } catch (err) {
         console.log(err);
         

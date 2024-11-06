@@ -6,47 +6,21 @@ import { ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import axiosInstance from "@/AxiosConfig";
 import { useNavigate } from "react-router-dom";
+import {validateCategory} from "../../../util/ValidationFunctions"
 
 export default function AddCategory() {
     const [cname,setCname] = useState("");
     const [description,setDescription] = useState("")
     const navigate = useNavigate()
     const [error,setError] = useState({})
-    function validate() {
-      const error = {};
 
-      if (!cname?.trim()) {
-        error.name = "Category name is required";
-      } else if (cname.trim().length < 4) {
-        error.name = "Category name must be at least 4 characters long";
-      } else if (!/^[a-zA-Z\s]+$/.test(cname.trim())) {
-        error.name = "Category name can only contain letters and spaces";
-      }
-
-      if (!description?.trim()) {
-        error.description = "Description is required";
-      } else if (description.trim().split(/\s+/).length < 3) {
-        error.description = "Description must be at least 3 words";
-      } else if (/^\d/.test(description.trim())) {
-        error.description = "Description cannot start with a number";
-      } else if (!/^[a-zA-Z0-9\s]+$/.test(description.trim())) {
-        error.description =
-          "Description can only contain letters, numbers, and spaces";
-      }
     
-
-      setError(error);
-      if (Object.keys(error).length == 0) {
-        return true;
-      } else {
-        return false;
-      }
-    }
 
 
     async function AddCategory(e){
         e.preventDefault();
-        if(validate()){
+        const validate = validateCategory(cname, description, setError);
+        if(validate){
          
          try {
             const response = await axiosInstance.post("/admin/categories", {

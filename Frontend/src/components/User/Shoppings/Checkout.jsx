@@ -72,11 +72,13 @@ export default function Checkout() {
         if(!selectedPaymentMethod){
           return reactToast.warn("select an Payment before proceeds");
         }
+        console.log(selectedAddress);
+        
         const response = await axiosInstance.post("/user/order", {
           user: userData._id,
           cartItems,
           subtotal,
-          shipping_address: selectedAddress._id,
+          shipping_address: selectedAddress,
           payment_method: selectedPaymentMethod,
           cart_id,
         }); 
