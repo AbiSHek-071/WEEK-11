@@ -42,7 +42,9 @@ export default function Navbar() {
         </div>
 
         <div className='flex items-center space-x-4'>
-          <Button variant='ghost' size='icon'>
+          <Button onClick={() => {
+              navigate("/wishlist");
+            }} variant='ghost' size='icon'>
             <Heart className='h-5 w-5' />
           </Button>
           <Button

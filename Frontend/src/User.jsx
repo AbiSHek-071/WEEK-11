@@ -17,6 +17,8 @@ import CheckoutPage from "./Pages/CheckoutPage";
 import Navbar from "./components/ui/Navbar";
 import ForgotPassword from "./components/User/ForgotPassword";
 import ResetPassword from "./components/User/ResetPassword";
+import Wishlist from "./components/User/Shoppings/Wishlist";
+import WishlistPage from "./Pages/WishlistPage";
 
 
 
@@ -70,6 +72,14 @@ function User() {
         element={
           <ProtectedHome>
             <CartPage />
+          </ProtectedHome>
+        }
+      />
+      <Route
+        path='/wishlist'
+        element={
+          <ProtectedHome>
+            <WishlistPage/>
           </ProtectedHome>
         }
       />

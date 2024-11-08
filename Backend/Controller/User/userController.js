@@ -250,6 +250,27 @@ async function editUser(req,res) {
     console.log(err);
   }
 }
+async function changePassword(req,res) {
+  try {
+    const {currentPassword,newPassword,confirmPassword,_id} = req.body
+    const userData = await User.findById(_id);
+    const passwordMatch = await bcrypt.compare(currentPassword,userData.password);
+    if(!passwordMatch){
+      return res.status(400).json({success:false,message:"Invalid Credential unable to change password"});
+    }
+    if(newPassword != confirmPassword){
+      return res.status(400).json({success:false,message:"Confirm password does not match..!"});
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    userData.password = hashedPassword;
+    await userData.save();
+    return res.status(200).json({success:true,message:"Password Changed successfully"})
+    
+  } catch (err) {
+    console.log(err);
+    
+  }
+}
 
 
 module.exports = {
@@ -261,4 +282,5 @@ module.exports = {
   forgetPassword,
   forgotPasswordOtpVerification,
   resetPassword,
+  changePassword,
 };

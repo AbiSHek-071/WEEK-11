@@ -112,9 +112,6 @@ export function validateCategory(cname, description, setError) {
     error.description = "Description must be at least 3 words";
   } else if (/^\d/.test(description.trim())) {
     error.description = "Description cannot start with a number";
-  } else if (!/^[a-zA-Z0-9\s]+$/.test(description.trim())) {
-    error.description =
-      "Description can only contain letters, numbers, and spaces";
   }
 
   setError(error);

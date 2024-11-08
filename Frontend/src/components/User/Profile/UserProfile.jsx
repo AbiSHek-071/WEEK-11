@@ -7,6 +7,7 @@ import { Route, Routes } from "react-router-dom";
 import MyProfie from "./MyProfie";
 import OrdersComponent from "./OrdersComponent";
 import ViewOrderDetails from "../../shared/ViewOrderDetails";
+import ChangePassword from "./ChangePassword";
 
 function UserProfile() {
   return (
@@ -26,7 +27,7 @@ function UserProfile() {
             <Route path='coupons' element={<div>coupons Component</div>} />
             <Route
               path='changepassword'
-              element={<div>changepassword Component</div>}
+              element={<ChangePassword/>}
             />
             <Route path='delete' element={<div>delete Component</div>} />
             {/* Add more routes for other menu items */}

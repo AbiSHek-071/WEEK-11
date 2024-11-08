@@ -24,6 +24,7 @@ userRoute.post("/edit",userAuth.jwtVerification,userAuth.checkUserBlocked ,userC
 userRoute.post("/forget-password",userController.forgetPassword);
 userRoute.post("/forget-password/otp-verification",userAuth.verifyOtp,userController.forgotPasswordOtpVerification);
 userRoute.post("/reset-password",userController.resetPassword);
+userRoute.post("/change-password",userController.changePassword)
 
 
 //product controller routes
