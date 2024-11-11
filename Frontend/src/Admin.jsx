@@ -10,25 +10,29 @@ import Customer from "./components/Admin/Customer";
 import AddProduct from "./components/Admin/Product/AddProduct";
 import { Provider } from "react-redux";
 import store from "./store/store";
-import ProtectedAdminHome from "./private/ProtectedAdminHome"
+import ProtectedAdminHome from "./private/ProtectedAdminHome";
 import OrdersComponent from "./components/User/Profile/OrdersComponent";
 import AdminOrdersComponent from "./components/Admin/AdminOrdersComponent";
 import ViewOrderDetails from "./components/shared/ViewOrderDetails";
+import AddProductOffer from "./components/Admin/Offer/AddProductOffer";
+import AddCategoryOffer from "./components/Admin/Offer/AddCategoryOffer";
+import Coupons from "./components/Admin/Coupons/Coupons";
+import AddCoupon from "./components/Admin/Coupons/AddCoupon";
 
 function Admin() {
   return (
-    <div className='flex h-screen'>
+    <div className="flex h-screen">
       {/* Sidebar: fixed and not scrollable */}
-      <div className='w-64 fixed h-full'>
+      <div className="w-64 fixed h-full">
         <Sidebar />
       </div>
 
       {/* Main content: scrollable area */}
-      <div className='flex-grow ml-64 p-6 overflow-y-auto bg-gray-100'>
+      <div className="flex-grow ml-64 p-6 overflow-y-auto bg-gray-100">
         <Provider store={store}>
           <Routes>
             <Route
-              path='/category'
+              path="/category"
               element={
                 <ProtectedAdminHome>
                   {" "}
@@ -37,16 +41,16 @@ function Admin() {
               }
             />
             <Route
-              path='/addcategory'
+              path="/addcategory"
               element={
                 <ProtectedAdminHome>
                   <AddCategory />
                 </ProtectedAdminHome>
               }
             />
-            <Route path='/editcategory/:id' element={<EditCategory />} />
+            <Route path="/editcategory/:id" element={<EditCategory />} />
             <Route
-              path='/product'
+              path="/product"
               element={
                 <ProtectedAdminHome>
                   <ProductManagement />
@@ -54,7 +58,7 @@ function Admin() {
               }
             />
             <Route
-              path='/addproduct'
+              path="/addproduct"
               element={
                 <ProtectedAdminHome>
                   <AddProduct />
@@ -62,7 +66,7 @@ function Admin() {
               }
             />
             <Route
-              path='/customer'
+              path="/customer"
               element={
                 <ProtectedAdminHome>
                   <Customer />
@@ -70,7 +74,7 @@ function Admin() {
               }
             />
             <Route
-              path='/orders'
+              path="/orders"
               element={
                 <ProtectedAdminHome>
                   <AdminOrdersComponent />
@@ -78,10 +82,42 @@ function Admin() {
               }
             />
             <Route
-              path='orderdetails/:id'
+              path="orderdetails/:id"
               element={
                 <ProtectedAdminHome>
-                 <ViewOrderDetails/>
+                  <ViewOrderDetails />
+                </ProtectedAdminHome>
+              }
+            />
+            <Route
+              path="product-offer/:id/:productName"
+              element={
+                <ProtectedAdminHome>
+                  <AddProductOffer />
+                </ProtectedAdminHome>
+              }
+            />
+            <Route
+              path="category-offer/:id/:categoryName"
+              element={
+                <ProtectedAdminHome>
+                  <AddCategoryOffer />
+                </ProtectedAdminHome>
+              }
+            />
+            <Route
+              path="coupons"
+              element={
+                <ProtectedAdminHome>
+                  <Coupons />
+                </ProtectedAdminHome>
+              }
+            />
+            <Route
+              path="addcoupon"
+              element={
+                <ProtectedAdminHome>
+                  <AddCoupon />
                 </ProtectedAdminHome>
               }
             />

@@ -13,21 +13,25 @@ const productSchema = new mongoose.Schema(
     information: {
       type: String,
     },
+    // offer: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "Category",
+    // },
     price: {
       type: Number,
       required: true,
     },
-     salePrice: {
-          type: Number,
-          required: true,
-          min: 0,
-          validate: {
-            validator: function (value) {
-              return value <= this.price;
-            },
-            message: "Sale price should not be greater than the regular price.",
-          },
+    salePrice: {
+      type: Number,
+      required: true,
+      min: 0,
+      validate: {
+        validator: function (value) {
+          return value <= this.price;
         },
+        message: "Sale price should not be greater than the regular price.",
+      },
+    },
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
@@ -61,4 +65,4 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Product",productSchema)
+module.exports = mongoose.model("Product", productSchema);
