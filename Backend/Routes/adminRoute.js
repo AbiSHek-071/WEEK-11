@@ -95,5 +95,7 @@ adminRoute.delete("/offer", offerController.deleteOffer);
 
 //coupon Controller routes
 adminRoute.post("/coupon", couponController.addCoupon);
+adminRoute.get("/coupons", couponController.fetchCoupons);
+adminRoute.delete("/coupon", couponController.deleteCoupon);
 
 module.exports = adminRoute;

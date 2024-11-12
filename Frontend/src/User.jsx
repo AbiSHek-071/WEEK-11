@@ -19,16 +19,15 @@ import ForgotPassword from "./components/User/ForgotPassword";
 import ResetPassword from "./components/User/ResetPassword";
 import Wishlist from "./components/User/Shoppings/Wishlist";
 import WishlistPage from "./Pages/WishlistPage";
-
-
+import PaymentComponent from "./util/PaymentComponent";
 
 function User() {
   return (
     <Routes>
-      <Route path='/signup' element={<SignupPage />} />
+      <Route path="/signup" element={<SignupPage />} />
 
       <Route
-        path='/login'
+        path="/login"
         element={
           <ProtectedLogin>
             <LoginPage />
@@ -37,7 +36,7 @@ function User() {
       />
 
       <Route
-        path='/forget-password'
+        path="/forget-password"
         element={
           <ProtectedLogin>
             <ForgotPassword />
@@ -45,7 +44,7 @@ function User() {
         }
       />
       <Route
-        path='/reset-password/:id'
+        path="/reset-password/:id"
         element={
           <ProtectedLogin>
             <ResetPassword />
@@ -53,11 +52,11 @@ function User() {
         }
       />
 
-      <Route path='/home' element={<LandingPage />} />
-      <Route path='/product/:id' element={<ProductPage />} />
-      <Route path='/shop' element={<ShopPage />} />
+      <Route path="/home" element={<LandingPage />} />
+      <Route path="/product/:id" element={<ProductPage />} />
+      <Route path="/shop" element={<ShopPage />} />
       <Route
-        path='/profile/*'
+        path="/profile/*"
         element={
           <>
             <ProtectedHome>
@@ -68,7 +67,7 @@ function User() {
         }
       />
       <Route
-        path='/cart'
+        path="/cart"
         element={
           <ProtectedHome>
             <CartPage />
@@ -76,18 +75,26 @@ function User() {
         }
       />
       <Route
-        path='/wishlist'
+        path="/wishlist"
         element={
           <ProtectedHome>
-            <WishlistPage/>
+            <WishlistPage />
           </ProtectedHome>
         }
       />
       <Route
-        path='/checkout'
+        path="/checkout"
         element={
           <ProtectedHome>
             <CheckoutPage />
+          </ProtectedHome>
+        }
+      />
+      <Route
+        path="/payment"
+        element={
+          <ProtectedHome>
+            <PaymentComponent />
           </ProtectedHome>
         }
       />

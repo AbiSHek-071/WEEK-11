@@ -11,6 +11,7 @@ const cartController = require("../Controller/User/cartController");
 const orderController = require("../Controller/User/orderController");
 const categoryController = require("../Controller/User/categoryController");
 const wishlistController = require("../Controller/User/wishlistController");
+const couponController = require("../Controller/User/couponController");
 //authentications
 const userAuth = require("../Middleware/userAuth");
 
@@ -136,5 +137,6 @@ userRoute.get(
 userRoute.get("/wishlist", wishlistController.fetchWishlist);
 userRoute.post("/whishlist/movetocart", wishlistController.movetocart);
 userRoute.post("/whishlist/isoncart", wishlistController.checkisOnCart);
+userRoute.get("/coupon", couponController.fetchCouponDetails);
 
 module.exports = userRoute;

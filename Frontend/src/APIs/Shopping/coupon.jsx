@@ -4,3 +4,17 @@ import axiosInstance from "@/AxiosConfig";
 export const AddCouponApi = async (coupon) => {
   return await axiosInstance.post("/admin/coupon", { coupon });
 };
+
+//get all coupons
+export const FetchCouponsApi = async () => {
+  return await axiosInstance.get("/admin/coupons");
+};
+
+//delete coupon
+export const deleteCouponApi = async (_id) => {
+  return await axiosInstance.delete("/admin/coupon", { params: { _id } });
+};
+
+export const appyCouponApi = async (couponCode) => {
+  return await axiosInstance.get("/user/coupon", { params: { couponCode } });
+};

@@ -1,4 +1,4 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
 const order_schema = new mongoose.Schema({
   user: {
@@ -69,13 +69,7 @@ const order_schema = new mongoose.Schema({
   payment_method: {
     type: String,
     required: true,
-    enum: [
-      "Credit Card/ Debit Card",
-      "Wallet",
-      "UPI",
-      "Cash on Delivery",
-      "Paypal",
-    ],
+    enum: ["Razor Pay", "Wallet", "UPI", "Cash on Delivery", "Paypal"],
   },
   payment_status: {
     type: String,
@@ -87,7 +81,6 @@ const order_schema = new mongoose.Schema({
     type: Number,
     default: 0,
     min: [0, "Discount cannot be negative"],
-    max: [100, "Discount cannot exceed 100%"],
     default: 0,
   },
   coupon_discount: {
@@ -138,4 +131,4 @@ order_schema.pre("save", function (next) {
 
 const Order = mongoose.model("order", order_schema);
 
-module.exports =  Order;
+module.exports = Order;

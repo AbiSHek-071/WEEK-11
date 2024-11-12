@@ -3,8 +3,10 @@ import { Tag, Calendar, Users, Save } from "lucide-react";
 import { AddCouponApi } from "@/APIs/Shopping/coupon";
 import { toast } from "sonner";
 import axiosInstance from "@/AxiosConfig";
+import { useNavigate } from "react-router-dom";
 
 function AddCoupon() {
+  const navigate = useNavigate();
   const [code, setCode] = useState("");
   const [description, setDescription] = useState("");
   const [discountValue, setDiscountValue] = useState("");
@@ -28,6 +30,7 @@ function AddCoupon() {
       };
       const response = await AddCouponApi(coupon);
       toast.success(response.data.message);
+      navigate("/admin/coupons");
     } catch (err) {
       console.log(err);
       if (err.response) {

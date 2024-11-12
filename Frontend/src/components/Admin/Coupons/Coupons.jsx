@@ -1,70 +1,71 @@
-import React, { useState } from "react";
-import { Trash2, Tag, DollarSign, Calendar, Users, Layers } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import {
+  Trash2,
+  Tag,
+  IndianRupee,
+  Calendar,
+  Users,
+  Layers,
+} from "lucide-react";
 
-// Mock data for demonstration
-const mockCoupons = [
-  {
-    _id: "1",
-    code: "SUMMER2023",
-    description: "Summer sale discount",
-    discount_value: 20,
-    min_purchase_amount: 100,
-    max_discount_amount: 50,
-    expiration_date: "2023-08-31",
-    usage_limit: 100,
-    is_active: true,
-    eligible_categories: ["Electronics", "Clothing"],
-  },
-  {
-    _id: "2",
-    code: "WELCOME10",
-    description: "New customer discount",
-    discount_value: 10,
-    min_purchase_amount: 50,
-    max_discount_amount: 25,
-    expiration_date: "2023-12-31",
-    usage_limit: 200,
-    is_active: true,
-    eligible_categories: ["All"],
-  },
-  {
-    _id: "3",
-    code: "FLASH50",
-    description: "Flash sale discount",
-    discount_value: 50,
-    min_purchase_amount: 200,
-    max_discount_amount: 100,
-    expiration_date: "2023-07-15",
-    usage_limit: 50,
-    is_active: false,
-    eligible_categories: ["Electronics"],
-  },
-  {
-    _id: "4",
-    code: "HOLIDAY25",
-    description: "Holiday season discount",
-    discount_value: 25,
-    min_purchase_amount: 150,
-    max_discount_amount: 75,
-    expiration_date: "2023-12-25",
-    usage_limit: null,
-    is_active: true,
-    eligible_categories: ["Clothing", "Accessories"],
-  },
-];
+import { useNavigate } from "react-router-dom";
+import { deleteCouponApi, FetchCouponsApi } from "@/APIs/Shopping/coupon";
+import ConfirmationModal from "@/components/shared/confirmationModal";
+import { toast } from "sonner";
 
 export default function Component() {
-  const [coupons, setCoupons] = useState(mockCoupons);
+  const navigate = useNavigate();
+  const [coupons, setCoupons] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [relaod, setreload] = useState(false);
+  const [modalContent, setModalContent] = useState({
+    title: "",
+    message: "",
+    onConfirm: null,
+  });
 
   const handleAddCoupon = () => {
-    // Implement add coupon logic
-    console.log("Add coupon clicked");
+    navigate("/admin/addcoupon");
   };
 
   const handleRemoveCoupon = (id) => {
-    // Implement remove coupon logic
-    setCoupons(coupons.filter((coupon) => coupon._id !== id));
+    setModalContent({
+      title: "Remove Coupon",
+      message: "Are you sure you want to Remove this Coupon?",
+      onConfirm: async () => {
+        try {
+          console.log(id);
+
+          const response = await deleteCouponApi(id);
+          console.log("called");
+
+          setreload(true);
+          return toast.success(response.data.message);
+        } catch (err) {
+          if (err.response) {
+            console.log(err);
+
+            toast.error(err.response.data.message);
+          }
+        }
+      },
+    });
+    setIsOpen(true);
   };
+
+  async function fetchAllCoupons() {
+    try {
+      const response = await FetchCouponsApi();
+      setCoupons(response.data.Coupons);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  useEffect(() => {
+    fetchAllCoupons();
+    setreload(false);
+  }, [relaod]);
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
@@ -122,15 +123,15 @@ export default function Component() {
                   <span className="ml-1">{coupon.discount_value}%</span>
                 </div>
                 <div className="flex items-center">
-                  <DollarSign className="mr-2 text-green-500" size={16} />
+                  <IndianRupee className="mr-2 text-green-500" size={16} />
                   <span className="font-medium">Min Purchase:</span>
-                  <span className="ml-1">${coupon.min_purchase_amount}</span>
+                  <span className="ml-1">₹{coupon.min_purchase_amount}</span>
                 </div>
                 <div className="flex items-center">
-                  <DollarSign className="mr-2 text-yellow-500" size={16} />
+                  <IndianRupee className="mr-2 text-yellow-500" size={16} />
                   <span className="font-medium">Max Discount:</span>
                   <span className="ml-1">
-                    ${coupon.max_discount_amount || "N/A"}
+                    ₹{coupon.max_discount_amount || "N/A"}
                   </span>
                 </div>
                 <div className="flex items-center">
@@ -147,18 +148,18 @@ export default function Component() {
                     {coupon.usage_limit || "Unlimited"}
                   </span>
                 </div>
-                <div className="flex items-center">
-                  <Layers className="mr-2 text-pink-500" size={16} />
-                  <span className="font-medium">Categories:</span>
-                  <span className="ml-1">
-                    {coupon.eligible_categories.join(", ")}
-                  </span>
-                </div>
               </div>
             </div>
           ))}
         </div>
       </div>
+      <ConfirmationModal
+        isOpen={isOpen}
+        onOpenChange={setIsOpen}
+        title={modalContent.title}
+        message={modalContent.message}
+        onConfirm={modalContent.onConfirm}
+      />
     </div>
   );
 }
