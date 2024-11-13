@@ -20,6 +20,7 @@ import ResetPassword from "./components/User/ResetPassword";
 import Wishlist from "./components/User/Shoppings/Wishlist";
 import WishlistPage from "./Pages/WishlistPage";
 import PaymentComponent from "./util/PaymentComponent";
+import Wallet from "./components/User/Profile/Wallet";
 
 function User() {
   return (
@@ -87,14 +88,6 @@ function User() {
         element={
           <ProtectedHome>
             <CheckoutPage />
-          </ProtectedHome>
-        }
-      />
-      <Route
-        path="/payment"
-        element={
-          <ProtectedHome>
-            <PaymentComponent />
           </ProtectedHome>
         }
       />

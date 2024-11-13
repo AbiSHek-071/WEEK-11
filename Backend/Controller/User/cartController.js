@@ -1,75 +1,76 @@
 const Cart = require("../../Models/Cart");
 const { login } = require("./userController");
-async function addToCart(req,res) {
-    try {  
-        const { userId, product } = req.body;
-        const {productId,size,stock,price,salePrice,qty} = product;
-       
-        
-        
-        
-        let cart = await Cart.findOne({userId});
-        
-        if(!cart){
-            cart = new Cart({
-              userId,
-              items: [
-                {productId,
-                size,
-                stock,
-                price,
-                salePrice,
-                qty,
-                totalProductPrice : salePrice*qty,
-            },
-              ],
-            });
-            cart.totalCartPrice = cart.items.reduce(
-              (total, item) => total + item.totalProductPrice,
-              0
-            );
-            await cart.save();
-            return res.status(201).json({success:true,message:"Item added to cart"});
-        }
+async function addToCart(req, res) {
+  try {
+    const { userId, product } = req.body;
+    const { productId, size, stock, price, salePrice, qty } = product;
 
-        let existingItem = cart.items.findIndex((item,index)=>{
-            return item.productId.toString() === productId.toString() && item.size === size; 
-        })
+    let cart = await Cart.findOne({ userId });
 
-        if(existingItem >= 0){            
-            existingItem = cart.items[existingItem];
-            existingItem.qty+=qty;
-            existingItem.totalProductPrice = existingItem.salePrice * existingItem.qty;
-            await cart.save();
-            return res
-              .status(200)
-              .json({ success: true, message: "Item added to cart" });
-        }else{
-             cart.items.push({
-               productId,
-               size,
-               stock,
-               price,
-               salePrice,
-               qty,
-               totalProductPrice: salePrice * qty,
-             });
-             
-               cart.totalCartPrice = cart.items.reduce(
-                 (total, item) => total + item.totalProductPrice,
-                 0
-               );
-
-              await cart.save();
-              return res
-                .status(200)
-                .json({ success: true, message: "Cart updated successfully!" });
-        }
-        
-    } catch (err) {
-        console.log(err);
-        
+    if (!cart) {
+      cart = new Cart({
+        userId,
+        items: [
+          {
+            productId,
+            size,
+            stock,
+            price,
+            salePrice,
+            qty,
+            totalProductPrice: salePrice * qty,
+          },
+        ],
+      });
+      cart.totalCartPrice = cart.items.reduce(
+        (total, item) => total + item.totalProductPrice,
+        0
+      );
+      await cart.save();
+      return res
+        .status(201)
+        .json({ success: true, message: "Item added to cart" });
     }
+
+    let existingItem = cart.items.findIndex((item, index) => {
+      return (
+        item.productId.toString() === productId.toString() && item.size === size
+      );
+    });
+
+    if (existingItem >= 0) {
+      existingItem = cart.items[existingItem];
+      existingItem.qty += qty;
+      existingItem.totalProductPrice =
+        existingItem.salePrice * existingItem.qty;
+      await cart.save();
+      return res
+        .status(200)
+        .json({ success: true, message: "Item added to cart" });
+    } else {
+      cart.items.push({
+        productId,
+        size,
+        stock,
+        price,
+        salePrice,
+        qty,
+        totalProductPrice: salePrice * qty,
+      });
+
+      cart.totalCartPrice = cart.items.reduce(
+        (total, item) => total + item.totalProductPrice,
+        0
+      );
+
+      await cart.save();
+      return res
+        .status(200)
+        .json({ success: true, message: "Cart updated successfully!" });
+    }
+  } catch (err) {
+    console.log(err);
+  }
 }
 async function fetchCart(req, res) {
   try {
@@ -86,34 +87,31 @@ async function fetchCart(req, res) {
       });
     }
 
-    
     cartItems.items.forEach((item) => {
-
       const product = item.productId;
       const sizeData = product.sizes.find((s) => s.size === item.size);
-      
 
       if (sizeData) {
-
         if (item.qty > sizeData.stock) {
-          item.qty = sizeData.stock; 
+          item.qty = sizeData.stock;
         }
-        item.totalProductPrice = item.qty * item.salePrice; 
+        item.totalProductPrice = item.qty * item.salePrice;
       }
-      if(item.qty == 0 && sizeData.stock>1){
+      if (item.qty == 0 && sizeData.stock > 1) {
         item.qty = 1;
       }
     });
 
-    
     cartItems.totalCartPrice = cartItems.items.reduce(
       (total, item) => total + item.totalProductPrice,
       0
     );
 
-    await cartItems.save(); 
+    await cartItems.save();
+    cartItems.items.map((item) => {
+      console.log("item===>", item);
+    });
 
-    
     return res.status(200).json({
       success: true,
       message: "Cart items fetched",
@@ -125,65 +123,58 @@ async function fetchCart(req, res) {
   }
 }
 
-
-async function plusCartItem(req,res) {
+async function plusCartItem(req, res) {
   try {
     const cart_id = req.params.cart_id;
     const user_id = req.params.user_id;
     let updated = false;
-    let cart = await Cart.findOne({userId:user_id}).populate("items.productId");
+    let cart = await Cart.findOne({ userId: user_id }).populate(
+      "items.productId"
+    );
 
-    
-    
-cart.items.forEach((item) => {
+    cart.items.forEach((item) => {
+      const product = item.productId;
+      const sizeData = product.sizes.find((s) => s.size === item.size);
 
-  const product = item.productId;
-  const sizeData = product.sizes.find((s) => s.size === item.size);
+      if (
+        item._id.toString() === cart_id &&
+        sizeData &&
+        item.qty < sizeData.stock &&
+        item.qty < 5
+      ) {
+        item.qty += 1;
+        item.totalProductPrice = item.qty * item.salePrice;
+        updated = true;
+      }
+    });
 
-
-  if (
-    item._id.toString() === cart_id &&
-    sizeData &&
-    item.qty < sizeData.stock &&
-    item.qty < 5
-  ) {
-    item.qty += 1;
-    item.totalProductPrice = item.qty * item.salePrice;
-    updated = true;
-  }
-});
-
-    if(!updated){
+    if (!updated) {
       return res.status(400).json({
         success: false,
         message: "Maximum qty exceeded",
       });
     }
 
-       cart.totalCartPrice = cart.items.reduce(
-         (total, item) => total + item.totalProductPrice,
-         0
-       );
-     
+    cart.totalCartPrice = cart.items.reduce(
+      (total, item) => total + item.totalProductPrice,
+      0
+    );
+
     await cart.save();
-    return res
-      .status(200)
-      .json({ success: true, message: "Qty + 1" });
-    
+    return res.status(200).json({ success: true, message: "Qty + 1" });
   } catch (err) {
     console.log(err);
   }
 }
 
-
-async function minusCartItem(req,res) {
+async function minusCartItem(req, res) {
   try {
     const cart_id = req.params.cart_id;
     const user_id = req.params.user_id;
 
     let cart = await Cart.findOne({ userId: user_id });
     cart.items.map((item) => {
-      if (item._id.toString() === cart_id && item.qty >1) {
+      if (item._id.toString() === cart_id && item.qty > 1) {
         item.qty -= 1;
         item.totalProductPrice = item.qty * item.salePrice;
       }
@@ -201,7 +192,7 @@ async function minusCartItem(req,res) {
     console.log(err);
   }
 }
-async function removeCartItem(req,res) {
+async function removeCartItem(req, res) {
   try {
     const cart_id = req.params.cart_id;
     const user_id = req.params.user_id;
@@ -209,21 +200,17 @@ async function removeCartItem(req,res) {
     let cart = await Cart.findOne({ userId: user_id });
     cart.items = cart.items.filter((item) => {
       if (item._id.toString() !== cart_id) {
-       return item
+        return item;
       }
     });
     cart.totalCartPrice = cart.items.reduce(
       (total, item) => total + item.totalProductPrice,
       0
     );
-     await cart.save();
-     return res.status(200).json({ success: true, message: "Item removed" });
-
-
+    await cart.save();
+    return res.status(200).json({ success: true, message: "Item removed" });
   } catch (err) {
     console.log(err);
-     
-    
   }
 }
 
@@ -238,7 +225,6 @@ async function fetchSize(req, res) {
         .json({ success: false, message: "Cart not found" });
     }
 
-  
     const itemExists = cart.items.find(
       (item) =>
         item.productId.toString() === product_id && item.size === selected
@@ -258,8 +244,6 @@ async function fetchSize(req, res) {
     res.status(500).json({ success: false, message: "Error fetching size" });
   }
 }
-
-
 
 module.exports = {
   addToCart,

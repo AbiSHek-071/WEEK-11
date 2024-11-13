@@ -20,7 +20,7 @@ export default function Cart() {
     try {
       const response = await axiosInstance.get(`/user/cart/${userData._id}`);
       setCartItems(response.data.cartItems.items);
-      console.log(response.data.cartItems);
+      console.log("cart ---------------------->", response.data.cartItems);
 
       setSubtota(response.data.cartItems.totalCartPrice);
     } catch (err) {

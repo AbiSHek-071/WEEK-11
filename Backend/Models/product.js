@@ -13,10 +13,10 @@ const productSchema = new mongoose.Schema(
     information: {
       type: String,
     },
-    // offer: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: "Category",
-    // },
+    offer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Offer",
+    },
     price: {
       type: Number,
       required: true,

@@ -9,6 +9,7 @@ import {
   Ticket,
   Settings,
   LogOut,
+  BadgeIndianRupee,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { NavLink } from "react-router-dom"; // Import NavLink for navigation
@@ -50,6 +51,11 @@ function Sidebar() {
                 path: "/admin/orders",
                 icon: <ShoppingCart size={20} />,
                 label: "Orders",
+              },
+              {
+                path: "/admin/sales-report",
+                icon: <BadgeIndianRupee size={20} />,
+                label: "Sales Report",
               },
               {
                 path: "/admin/coupons",

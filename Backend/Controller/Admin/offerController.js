@@ -1,5 +1,6 @@
 const category = require("../../Models/category");
 const Offer = require("../../Models/offer");
+
 const product = require("../../Models/product");
 
 async function addProductOffer(req, res) {
@@ -13,27 +14,40 @@ async function addProductOffer(req, res) {
       target_type,
     } = req.body;
 
+    // ----- Create the Offer -----
     const offer = new Offer({
       name: offerName,
-      offer_value: offerValue,
+      offer_value: wofferValue,
       target_type,
       target_id: id,
       target_name: productName,
       end_date: offerExpairyDate,
     });
 
-    // const product = await product.find({ _id: id });
-    // product.offer = offer._id;
+    if (target_type === "product") {
+      // ----- Find Product and Assign Offer -----
+      const productData = await product.findOne({ _id: id });
+      if (!productData) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Product not found" });
+      }
+      productData.offer = offer._id;
+      await productData.save();
+    }
 
-    // await product.save();
-
+    // ----- Save the Offer -----
     await offer.save();
+
     return res.status(200).json({
       success: true,
-      message: `Offer successfuly added to ${productName}`,
+      message: `Offer successfully added to ${productName}`,
     });
   } catch (err) {
-    console.log(err);
+    console.error("Error adding offer:", err);
+    return res
+      .status(500)
+      .json({ success: false, message: "Error adding offer" });
   }
 }
 
@@ -57,10 +71,22 @@ async function addCategoryOffer(req, res) {
       end_date: offerExpairyDate,
     });
 
-    // const category = await category.find({ _id: id });
-    // category.offer = offer._id;
+    if (target_type === "category") {
+      console.log("asdkjagdajshdgajhdashvdh");
 
-    // await category.save();
+      // ----- Find Category and Assign Offer -----
+      const categoryData = await category.findOne({ _id: id });
+      if (!categoryData) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Category not found" });
+      }
+      categoryData.offer = offer._id;
+      console.log("categoryData====>", categoryData);
+
+      await categoryData.save();
+    }
+
     await offer.save();
     return res.status(200).json({
       success: true,

@@ -14,6 +14,7 @@ import {
   checkIsExistOnWishlistApi,
   removeFromWishListApi,
 } from "@/APIs/Products/WishlistApis";
+import { CalculateOfferPrice } from "@/util/CalculateOfferPrice";
 
 export default function ProductDetails({
   product,
@@ -24,6 +25,10 @@ export default function ProductDetails({
   const [mainImage, setMainImage] = useState(product.images[0]);
   const [isZoomModalOpen, setIsZoomModalOpen] = useState(false);
   const userData = useSelector((store) => store.user.userDatas);
+  //offer
+  const [offerPrice, setofferPrice] = useState(0);
+  const [offerDiscountAmount, setofferDiscountAmount] = useState(null);
+  const [offerDiscountPercentage, setofferDiscountPercentage] = useState(null);
 
   const [size, setSize] = useState(null);
   const [error, setError] = useState("");
@@ -138,11 +143,23 @@ export default function ProductDetails({
       }
     }
   }
+  async function test() {
+    const offerData = await CalculateOfferPrice(
+      product._id,
+      product.category,
+      product.salePrice
+    );
+    setofferPrice(offerData.offerPrice);
+    setofferDiscountAmount(offerData.offerDiscountAmt);
+    setofferDiscountPercentage(offerData.offerDiscount);
+  }
 
   useEffect(() => {
     if (product && product.images && product.images.length > 0) {
       setMainImage(product.images[0]);
     }
+    test();
+
     checkisExistONWishlist();
   }, [product]);
 
@@ -220,6 +237,7 @@ export default function ProductDetails({
           <CardContent className="space-y-6">
             <h1 className="text-3xl font-bold">{product.name}</h1>
             <p className="text-xl font-semibold">Men's Exclusive Collection</p>
+
             <div className="flex items-center space-x-1">
               {[...Array(5)].map((_, i) => (
                 <Star
@@ -237,14 +255,38 @@ export default function ProductDetails({
                 {averageRating.toFixed(1)} ({totalReviews})
               </span>
             </div>
-            <p className="text-lg font-semibold text-gray-500 line-through">
-              INR {product.price}
-            </p>
-            <p className="text-2xl font-bold text-black">
-              INR {product.salePrice}
-            </p>
+
+            {offerPrice ? (
+              <p className="text-lg font-semibold text-gray-500 line-through">
+                {product.salePrice.toFixed(2)} Rs
+              </p>
+            ) : (
+              <p className="text-lg font-semibold text-gray-500 line-through">
+                {product.price.toFixed(2)} Rs
+              </p>
+            )}
+
+            <div>
+              <p className="text-4xl font-bold text-black">
+                {offerPrice
+                  ? `${offerPrice.toFixed(2)} Rs`
+                  : `${product.salePrice.toFixed(2)} Rs`}
+              </p>
+              {offerDiscountPercentage && (
+                <p className="text-lg font-normal text-red-500">
+                  {offerDiscountPercentage.toFixed(2)}% Off
+                </p>
+              )}
+            </div>
+
+            {/* {offerDiscountAmount && (
+              <p className="text-lg font-semibold text-green-500">
+                Discount: {offerDiscountAmount.toFixed(2)} Rs
+              </p>
+            )} */}
 
             <p className="text-gray-600">{product.description}</p>
+
             <div>
               <h3 className="text-lg font-semibold mb-2">Size</h3>
               <div className="flex space-x-2">
@@ -279,13 +321,14 @@ export default function ProductDetails({
               </div>
               {product.totalStock <= 15 && product.totalStock > 1 && (
                 <h6 className="mt-5 text-red-500">
-                  Total Stock Left :{product.totalStock}
+                  Total Stock Left: {product.totalStock}
                 </h6>
               )}
-              {product.totalStock == 0 && (
+              {product.totalStock === 0 && (
                 <h6 className="mt-5 text-red-500">Out of Stock</h6>
               )}
             </div>
+
             <div>
               {error && <span className="text-red-500">{error}</span>}
               <div className="flex items-center space-x-4">

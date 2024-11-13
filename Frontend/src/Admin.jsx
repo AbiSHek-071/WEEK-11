@@ -18,6 +18,7 @@ import AddProductOffer from "./components/Admin/Offer/AddProductOffer";
 import AddCategoryOffer from "./components/Admin/Offer/AddCategoryOffer";
 import Coupons from "./components/Admin/Coupons/Coupons";
 import AddCoupon from "./components/Admin/Coupons/AddCoupon";
+import SalesReport from "./components/Admin/SalesReport";
 
 function Admin() {
   return (
@@ -118,6 +119,14 @@ function Admin() {
               element={
                 <ProtectedAdminHome>
                   <AddCoupon />
+                </ProtectedAdminHome>
+              }
+            />
+            <Route
+              path="sales-report"
+              element={
+                <ProtectedAdminHome>
+                  <SalesReport />
                 </ProtectedAdminHome>
               }
             />

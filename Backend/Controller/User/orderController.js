@@ -1,6 +1,7 @@
 const Cart = require("../../Models/Cart");
 const Order = require("../../Models/order");
 const Product = require("../../Models/product");
+const Wallet = require("../../Models/wallet");
 
 async function createOrder(req, res) {
   console.log("call readched----------------------");
@@ -61,8 +62,25 @@ async function createOrder(req, res) {
     });
     cart.items = updatedCartItems;
     await cart.save();
-
     manageProductQty(order.order_items);
+
+    console.log("user--------->", user);
+
+    let myWallet = await Wallet.findOne({ user: user });
+    if (!myWallet) {
+      return res.status(404).json({ message: "unable to find your wallet" });
+    }
+    myWallet.balance -= total_price_with_discount;
+    const transactions = {
+      order_id: order._id,
+      transaction_date: new Date(),
+      transaction_type: "debit",
+      transaction_status: "completed",
+      amount: total_price_with_discount,
+    };
+    myWallet.transactions.push(transactions);
+
+    myWallet.save();
 
     return res
       .status(201)

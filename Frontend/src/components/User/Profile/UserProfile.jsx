@@ -9,6 +9,7 @@ import OrdersComponent from "./OrdersComponent";
 import ViewOrderDetails from "../../shared/ViewOrderDetails";
 import ChangePassword from "./ChangePassword";
 import Coupons from "./Coupons";
+import Wallet from "./Wallet";
 
 function UserProfile() {
   return (
@@ -24,7 +25,7 @@ function UserProfile() {
             <Route path="orders" element={<OrdersComponent />} />
             <Route path="vieworder/:id" element={<ViewOrderDetails />} />
             {/* <Route path='address' element={<div>Address Component</div>} /> */}
-            <Route path="wallet" element={<div>wallet Component</div>} />
+            <Route path="wallet" element={<Wallet />} />
             <Route path="coupons" element={<Coupons />} />
             <Route path="changepassword" element={<ChangePassword />} />
             <Route path="delete" element={<div>delete Component</div>} />

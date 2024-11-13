@@ -56,3 +56,17 @@ export const fetchCatOfferApi = async () => {
 export const fetchPrdOfferApi = async () => {
   return await axiosInstance.get("/admin/offer/product");
 };
+
+export const findProductAndCategoryOfferApi = async (
+  product_id,
+  category_id,
+  product_price
+) => {
+  return await axiosInstance.get("/user/findoffer", {
+    params: {
+      product_id,
+      category_id,
+      product_price,
+    },
+  });
+};

@@ -12,6 +12,8 @@ const orderController = require("../Controller/User/orderController");
 const categoryController = require("../Controller/User/categoryController");
 const wishlistController = require("../Controller/User/wishlistController");
 const couponController = require("../Controller/User/couponController");
+const walletController = require("../Controller/User/walletController");
+const offerController = require("../Controller/User/offerController");
 //authentications
 const userAuth = require("../Middleware/userAuth");
 
@@ -138,5 +140,12 @@ userRoute.get("/wishlist", wishlistController.fetchWishlist);
 userRoute.post("/whishlist/movetocart", wishlistController.movetocart);
 userRoute.post("/whishlist/isoncart", wishlistController.checkisOnCart);
 userRoute.get("/coupon", couponController.fetchCouponDetails);
+
+//wallet controller routes
+userRoute.post("/wallet/add-money", walletController.addMoneytoWallet);
+userRoute.get("/wallet", walletController.fetchWallet);
+
+//offer controller routes
+userRoute.get("/findoffer", offerController.fetchCorrectOffer);
 
 module.exports = userRoute;

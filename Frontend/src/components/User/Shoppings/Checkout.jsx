@@ -29,6 +29,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import { appyCouponApi } from "@/APIs/Shopping/coupon";
 import PaymentComponent from "@/util/PaymentComponent";
+import { fetchWalletInfoApi } from "@/APIs/Profile/Wallet";
+import ConfirmationModal from "@/components/shared/confirmationModal";
 
 export default function Checkout() {
   const userData = useSelector((store) => store.user.userDatas);
@@ -44,7 +46,9 @@ export default function Checkout() {
   const [coupon_Discount, setcoupon_Discount] = useState(0);
   //GRAND TOTAL PRICE
   const [total_price_with_discount, settotal_price_with_discount] = useState(0);
-  //
+
+  //wallet balance
+  const [Walletbalance, setWalletBalance] = useState(0);
 
   const [cart_id, setCart_id] = useState();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -57,6 +61,14 @@ export default function Checkout() {
   const [verifiedCouponCode, setverifiedCouponCode] = useState("");
   const [couponData, setCouponData] = useState(null);
   const [couponDiscount, setCouponDiscount] = useState(0);
+
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const [modalContent, setModalContent] = useState({
+    title: "",
+    message: "",
+    onConfirm: null,
+  });
 
   const navigate = useNavigate();
 
@@ -76,9 +88,16 @@ export default function Checkout() {
   }
 
   //------------------SELECTING PAYMENT METHOD---------------------
-  const handlePaymentMethodChange = (event) => {
-    console.log("selectedPaymentMethod----------->", event.target.value);
+  const handlePaymentMethodChange = async (event) => {
+    console.log(event.target.value);
+
     setSelectedPaymentMethod(event.target.value);
+    if (event.target.value === "wallet") {
+      const response = await fetchWalletInfoApi(userData._id);
+      setWalletBalance(response.data.myWallet.balance);
+    } else {
+      setWalletBalance(0);
+    }
   };
 
   //-----------------HANDLE PLACE ORDER------------------------------
@@ -137,6 +156,7 @@ export default function Checkout() {
       console.log(err);
       const errorMessage =
         err.response?.data?.message || "An unexpected error occurred";
+      toast.error(errorMessage);
     }
   }
 
@@ -180,6 +200,25 @@ export default function Checkout() {
     setCouponData(null);
     setCouponDiscount(0);
   }
+
+  //pay with wallet
+  function handleWalletPayment() {
+    if (Walletbalance < total_price_with_discount) {
+      return toast.error(
+        "Your wallet balance is insufficient to complete this payment"
+      );
+    }
+
+    //modal data
+    setModalContent({
+      title: "Wallet Payment",
+      message:
+        "You are about to complete this payment using your wallet balance. Do you want to proceed?",
+      onConfirm: handlePlaceOrder,
+    });
+    setModalOpen(true);
+  }
+
   //--------------TOTAL PRICE CALCULATION WITH AND WITHOUT COUPON------------
   useEffect(() => {
     fetchCartItems();
@@ -342,6 +381,17 @@ export default function Checkout() {
                 </div>
               </label>
 
+              {Walletbalance > 0 && (
+                <div className="ml-8 mt-2 text-gray-700 font-medium flex items-center">
+                  <span className="text-gray-500 mr-2">
+                    Total Wallet Balance:
+                  </span>
+                  <span className="text-green-600">
+                    Rs {Walletbalance.toFixed(2)}
+                  </span>
+                </div>
+              )}
+
               {/* Cash on Delivery */}
               <label className="flex items-center justify-between cursor-pointer">
                 <div className="flex items-center">
@@ -459,9 +509,32 @@ export default function Checkout() {
                 handlePlaceOrder={handlePlaceOrder}
               />
             )}
+            {selectedPaymentMethod == "wallet" && (
+              <Button
+                onClick={handleWalletPayment}
+                // onPress={onOpen}
+                className="mt-4 w-full h-16 rounded-md"
+                color="primary"
+              >
+                {" "}
+                Pay with your wallet
+              </Button>
+            )}
+            {selectedPaymentMethod == "" && (
+              <Button className="mt-4 w-full h-16 rounded-md" color="primary">
+                Select a payment method
+              </Button>
+            )}
           </div>
         </div>
       </div>
+      <ConfirmationModal
+        isOpen={modalOpen}
+        onOpenChange={setModalOpen}
+        title={modalContent.title}
+        message={modalContent.message}
+        onConfirm={modalContent.onConfirm}
+      />
     </div>
   );
 }
