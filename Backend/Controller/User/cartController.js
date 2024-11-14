@@ -1,4 +1,5 @@
 const Cart = require("../../Models/Cart");
+const calculateProductOfferinCart = require("../../utils/calculateProductOfferinCart");
 const { login } = require("./userController");
 async function addToCart(req, res) {
   try {
@@ -76,9 +77,14 @@ async function fetchCart(req, res) {
   try {
     const _id = req.params.id;
 
-    const cartItems = await Cart.findOne({ userId: _id }).populate(
-      "items.productId"
-    );
+    const cartItems = await Cart.findOne({ userId: _id }).populate({
+      path: "items.productId",
+      populate: [
+        { path: "category", populate: { path: "offer" } }, // Populate category and its offer
+        { path: "offer" }, // Populate product's own offer
+      ],
+    });
+
     if (!cartItems) {
       return res.status(200).json({
         success: false,
@@ -95,22 +101,24 @@ async function fetchCart(req, res) {
         if (item.qty > sizeData.stock) {
           item.qty = sizeData.stock;
         }
-        item.totalProductPrice = item.qty * item.salePrice;
+        item.totalProductPrice = item.qty * item.discountedAmount;
       }
       if (item.qty == 0 && sizeData.stock > 1) {
         item.qty = 1;
       }
     });
 
+    cartItems.items.forEach((item) => {
+      calculateProductOfferinCart(item);
+    });
     cartItems.totalCartPrice = cartItems.items.reduce(
       (total, item) => total + item.totalProductPrice,
       0
     );
 
+    console.log("Cart items ====>", cartItems.items);
+
     await cartItems.save();
-    cartItems.items.map((item) => {
-      console.log("item===>", item);
-    });
 
     return res.status(200).json({
       success: true,

@@ -41,9 +41,18 @@ const cartSchema = new mongoose.Schema(
         },
         discount: {
           type: Number,
-          default: function () {
-            return ((this.price - this.salePrice) / this.price) * 100;
-          },
+          min: 0,
+          default: 0,
+        },
+        discountedAmount: {
+          type: Number,
+          min: 0,
+          default: 0,
+        },
+        discountAmount: {
+          type: Number,
+          min: 0,
+          default: 0,
         },
         qty: {
           type: Number,

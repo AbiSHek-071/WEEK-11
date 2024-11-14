@@ -17,7 +17,7 @@ async function addProductOffer(req, res) {
     // ----- Create the Offer -----
     const offer = new Offer({
       name: offerName,
-      offer_value: wofferValue,
+      offer_value: offerValue,
       target_type,
       target_id: id,
       target_name: productName,

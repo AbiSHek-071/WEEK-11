@@ -143,7 +143,7 @@ export default function Cart() {
                         <p className="text-center">{item.size}</p>
 
                         <p className="text-center font-semibold">
-                          INR {item.salePrice.toFixed(2)}
+                          INR {item.discountedAmount.toFixed(2)}
                         </p>
 
                         <div className="flex flex-col items-center">
