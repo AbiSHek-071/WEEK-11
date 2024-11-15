@@ -27,7 +27,7 @@ import {
   TableCell,
 } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
-import { appyCouponApi } from "@/APIs/Shopping/coupon";
+import { appyCouponApi, updateCouponDataApi } from "@/APIs/Shopping/coupon";
 import PaymentComponent from "@/util/PaymentComponent";
 import { fetchWalletInfoApi } from "@/APIs/Profile/Wallet";
 import ConfirmationModal from "@/components/shared/confirmationModal";
@@ -156,6 +156,12 @@ export default function Checkout() {
         cart_id,
       });
       setOrderDetails(response?.data?.order);
+
+      //updateCouponAfter order success
+      if (couponData) {
+        handleUpdateCoupon(couponData._id, userData._id);
+      }
+
       //SETTING DELIVERY DATE
       const formattedDate = new Date(
         response.data.order.delivery_by
@@ -194,6 +200,15 @@ export default function Checkout() {
     }
   }
 
+  //...................UPDATE COUPON DATA..............
+  async function handleUpdateCoupon(coupon_id, user_id) {
+    try {
+      const response = await updateCouponDataApi(coupon_id, user_id);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   //-----------JUST NAVIGATIONS-----------
   function onExit() {
     navigate("/");
@@ -206,6 +221,17 @@ export default function Checkout() {
     try {
       const response = await appyCouponApi(couponCode);
       const data = response.data.CouponData;
+
+      const userApplied = data.users_applied.find(
+        (user_applied) => user_applied.user == userData._id
+      );
+
+      if (userApplied && userApplied.used_count >= data.usage_limit) {
+        return toast.error(
+          "You have reached the maximum limit of the coupon usage"
+        );
+      }
+
       setCouponData(data);
 
       const discountPercentage = data.discount_value;
@@ -529,8 +555,9 @@ export default function Checkout() {
                 type="text"
                 placeholder="Coupon code"
                 className="flex-grow border rounded-l-md px-4 py-2"
+                value={couponCode}
                 onChange={(e) => {
-                  setCouponCode(e.target.value);
+                  setCouponCode(e.target.value.toUpperCase());
                 }}
               />
               {couponData ? (

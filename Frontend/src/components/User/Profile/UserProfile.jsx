@@ -28,7 +28,7 @@ function UserProfile() {
             <Route path="wallet" element={<Wallet />} />
             <Route path="coupons" element={<Coupons />} />
             <Route path="changepassword" element={<ChangePassword />} />
-            <Route path="delete" element={<div>delete Component</div>} />
+
             {/* Add more routes for other menu items */}
           </Routes>
         </Provider>

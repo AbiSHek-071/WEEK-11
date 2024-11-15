@@ -8,12 +8,14 @@ export default function ProductCard({ product }) {
   const [stars, setStars] = useState(0);
   const {
     name,
-    price,
+    salePrice,
     description,
     rating,
     category,
     sleeve,
-
+    discount,
+    discountAmount,
+    discountedAmount,
     images,
     totalStock,
   } = product;
@@ -36,7 +38,6 @@ export default function ProductCard({ product }) {
   return (
     <div
       onClick={() => {
-        console.log("products : ", product);
         navigate(`/product/${product._id}`);
         window.scrollTo({
           top: 0,
@@ -56,11 +57,19 @@ export default function ProductCard({ product }) {
             Out of Stock
           </div>
         )}
+        {totalStock != 0 && discount != 0 && (
+          <p className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1">
+            {discount}%
+          </p>
+        )}
       </div>
       <div className="p-4">
         <h3 className="font-semibold text-lg mb-1 truncate">{name}</h3>
         <div className="flex justify-between items-center mb-2">
-          <p className="font-bold text-lg">₹{price.toLocaleString()}</p>
+          <p className="font-bold text-lg">
+            ₹{discountedAmount.toLocaleString() || salePrice.toLocaleString()}
+          </p>
+
           <div className="flex items-center">
             {[...Array(stars)].map((_, index) => (
               <Star
@@ -71,6 +80,7 @@ export default function ProductCard({ product }) {
             <span className="ml-1 text-sm">{rating}</span>
           </div>
         </div>
+
         <div className="flex justify-between text-sm text-gray-600">
           <span>{category?.name}</span>
           <span>{sleeve} Sleeve</span>

@@ -17,6 +17,7 @@ const offerController = require("../Controller/User/offerController");
 const bannerController = require("../Controller/User/bannerController");
 //authentications
 const userAuth = require("../Middleware/userAuth");
+const checkStockAvailability = require("../Middleware/checkStockAvailability");
 
 // user controller routes
 userRoute.post("/sendotp", userController.sendOtp);
@@ -113,6 +114,7 @@ userRoute.post(
   "/order",
   userAuth.jwtVerification,
   userAuth.checkUserBlocked,
+  checkStockAvailability,
   orderController.createOrder
 );
 userRoute.get("/orders/:_id", orderController.fetchOrders);
@@ -140,7 +142,10 @@ userRoute.get(
 userRoute.get("/wishlist", wishlistController.fetchWishlist);
 userRoute.post("/whishlist/movetocart", wishlistController.movetocart);
 userRoute.post("/whishlist/isoncart", wishlistController.checkisOnCart);
+
+//coupon Controller routes
 userRoute.get("/coupon", couponController.fetchCouponDetails);
+userRoute.patch("/coupon", couponController.updateCoupon);
 
 //wallet controller routes
 userRoute.post("/wallet/add-money", walletController.addMoneytoWallet);

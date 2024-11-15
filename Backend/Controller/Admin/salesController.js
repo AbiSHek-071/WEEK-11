@@ -199,9 +199,10 @@ const dowloadSalesPDF = async (req, res) => {
   }
 };
 
-//download sales report in excel format
+//Download sales report in excel format
+const ExcelJS = require("exceljs");
 
-const download_sales_report_xl = async (req, res) => {
+async function downloadSalesExcel(req, res) {
   try {
     const { filterType, startDate, endDate } = req.query;
     const filterQueries = generateDateFilterQuery(
@@ -219,53 +220,61 @@ const download_sales_report_xl = async (req, res) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Sales Report");
 
+    // Create table design
     worksheet.columns = [
+      { header: "Order Date", key: "orderDate", width: 20 },
+      { header: "Customer Name", key: "customerName", width: 20 },
+      { header: "Payment Method", key: "paymentMethod", width: 20 },
+      { header: "Delivery Status", key: "deliveryStatus", width: 20 },
       { header: "Product Name", key: "productName", width: 25 },
       { header: "Quantity", key: "quantity", width: 10 },
-      { header: "Unit Price", key: "unitPrice", width: 15 },
-      { header: "Total Price", key: "totalPrice", width: 15 },
-      { header: "Discount", key: "discount", width: 15 },
-      { header: "Coupon Deduction", key: "couponDeduction", width: 15 },
-      { header: "Final Amount", key: "finalAmount", width: 15 },
-      { header: "Order Date", key: "orderDate", width: 20 },
-      { header: "Customer Name", key: "customer_name", width: 20 },
-      { header: "Payment Method", key: "paymentMethod", width: 20 },
-      { header: "Delivery Status", key: "deliveryStatus", width: 15 },
+      { header: "Unit Price (RS)", key: "unitPrice", width: 15 },
+      { header: "Total Price (RS)", key: "totalPrice", width: 15 },
+      { header: "Discount (RS)", key: "discount", width: 15 },
+      { header: "Coupon (RS)", key: "couponDeduction", width: 15 },
+      { header: "Final Amount (RS)", key: "finalAmount", width: 15 },
     ];
+
+    // Add data to sheet
     reports.forEach((report) => {
       const orderDate = new Date(report.placed_at).toLocaleDateString();
-
       const products = report.order_items.map((item) => ({
-        productName: item.product.name,
-        quantity: item.quantity,
-        OrginaalUnitPrice: item.price,
-        totalPrice: item.totalProductPrice,
-        discount: report.total_discount,
-        couponDeduction: report.coupon_discount,
-        finalAmount: report.total_price_with_discount,
-        orderDate: orderDate,
-        customer_name: report.userId.name,
+        orderDate,
+        customerName: report.user.name,
         paymentMethod: report.payment_method,
         deliveryStatus: report.order_status,
+        productName: item.product.name,
+        quantity: item.qty,
+        unitPrice: item.price || 0,
+        totalPrice: item.totalProductPrice || 0,
+        discount: report.total_discount || 0,
+        couponDeduction: report.coupon_discount || 0,
+        finalAmount: report.total_price_with_discount || 0,
       }));
 
-      products.forEach((product) => {
-        worksheet.addRow(product);
-      });
+      // Add each product as a row
+      products.forEach((product) => worksheet.addRow(product));
     });
 
     res.setHeader(
       "Content-Disposition",
-      "attachment; filename=sales_report.xlsx"
+      "attachment; filename=SalesReport.xlsx"
     );
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+
     await workbook.xlsx.write(res);
     res.end();
   } catch (error) {
+    console.error("Error generating Excel report:", error);
     res.status(500).json({ message: "Failed to generate sales report", error });
   }
-};
+}
 
 module.exports = {
   fetchSalesReport,
   dowloadSalesPDF,
+  downloadSalesExcel,
 };

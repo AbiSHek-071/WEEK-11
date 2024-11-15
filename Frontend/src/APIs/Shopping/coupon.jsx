@@ -18,3 +18,8 @@ export const deleteCouponApi = async (_id) => {
 export const appyCouponApi = async (couponCode) => {
   return await axiosInstance.get("/user/coupon", { params: { couponCode } });
 };
+
+//update coupon after order
+export const updateCouponDataApi = async (coupon_id, user_id) => {
+  return await axiosInstance.patch("/user/coupon", { coupon_id, user_id });
+};

@@ -13,11 +13,24 @@ const SalesReport = () => {
     try {
       const response = await axiosInstance.get("admin/sales/download/pdf", {
         params: { filterType, startDate, endDate },
-        responseType: "blob", // Move this inside the options object
+        responseType: "blob",
       });
 
       const blob = new Blob([response.data], { type: "application/pdf" });
       saveAs(blob, "SalesReport.pdf");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleExcelDownload = async () => {
+    try {
+      const response = await axiosInstance.get("admin/sales/download/excel", {
+        params: { filterType, startDate, endDate },
+        responseType: "blob",
+      });
+
+      const blob = new Blob([response.data], { type: "application/xlsx" });
+      saveAs(blob, "SalesReport.xlsx");
     } catch (error) {
       console.log(error);
     }
@@ -133,7 +146,10 @@ const SalesReport = () => {
             </table>
           </div>
           <div className="mt-4 flex justify-end space-x-4 p-4">
-            <button className="bg-green-800 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+            <button
+              onClick={handleExcelDownload}
+              className="bg-green-800 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+            >
               Download Excel
             </button>
             <button

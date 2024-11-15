@@ -104,6 +104,7 @@ adminRoute.delete("/coupon", couponController.deleteCoupon);
 //sales report Controller routes
 adminRoute.get("/sales", salesController.fetchSalesReport);
 adminRoute.get("/sales/download/pdf", salesController.dowloadSalesPDF);
+adminRoute.get("/sales/download/excel", salesController.downloadSalesExcel);
 
 //banner Controller routes
 adminRoute.post("/banner", bannerController.addBanner);

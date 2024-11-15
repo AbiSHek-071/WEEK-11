@@ -1,6 +1,9 @@
 const bcrypt = require("bcrypt");
 const product = require("../../Models/product");
 const Category = require("../../Models/category");
+const {
+  calculateProductOfferinShop,
+} = require("../../utils/calculateProductOfferinShop");
 
 async function fetchProducts(req, res) {
   try {
@@ -65,12 +68,16 @@ async function fetchProducts(req, res) {
     }
 
     // Final ProductData
-    const productData = await product
+    let productData = await product
       .find(filterQueries)
-      .populate("category")
+      .populate([
+        { path: "category", populate: { path: "offer" } }, // Populate category and its offer
+        { path: "offer" }, // Populate product's own offer
+      ])
       .sort(sort)
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .lean();
 
     // Count total products for pagination
     const totalProduct = await product.countDocuments(filterQueries);
@@ -80,6 +87,15 @@ async function fetchProducts(req, res) {
         .status(404)
         .json({ message: "No products found", success: false });
     }
+
+    productData.forEach((product) => {
+      calculateProductOfferinShop(product);
+    });
+
+    console.log(
+      "::::::::::::::::::::::::::productData::::::::::::::::::::",
+      productData
+    );
 
     return res.status(200).json({
       message: "Products fetched successfully",

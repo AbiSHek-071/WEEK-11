@@ -4,8 +4,6 @@ const Product = require("../../Models/product");
 const Wallet = require("../../Models/wallet");
 
 async function createOrder(req, res) {
-  console.log("call readched----------------------");
-
   try {
     const {
       user,
@@ -19,30 +17,7 @@ async function createOrder(req, res) {
       cart_id,
     } = req.body;
 
-    console.log(
-      "user==============>",
-      user,
-      "cartItems==============>",
-      cartItems,
-      "total_amount==============>",
-      total_amount,
-      "total_discount==============>",
-      total_discount,
-      "coupon_Discount==============>",
-      coupon_Discount,
-      "total_price_with_discount==============>",
-      total_price_with_discount,
-      "shipping_address==============>",
-      shipping_address,
-      "payment_method==============>",
-      payment_method,
-      "cart_id==============>",
-      cart_id
-    );
-
     const products = [];
-
-    console.log("TOTAL AMOUNT:", total_amount);
 
     //creating product array
     cartItems.forEach((item) => {
@@ -86,23 +61,23 @@ async function createOrder(req, res) {
     await cart.save();
     manageProductQty(order.order_items);
 
-    console.log("user--------->", user);
+    if (payment_method == "wallet") {
+      let myWallet = await Wallet.findOne({ user: user });
+      if (!myWallet) {
+        return res.status(404).json({ message: "unable to find your wallet" });
+      }
+      myWallet.balance -= total_price_with_discount;
+      const transactions = {
+        order_id: order._id,
+        transaction_date: new Date(),
+        transaction_type: "debit",
+        transaction_status: "completed",
+        amount: total_price_with_discount,
+      };
+      myWallet.transactions.push(transactions);
 
-    let myWallet = await Wallet.findOne({ user: user });
-    if (!myWallet) {
-      return res.status(404).json({ message: "unable to find your wallet" });
+      myWallet.save();
     }
-    myWallet.balance -= total_price_with_discount;
-    const transactions = {
-      order_id: order._id,
-      transaction_date: new Date(),
-      transaction_type: "debit",
-      transaction_status: "completed",
-      amount: total_price_with_discount,
-    };
-    myWallet.transactions.push(transactions);
-
-    myWallet.save();
 
     return res
       .status(201)
@@ -195,7 +170,6 @@ async function fetchOrderDetails(req, res) {
 async function returnOrder(req, res) {
   try {
     const { order_id } = req.params;
-    console.log(order_id);
 
     const updatedData = await Order.findByIdAndUpdate(
       { _id: order_id },
@@ -221,9 +195,6 @@ async function cancelOrder(req, res) {
   try {
     const { order_id } = req.params;
     const { order_items } = req.body;
-    console.log(order_items);
-
-    console.log(order_id);
 
     const updatedData = await Order.findByIdAndUpdate(
       { _id: order_id },

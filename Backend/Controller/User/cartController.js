@@ -121,8 +121,6 @@ async function fetchCart(req, res) {
     );
     await cartItems.save();
 
-    console.log("cartItems:::::::::::>", cartItems);
-
     return res.status(200).json({
       success: true,
       message: "Cart items fetched",
