@@ -115,10 +115,13 @@ async function fetchCart(req, res) {
       (total, item) => total + item.totalProductPrice,
       0
     );
-
-    console.log("Cart items ====>", cartItems.items);
-
+    cartItems.total_discount = cartItems.items.reduce(
+      (total, item) => total + item.discountAmount * item.qty,
+      0
+    );
     await cartItems.save();
+
+    console.log("cartItems:::::::::::>", cartItems);
 
     return res.status(200).json({
       success: true,

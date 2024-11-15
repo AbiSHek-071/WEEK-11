@@ -19,6 +19,8 @@ import AddCategoryOffer from "./components/Admin/Offer/AddCategoryOffer";
 import Coupons from "./components/Admin/Coupons/Coupons";
 import AddCoupon from "./components/Admin/Coupons/AddCoupon";
 import SalesReport from "./components/Admin/SalesReport";
+import AddBanner from "./components/Admin/banner/AddBanner";
+import Banner from "./components/Admin/banner/Banner";
 
 function Admin() {
   return (
@@ -127,6 +129,22 @@ function Admin() {
               element={
                 <ProtectedAdminHome>
                   <SalesReport />
+                </ProtectedAdminHome>
+              }
+            />
+            <Route
+              path="banner"
+              element={
+                <ProtectedAdminHome>
+                  <Banner />
+                </ProtectedAdminHome>
+              }
+            />
+            <Route
+              path="add-banner"
+              element={
+                <ProtectedAdminHome>
+                  <AddBanner />
                 </ProtectedAdminHome>
               }
             />

@@ -63,7 +63,11 @@ function Sidebar() {
                 label: "Coupon",
               },
 
-              { icon: <Image size={20} />, label: "Banner" },
+              {
+                path: "/admin/banner",
+                icon: <Image size={20} />,
+                label: "Banner",
+              },
               { icon: <Settings size={20} />, label: "Settings" },
               {
                 icon: <LogOut size={20} />,
@@ -90,7 +94,7 @@ function Sidebar() {
                   <Button
                     variant="ghost"
                     className="w-full justify-start"
-                    onClick={item.onClick} // Attach the click handler here
+                    onClick={item.onClick}
                   >
                     {item.icon}
                     <span className="ml-2">{item.label}</span>

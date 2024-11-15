@@ -53,10 +53,10 @@ async function addProduct(req, res) {
 
 async function fetchProducts(req, res) {
   try {
-     const page = parseInt(req.query.page) || 1;
-     const limit = parseInt(req.query.limit) || 5;
-     const skip = (page - 1) * limit;
-     const totalProducts = await Product.countDocuments();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
+    const totalProducts = await Product.countDocuments();
 
     const products = await Product.find({})
       .populate({
@@ -91,8 +91,17 @@ async function fetchProducts(req, res) {
 
 async function editProduct(req, res) {
   try {
-    const { _id, name, description, price,salePrice, category, sleeve, sizes, images } =
-      req.body;
+    const {
+      _id,
+      name,
+      description,
+      price,
+      salePrice,
+      category,
+      sleeve,
+      sizes,
+      images,
+    } = req.body;
 
     let totalStock = 0;
 
@@ -133,6 +142,7 @@ async function editProduct(req, res) {
 async function toggleProduct(req, res) {
   try {
     const { _id, isActive } = req.body;
+    console.log("_id======>", _id, "isActive=====>", isActive);
 
     const updateData = await Product.findByIdAndUpdate(
       { _id },
@@ -158,12 +168,9 @@ async function toggleProduct(req, res) {
   }
 }
 
-
-
-
 module.exports = {
   addProduct,
   fetchProducts,
   editProduct,
-  toggleProduct
+  toggleProduct,
 };

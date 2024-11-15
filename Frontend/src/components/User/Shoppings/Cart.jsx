@@ -20,7 +20,6 @@ export default function Cart() {
     try {
       const response = await axiosInstance.get(`/user/cart/${userData._id}`);
       setCartItems(response.data.cartItems.items);
-      console.log("cart ---------------------->", response.data.cartItems);
 
       setSubtota(response.data.cartItems.totalCartPrice);
     } catch (err) {
@@ -189,15 +188,10 @@ export default function Cart() {
                         INR {subtotal.toFixed(2)}
                       </span>
                     </div>
-                    <div className="flex justify-between text-red-600">
-                      <span>Discount (-0%)</span>
-                      <span>-INR {discount.toFixed(2)}</span>
-                    </div>
+                    <div className="flex justify-between text-red-600"></div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Delivery Fee</span>
-                      <span className="font-semibold">
-                        INR {deliveryFee.toFixed(2)}
-                      </span>
+                      <span className="font-semibold text-green-600">Free</span>
                     </div>
                     <div className="border-t border-gray-200 pt-3 mt-3">
                       <div className="flex justify-between font-semibold text-lg">
@@ -207,22 +201,6 @@ export default function Cart() {
                     </div>
                   </div>
                   <div className="mt-6 space-y-4">
-                    <div className="flex space-x-4">
-                      <div className="flex-1 relative">
-                        <input
-                          type="text"
-                          placeholder="Add promo code"
-                          className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-200 transition duration-200"
-                        />
-                        <Tag
-                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                          size={20}
-                        />
-                      </div>
-                      <button className="px-6 py-3 bg-black text-white rounded-md hover:bg-gray-800 transition duration-300 ease-in-out">
-                        Apply
-                      </button>
-                    </div>
                     <button
                       onClick={() => {
                         navigate("/checkout");

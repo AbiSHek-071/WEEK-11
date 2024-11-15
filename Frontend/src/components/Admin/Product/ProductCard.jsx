@@ -112,12 +112,14 @@ function ProductCard({ product, categories, setReload, offers }) {
 
             <div className="flex items-center space-x-2">
               <Switch
-                checked={isListed}
-                onCheckedChange={() => handleToggle(product._id, isListed)}
+                checked={product.isActive}
+                onCheckedChange={() =>
+                  handleToggle(product._id, product.isActive)
+                }
                 aria-label="Toggle listing"
               />
               <span className="text-sm font-medium">
-                {isListed ? "Listed" : "Unlisted"}
+                {product.isActive ? "Listed" : "Unlisted"}
               </span>
             </div>
           </div>

@@ -112,7 +112,7 @@ async function checkofferexist(req, res) {
 }
 async function deleteOffer(req, res) {
   try {
-    const { _id } = req.query; // Ensure _id is being passed correctly
+    const { _id } = req.query;
     const data = await Offer.deleteOne({ target_id: _id });
 
     if (data.deletedCount === 1) {
@@ -123,7 +123,7 @@ async function deleteOffer(req, res) {
       return res.status(400).json({ message: "Deletion failed" });
     }
   } catch (err) {
-    console.error(err); // Log the error for debugging
+    console.error(err);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 }

@@ -18,6 +18,28 @@ async function createOrder(req, res) {
       payment_method,
       cart_id,
     } = req.body;
+
+    console.log(
+      "user==============>",
+      user,
+      "cartItems==============>",
+      cartItems,
+      "total_amount==============>",
+      total_amount,
+      "total_discount==============>",
+      total_discount,
+      "coupon_Discount==============>",
+      coupon_Discount,
+      "total_price_with_discount==============>",
+      total_price_with_discount,
+      "shipping_address==============>",
+      shipping_address,
+      "payment_method==============>",
+      payment_method,
+      "cart_id==============>",
+      cart_id
+    );
+
     const products = [];
 
     console.log("TOTAL AMOUNT:", total_amount);
@@ -29,9 +51,9 @@ async function createOrder(req, res) {
           product: item.productId._id,
           qty: item.qty,
           size: item.size,
-          price: item.salePrice,
-          discount: 0,
-          total_price: item.salePrice,
+          price: item.discountedAmount || item.salePrice,
+          discount: item.discount || 0,
+          total_price: item.discountedAmount || item.salePrice,
         });
       }
     });
@@ -134,7 +156,8 @@ async function fetchOrders(req, res) {
     const orders = await Order.find({ user: _id })
       .populate("user")
       .populate("shipping_address")
-      .populate("order_items.product");
+      .populate("order_items.product")
+      .sort({ placed_at: -1 });
 
     if (!orders) {
       return res

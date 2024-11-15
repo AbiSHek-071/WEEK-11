@@ -14,7 +14,7 @@ import axiosInstance from "@/AxiosConfig";
 import { Switch } from "../../ui/switch";
 import { toast } from "sonner";
 import Pagination from "../../shared/Pagination";
-import { fetchCatOfferApi } from "@/APIs/Products/Offer";
+import { fetchCatOfferApi, removeOffer } from "@/APIs/Products/Offer";
 
 export default function Category() {
   const [categories, setCategories] = useState([]);
@@ -23,6 +23,8 @@ export default function Category() {
   const [totalPages, setTotalPages] = useState(0);
   const [offer, setOffer] = useState([]);
   const limit = 5;
+
+  const [reload, setReload] = useState(false);
 
   const navigate = useNavigate();
 
@@ -60,6 +62,18 @@ export default function Category() {
       toast.error("An error occurred. Please try again.");
     }
   }
+  async function removeCategoryOffer(_id) {
+    try {
+      const response = await removeOffer(_id);
+      toast.success(response.data.message);
+      setReload(true);
+    } catch (err) {
+      console.log(err);
+      if (err.response) {
+        toast.error(err.response.data.message);
+      }
+    }
+  }
 
   async function fetchCatOffer() {
     try {
@@ -73,7 +87,8 @@ export default function Category() {
   useEffect(() => {
     fetchData();
     fetchCatOffer();
-  }, [toggle, page]);
+    setReload(false);
+  }, [toggle, page, reload]);
 
   return (
     <div className="p-8">
@@ -122,12 +137,9 @@ export default function Category() {
                 <TableCell className="font-medium">
                   {categoryOffer ? (
                     <button
-                      onClick={() => {
-                        // Handle removing offer
-                        navigate(
-                          `/admin/remove-category-offer/${category._id}`
-                        );
-                      }}
+                      onClick={() =>
+                        removeCategoryOffer(categoryOffer.target_id)
+                      }
                       className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-200"
                     >
                       Remove Offer

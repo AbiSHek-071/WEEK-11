@@ -199,6 +199,72 @@ const dowloadSalesPDF = async (req, res) => {
   }
 };
 
+//download sales report in excel format
+
+const download_sales_report_xl = async (req, res) => {
+  try {
+    const { filterType, startDate, endDate } = req.query;
+    const filterQueries = generateDateFilterQuery(
+      filterType,
+      startDate,
+      endDate
+    );
+
+    const reports = await Order.find(filterQueries)
+      .populate("user")
+      .populate("shipping_address")
+      .populate("order_items.product")
+      .sort({ placed_at: -1 });
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Sales Report");
+
+    worksheet.columns = [
+      { header: "Product Name", key: "productName", width: 25 },
+      { header: "Quantity", key: "quantity", width: 10 },
+      { header: "Unit Price", key: "unitPrice", width: 15 },
+      { header: "Total Price", key: "totalPrice", width: 15 },
+      { header: "Discount", key: "discount", width: 15 },
+      { header: "Coupon Deduction", key: "couponDeduction", width: 15 },
+      { header: "Final Amount", key: "finalAmount", width: 15 },
+      { header: "Order Date", key: "orderDate", width: 20 },
+      { header: "Customer Name", key: "customer_name", width: 20 },
+      { header: "Payment Method", key: "paymentMethod", width: 20 },
+      { header: "Delivery Status", key: "deliveryStatus", width: 15 },
+    ];
+    reports.forEach((report) => {
+      const orderDate = new Date(report.placed_at).toLocaleDateString();
+
+      const products = report.order_items.map((item) => ({
+        productName: item.product.name,
+        quantity: item.quantity,
+        OrginaalUnitPrice: item.price,
+        totalPrice: item.totalProductPrice,
+        discount: report.total_discount,
+        couponDeduction: report.coupon_discount,
+        finalAmount: report.total_price_with_discount,
+        orderDate: orderDate,
+        customer_name: report.userId.name,
+        paymentMethod: report.payment_method,
+        deliveryStatus: report.order_status,
+      }));
+
+      products.forEach((product) => {
+        worksheet.addRow(product);
+      });
+    });
+
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=sales_report.xlsx"
+    );
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (error) {
+    res.status(500).json({ message: "Failed to generate sales report", error });
+  }
+};
+
 module.exports = {
   fetchSalesReport,
   dowloadSalesPDF,

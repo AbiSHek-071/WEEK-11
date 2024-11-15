@@ -76,9 +76,19 @@ export default function Checkout() {
   async function fetchCartItems() {
     try {
       const response = await axiosInstance.get(`/user/cart/${userData._id}`);
+      //items in the cart
       setCartItems(response.data.cartItems.items);
+      //id of the cart
       setCart_id(response.data.cartItems._id);
+      //total price for entaire cart
       settotal_amount(response.data.cartItems.totalCartPrice);
+      //discount amount from the offer
+      const offerDiscount = response.data.cartItems.total_discount;
+      console.log("Offer Discount ::::::::::>", offerDiscount);
+      //total_discount for the order offerDiscount+coupon_Discount
+      console.log("coupon_discount::::::>", coupon_Discount);
+      settotal_discount(offerDiscount + coupon_Discount);
+      console.log("Total Discount::::>", offerDiscount + coupon_Discount);
     } catch (err) {
       console.log(err);
       if (err.response) {
@@ -110,15 +120,39 @@ export default function Checkout() {
         return reactToast.warn("select an Payment before proceeds");
       }
 
+      //+++++++++++++++CONSOLE TESTED++++++++++++++++++++++++++++++++
+
+      // console.log("user::::::::>", userData._id);
+      // console.log("cartItems::::::::>", cartItems);
+      // console.log("total_amount::::::::>", total_amount);
+      // console.log("total_discount::::::::>", total_discount);
+      // console.log("coupon_discount::::::::>", coupon_Discount);
+      // console.log(
+      //   " total_price_with_discount::::::::>",
+      //   total_price_with_discount
+      // );
+      // console.log("shipping address::::::::>", selectedAddress);
+      // console.log("payment method::::::::>", selectedPaymentMethod);
+      // console.log("cart_id::::::::>", cart_id);
+
       const response = await axiosInstance.post("/user/order", {
+        //id of the user who order's
         user: userData._id,
+        //items in the order
         cartItems,
+        //grand total Amount of the order
         total_amount,
+        //total discount the user get couponDisocunt+offerDiscount
         total_discount,
+        //coupon discount
         coupon_Discount,
+        //Grand total amount he paid after coupon discount total_amount - couponDiscount
         total_price_with_discount,
+        //His shipping address
         shipping_address: selectedAddress,
+        //method of payment
         payment_method: selectedPaymentMethod,
+        //id of his cart
         cart_id,
       });
       setOrderDetails(response?.data?.order);
@@ -179,7 +213,6 @@ export default function Checkout() {
 
       if (data.min_purchase_amount < total_amount) {
         setcoupon_Discount(calculatedDiscount);
-        settotal_discount(calculatedDiscount);
         setverifiedCouponCode(data.code);
       } else {
         toast.error("Sorry, the coupon is not valid for this purchase.");
@@ -239,7 +272,6 @@ export default function Checkout() {
     } else {
       settotal_price_with_discount(total_amount);
       setcoupon_Discount(0);
-      settotal_discount(0);
       setCouponData(null);
     }
   }, [total_discount, coupon_Discount, total_amount, couponData]);
@@ -288,18 +320,37 @@ export default function Checkout() {
                           {orderDetails?.payment_method}
                         </TableCell>
                       </TableRow>
-                      <TableRow key="5">
-                        <TableCell>Coupon Discount</TableCell>
+
+                      {/* Conditional Rendering for Coupon Discount */}
+                      {orderDetails?.coupon_discount > 0 && (
+                        <TableRow key="5">
+                          <TableCell>Coupon Discount</TableCell>
+                          <TableCell className="text-right">
+                            -INR {orderDetails?.coupon_discount}.00
+                          </TableCell>
+                        </TableRow>
+                      )}
+
+                      {/* Conditional Rendering for Total Savings */}
+                      {orderDetails?.total_discount > 0 && (
+                        <TableRow key="6">
+                          <TableCell>Total Savings</TableCell>
+                          <TableCell className="text-right">
+                            -INR {orderDetails?.total_discount}.00
+                          </TableCell>
+                        </TableRow>
+                      )}
+
+                      {/* Display 'Free' if shipping_fee is 0 */}
+                      <TableRow key="7">
+                        <TableCell>Shipping Fee</TableCell>
                         <TableCell className="text-right">
-                          -INR {orderDetails?.coupon_discount}.00
+                          {orderDetails?.shipping_fee === 0
+                            ? "Free"
+                            : `INR ${orderDetails?.shipping_fee}.00`}
                         </TableCell>
                       </TableRow>
-                      <TableRow key="6">
-                        <TableCell>Total Savings</TableCell>
-                        <TableCell className="text-right">
-                          -INR {orderDetails?.total_discount}.00
-                        </TableCell>
-                      </TableRow>
+
                       <TableRow key="4">
                         <TableCell>Amount</TableCell>
                         <TableCell className="text-right">
@@ -409,6 +460,7 @@ export default function Checkout() {
             </div>
           </section>
         </div>
+        {/* ===========billing section=============== */}
         <div className="w-full lg:w-1/3">
           <div className="bg-gray-100 p-6 rounded-md">
             {cartItems.map((item) =>
@@ -422,7 +474,12 @@ export default function Checkout() {
                   </div>
                   <div className="w-full">
                     <h3 className="font-semibold">{item.productId.name}</h3>
-                    <p>INR{item.salePrice.toFixed(2)}</p>
+                    <p>INR{item.discountedAmount.toFixed(2)}</p>
+                    {item.discountAmount > 0 && (
+                      <p className="text-red-400">
+                        you saved {item.discountAmount * item.qty}₹
+                      </p>
+                    )}
                     <p> Size: {item.size}</p>
                   </div>
                   <p>QTY:{item.qty}</p>
@@ -458,13 +515,13 @@ export default function Checkout() {
               {coupon_Discount > 0 && (
                 <div className="flex justify-between mb-2">
                   <span>Coupon Discount Amount:</span>
-                  <span>INR{coupon_Discount}</span>
+                  <span>INR{coupon_Discount.toFixed(2)}</span>
                 </div>
               )}
 
               <div className="flex justify-between font-semibold">
                 <span>Total:</span>
-                <span>INR {total_price_with_discount}</span>
+                <span>INR {total_price_with_discount.toFixed(2)}</span>
               </div>
             </div>
             <div className="mt-4 flex">
@@ -503,13 +560,13 @@ export default function Checkout() {
                 Place Order
               </Button>
             )}
-            {selectedPaymentMethod == "Razor Pay" && (
+            {selectedPaymentMethod == "Razor Pay" && selectedAddress && (
               <PaymentComponent
-                total={total_price_with_discount}
+                total={total_price_with_discount.toFixed(2)}
                 handlePlaceOrder={handlePlaceOrder}
               />
             )}
-            {selectedPaymentMethod == "wallet" && (
+            {selectedPaymentMethod == "wallet" && selectedAddress && (
               <Button
                 onClick={handleWalletPayment}
                 // onPress={onOpen}
@@ -520,11 +577,11 @@ export default function Checkout() {
                 Pay with your wallet
               </Button>
             )}
-            {selectedPaymentMethod == "" && (
+            {selectedPaymentMethod == "" || selectedAddress == "" ? (
               <Button className="mt-4 w-full h-16 rounded-md" color="primary">
-                Select a payment method
+                Select a payment method and Address
               </Button>
-            )}
+            ) : null}
           </div>
         </div>
       </div>

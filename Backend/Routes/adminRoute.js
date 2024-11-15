@@ -12,7 +12,9 @@ const orderController = require("../Controller/Admin/orderController");
 const offerController = require("../Controller/Admin/offerController");
 const couponController = require("../Controller/Admin/couponController");
 const salesController = require("../Controller/Admin/salesController");
+const bannerController = require("../Controller/Admin/bannerController");
 const adminAuth = require("../Middleware/adminAuth");
+const admin = require("../Models/admin");
 
 //...........ROUTES................
 
@@ -102,5 +104,10 @@ adminRoute.delete("/coupon", couponController.deleteCoupon);
 //sales report Controller routes
 adminRoute.get("/sales", salesController.fetchSalesReport);
 adminRoute.get("/sales/download/pdf", salesController.dowloadSalesPDF);
+
+//banner Controller routes
+adminRoute.post("/banner", bannerController.addBanner);
+adminRoute.get("/banner", bannerController.fetchBanners);
+adminRoute.patch("/banner/status", bannerController.toggleStatus);
 
 module.exports = adminRoute;

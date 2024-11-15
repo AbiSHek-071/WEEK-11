@@ -2,95 +2,87 @@ const bcrypt = require("bcrypt");
 const product = require("../../Models/product");
 const Category = require("../../Models/category");
 
-
-
 async function fetchProducts(req, res) {
   try {
     const { category, sleeve, size, search, sortBy } = req.query;
-    console.log(sortBy);
-    
-   
+
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
     const skip = (page - 1) * limit;
-    
 
-    //filtering based on category
-    const filterQueries = {isActive:true}
-    if(category){
+    // active category
+    let categoryIds = [];
+    if (category) {
       const categories = await Category.find({
         name: { $in: category.split(",") },
-      }).lean()
-
-      const categoryIds = categories.map((cat) => cat._id);
-      filterQueries["category"] = { $in: categoryIds }; 
+        isActive: true,
+      }).lean();
+      categoryIds = categories.map((cat) => cat._id);
+    } else {
+      const activeCategories = await Category.find({ isActive: true }).lean();
+      categoryIds = activeCategories.map((cat) => cat._id);
     }
 
-    //filtering based on sleeve
-    if(sleeve){
-      filterQueries.sleeve = {$in:sleeve.split(",")}
+    //filterQueries active categories
+    const filterQueries = { isActive: true, category: { $in: categoryIds } };
+
+    // Filter based on sleeve
+    if (sleeve) {
+      filterQueries.sleeve = { $in: sleeve.split(",") };
     }
 
-    //filtering based on size
-    if(size){
+    // Filter based on size
+    if (size) {
       filterQueries["sizes"] = {
         $elemMatch: {
-          size: {
-            $in: size.split(',')
-          },
-          stock : {$gt : 0}
-        }
+          size: { $in: size.split(",") },
+          stock: { $gt: 0 },
+        },
       };
-    }   
+    }
 
-
-    //include search to filter queries 
-    if(search){
+    //  search to filter queries
+    if (search) {
       filterQueries["$or"] = [
         { name: { $regex: search, $options: "i" } },
-        { description :{$regex:search,$options:"i"}},
-        {sleeve:{$regex:search,$options:"i"}},
+        { description: { $regex: search, $options: "i" } },
+        { sleeve: { $regex: search, $options: "i" } },
       ];
     }
 
-    //sorting 
+    // Sorting options
     const sort = {};
-    if(sortBy == "newest"){
+    if (sortBy == "newest") {
       sort["createdAt"] = -1;
-    }else if(sortBy == "price-low-to-high"){
+    } else if (sortBy == "price-low-to-high") {
       sort["price"] = 1;
-    }else if(sortBy == "price-high-to-low"){
+    } else if (sortBy == "price-high-to-low") {
       sort["price"] = -1;
-    }else if(sortBy == "name-a-to-z"){
+    } else if (sortBy == "name-a-to-z") {
       sort["name"] = 1;
-    }else if(sortBy == "name-z-to-a"){
-      sort["name"] = -1
+    } else if (sortBy == "name-z-to-a") {
+      sort["name"] = -1;
     }
-    
 
+    // Final ProductData
     const productData = await product
       .find(filterQueries)
-      .populate({
-        path: "category",
-        match: { isActive: true },
-        select: "name",
-      })
+      .populate("category")
       .sort(sort)
       .skip(skip)
       .limit(limit);
- 
 
+    // Count total products for pagination
     const totalProduct = await product.countDocuments(filterQueries);
 
-    
-
-    if (!productData) {
+    if (!productData.length) {
       return res
         .status(404)
-        .json({ message: "Unable to fetch Image", success: false });
+        .json({ message: "No products found", success: false });
     }
+
     return res.status(200).json({
-      message: "products fetched successfully",
+      message: "Products fetched successfully",
       success: true,
       productData,
       currentPage: page,
@@ -99,8 +91,10 @@ async function fetchProducts(req, res) {
     });
   } catch (err) {
     console.log(err);
+    res.status(500).json({ message: "Server error", success: false });
   }
 }
+
 async function fetchproduct(req, res) {
   try {
     const { id } = req.body;
@@ -115,18 +109,15 @@ async function fetchproduct(req, res) {
         .status(404)
         .json({ success: true, message: "Unable to Find the Product," });
     }
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: "Product Fetched",
-        product: productData,
-      });
+    return res.status(200).json({
+      success: true,
+      message: "Product Fetched",
+      product: productData,
+    });
   } catch (err) {
     console.log(err);
   }
 }
-
 
 async function fetchRelatedProducts(req, res) {
   try {
