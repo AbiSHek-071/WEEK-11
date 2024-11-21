@@ -92,11 +92,6 @@ async function fetchProducts(req, res) {
       calculateProductOfferinShop(product);
     });
 
-    console.log(
-      "::::::::::::::::::::::::::productData::::::::::::::::::::",
-      productData
-    );
-
     return res.status(200).json({
       message: "Products fetched successfully",
       success: true,

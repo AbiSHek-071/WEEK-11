@@ -1,5 +1,3 @@
-
-
 ////////////////Product Validation/////////////////////
 export function validateProduct(
   name,
@@ -56,12 +54,7 @@ export function validateProduct(
 }
 
 //////////Edit Product Validate///////////////////
-export function validateEditProduct(
-  name,
-  price,
-  description,
-  setError
-) {
+export function validateEditProduct(name, price, description, setError) {
   const error = {};
 
   if (!name?.trim()) {
@@ -93,7 +86,6 @@ export function validateEditProduct(
     return false;
   }
 }
-
 
 /////////////Category Validation////////////////////
 export function validateCategory(cname, description, setError) {
@@ -160,7 +152,6 @@ export function validateSignup(name, email, phone, password, setError) {
       "Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, and a number";
   }
 
-
   setError(error);
   if (Object.keys(error).length == 0) {
     return true;
@@ -168,8 +159,6 @@ export function validateSignup(name, email, phone, password, setError) {
     return false;
   }
 }
-
-
 
 ///////////////////////////Address Validation ////////////////////////////
 
@@ -249,8 +238,6 @@ export function validateAddress(
   return Object.keys(error).length === 0;
 }
 
-
-
 ///////////////////User Details Validation//////////////
 export function validateUserDetails(name, phone, setError) {
   const error = {};
@@ -275,5 +262,117 @@ export function validateUserDetails(name, phone, setError) {
   setError(error);
 
   // Return true if no errors, otherwise false
+  return Object.keys(error).length === 0;
+}
+
+//Add coupon Validation
+export function validateCouponDetails(
+  code,
+  description,
+  discountValue,
+  minPurchaseAmount,
+  maxDiscountAmount,
+  expirationDate,
+  usageLimit,
+  setError
+) {
+  console.log("somthing is happening");
+
+  const error = {};
+
+  // Code validation
+  if (!code?.trim()) {
+    error.code = "Code is required";
+  } else if (!/^[A-Z0-9]+$/.test(code.trim())) {
+    error.code =
+      "Code must be in capital letters and can only contain letters and numbers";
+  }
+
+  // Description validation
+  if (!description?.trim()) {
+    error.description = "Description is required";
+  }
+
+  // Discount Value validation
+  if (discountValue === undefined || discountValue === null) {
+    error.discountValue = "Discount value is required";
+  } else if (discountValue <= 0 || discountValue >= 99) {
+    error.discountValue =
+      "Discount value must be greater than 0 and less than 99";
+  }
+
+  // Minimum Purchase Amount validation
+  if (minPurchaseAmount === undefined || minPurchaseAmount === null) {
+    error.minPurchaseAmount = "Minimum purchase amount is required";
+  } else if (minPurchaseAmount < 100) {
+    error.minPurchaseAmount = "Minimum purchase amount must be at least 100";
+  }
+
+  // Maximum Discount Amount validation
+  if (maxDiscountAmount === undefined || maxDiscountAmount === null) {
+    error.maxDiscountAmount = "Maximum discount amount is required";
+  } else if (maxDiscountAmount <= minPurchaseAmount) {
+    error.maxDiscountAmount =
+      "Maximum discount amount must be greater than the minimum purchase amount";
+  } else if (maxDiscountAmount > 3000) {
+    error.maxDiscountAmount = "Maximum discount amount cannot exceed 3000";
+  }
+
+  // Expiration Date validation
+  if (!expirationDate) {
+    error.expirationDate = "Expiration date is required";
+  } else if (new Date(expirationDate) <= new Date()) {
+    error.expirationDate = "Expiration date must be a future date";
+  }
+
+  // Usage Limit validation
+  if (usageLimit === undefined || usageLimit === null) {
+    error.usageLimit = "Usage limit is required";
+  } else if (usageLimit <= 0) {
+    error.usageLimit = "Usage limit must be greater than 0";
+  } else if (usageLimit > 50) {
+    error.usageLimit = "Usage limit cannot exceed 50";
+  }
+
+  setError(error);
+
+  // Return error object
+  if (Object.keys(error).length == 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+export function validateOfferAdding(
+  offerName,
+  offerValue,
+  offerExpairyDate,
+  setError
+) {
+  let error = {}; // Initialize an error object
+
+  // Validate offerName - should start with a capital letter or be a number
+  const offerNamePattern = /^[A-Z][a-zA-Z0-9]*$/;
+  if (!offerNamePattern.test(offerName)) {
+    error.offerName =
+      "Offer name should start with a capital letter or be a number.";
+  }
+
+  // Validate offerValue - should be a number between 1 and 99
+  if (isNaN(offerValue) || offerValue < 1 || offerValue > 99) {
+    error.offerValue = "Offer value should be a number between 1 and 99.";
+  }
+
+  // Validate offerExpairyDate - should be a future date
+  const currentDate = new Date();
+  const expiryDate = new Date(offerExpairyDate);
+  if (expiryDate <= currentDate) {
+    error.offerExpairyDate = "Offer expiry date should be a future date.";
+  }
+
+  setError(error); // Set the error state
+
+  // Return true if there are no errors, otherwise return false
   return Object.keys(error).length === 0;
 }

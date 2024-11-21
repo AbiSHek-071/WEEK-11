@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 import React, { useState } from "react";
 
-function PaymentComponent({ total, handlePlaceOrder, setPayment_status }) {
+function ContiinuePayment({ total, onSuccess }) {
   console.log("---------->", total);
 
   const handleSubmit = () => {
@@ -14,9 +14,8 @@ function PaymentComponent({ total, handlePlaceOrder, setPayment_status }) {
       description: "STITCHERS E-COMMERCE PAYMENT TESTING",
       handler: function (response) {
         console.log("called function");
-        let payment_status = "Paid";
 
-        handlePlaceOrder(payment_status);
+        onSuccess();
       },
       prefill: {
         name: "Abhishek P",
@@ -29,16 +28,6 @@ function PaymentComponent({ total, handlePlaceOrder, setPayment_status }) {
       theme: {
         color: "#3399cc",
       },
-      modal: {
-        ondismiss: function () {
-          console.log(
-            "handle order on payment failed here :::::::::::::::::::::>"
-          );
-          let payment_status = "Failed";
-
-          handlePlaceOrder(payment_status);
-        },
-      },
     };
 
     const pay = new window.Razorpay(options);
@@ -49,12 +38,12 @@ function PaymentComponent({ total, handlePlaceOrder, setPayment_status }) {
     <div>
       <button
         onClick={handleSubmit}
-        className="bg-black text-white mt-4 w-full h-16 rounded-md"
+        className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded shadow-md hover:shadow-lg transition-all duration-300 ease-in-out"
       >
-        Pay with RazorPay and Place Order
+        Continue Payment Rs {total}
       </button>
     </div>
   );
 }
 
-export default PaymentComponent;
+export default ContiinuePayment;

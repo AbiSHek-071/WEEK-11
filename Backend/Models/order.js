@@ -1,3 +1,4 @@
+const { status } = require("express/lib/response");
 const mongoose = require("mongoose");
 
 const order_schema = new mongoose.Schema({
@@ -36,18 +37,47 @@ const order_schema = new mongoose.Schema({
         max: [100, "Discount cannot exceed 100%"],
         default: 0,
       },
+      order_status: {
+        type: String,
+        required: true,
+        enum: [
+          "Pending",
+          "Shipped",
+          "Delivered",
+          "Cancelled",
+          "Returned",
+          "Return Rejected",
+        ],
+        default: "Pending",
+      },
+      payment_status: {
+        type: String,
+        required: true,
+        enum: ["Pending", "Paid", "Failed", "Refunded"],
+        default: "Pending",
+      },
+      Delivered_on: {
+        type: Date,
+      },
       total_price: {
         type: Number,
         required: true,
       },
+      returnReq: {
+        request_status: {
+          type: String,
+          enum: ["Pending", "Accepted", "Rejected"],
+        },
+        reason: {
+          type: String,
+        },
+        explanation: {
+          type: String,
+        },
+      },
     },
   ],
-  order_status: {
-    type: String,
-    required: true,
-    enum: ["Pending", "Shipped", "Delivered", "Cancelled", "Returned"],
-    default: "Pending",
-  },
+
   total_amount: {
     type: Number,
     required: true,
@@ -70,12 +100,6 @@ const order_schema = new mongoose.Schema({
     type: String,
     required: true,
     enum: ["Razor Pay", "wallet", "Cash on Delivery"],
-  },
-  payment_status: {
-    type: String,
-    required: true,
-    enum: ["Pending", "Paid", "Failed", "Refunded"],
-    default: "Pending",
   },
   total_discount: {
     type: Number,
@@ -106,6 +130,10 @@ const order_schema = new mongoose.Schema({
   updatedAt: {
     type: Date,
     default: Date.now,
+  },
+  isReturnReq: {
+    type: Boolean,
+    default: false,
   },
 });
 

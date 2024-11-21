@@ -89,6 +89,9 @@ export default function Checkout() {
       console.log("coupon_discount::::::>", coupon_Discount);
       settotal_discount(offerDiscount + coupon_Discount);
       console.log("Total Discount::::>", offerDiscount + coupon_Discount);
+      if (response.data.cartItems.totalCartPrice <= 0) {
+        navigate("/");
+      }
     } catch (err) {
       console.log(err);
       if (err.response) {
@@ -111,7 +114,7 @@ export default function Checkout() {
   };
 
   //-----------------HANDLE PLACE ORDER------------------------------
-  async function handlePlaceOrder() {
+  async function handlePlaceOrder(payment_status) {
     try {
       if (!selectedAddress) {
         return reactToast.warn("select an adress before proceeds");
@@ -119,21 +122,26 @@ export default function Checkout() {
       if (!selectedPaymentMethod) {
         return reactToast.warn("select an Payment before proceeds");
       }
+      if (selectedPaymentMethod == "wallet") {
+        payment_status = "Paid";
+      } else if (typeof payment_status !== "string") {
+        payment_status = "Pending";
+      }
 
       //+++++++++++++++CONSOLE TESTED++++++++++++++++++++++++++++++++
 
-      // console.log("user::::::::>", userData._id);
-      // console.log("cartItems::::::::>", cartItems);
-      // console.log("total_amount::::::::>", total_amount);
-      // console.log("total_discount::::::::>", total_discount);
-      // console.log("coupon_discount::::::::>", coupon_Discount);
-      // console.log(
-      //   " total_price_with_discount::::::::>",
-      //   total_price_with_discount
-      // );
-      // console.log("shipping address::::::::>", selectedAddress);
-      // console.log("payment method::::::::>", selectedPaymentMethod);
-      // console.log("cart_id::::::::>", cart_id);
+      console.log("user::::::::>", userData._id);
+      console.log("cartItems::::::::>", cartItems);
+      console.log("total_amount::::::::>", total_amount);
+      console.log("total_discount::::::::>", total_discount);
+      console.log("coupon_discount::::::::>", coupon_Discount);
+      console.log(
+        " total_price_with_discount::::::::>",
+        total_price_with_discount
+      );
+      console.log("shipping address::::::::>", selectedAddress);
+      console.log("payment method::::::::>", selectedPaymentMethod);
+      console.log("cart_id::::::::>", cart_id);
 
       const response = await axiosInstance.post("/user/order", {
         //id of the user who order's
@@ -152,9 +160,13 @@ export default function Checkout() {
         shipping_address: selectedAddress,
         //method of payment
         payment_method: selectedPaymentMethod,
+        //payment status
+        payment_status,
         //id of his cart
         cart_id,
       });
+      console.log("after call");
+
       setOrderDetails(response?.data?.order);
 
       //updateCouponAfter order success
@@ -471,16 +483,40 @@ export default function Checkout() {
 
               {/* Cash on Delivery */}
               <label className="flex items-center justify-between cursor-pointer">
-                <div className="flex items-center">
+                <div className="flex items-center space-x-2">
+                  {" "}
+                  {/* Changed items-start to items-center and added space-x-2 */}
                   <input
                     type="radio"
                     name="paymentMethod"
                     value="Cash on Delivery"
-                    className="w-6 h-6 border-2 border-gray-400 rounded-full mr-2"
+                    className={`w-5 h-5 border-2 border-gray-400 rounded-full ${
+                      total_price_with_discount < 1000
+                        ? "opacity-50 cursor-not-allowed"
+                        : "cursor-pointer"
+                    }`}
                     onChange={handlePaymentMethodChange}
                     checked={selectedPaymentMethod === "Cash on Delivery"}
+                    disabled={total_price_with_discount < 1000}
                   />
-                  <span>Cash on delivery</span>
+                  <div className="">
+                    {" "}
+                    {/* Wrapped text elements in a div with gap */}
+                    <span
+                      className={`text-sm ${
+                        total_price_with_discount < 1000
+                          ? "opacity-70 cursor-not-allowed "
+                          : "cursor-pointer "
+                      }`}
+                    >
+                      Cash on delivery
+                    </span>
+                    {total_price_with_discount < 1000 && (
+                      <span className="text-xs text-red-500 bg-red-50 px-2 py-0.5 rounded-full">
+                        Minimum order amount ₹1000
+                      </span>
+                    )}
+                  </div>
                 </div>
               </label>
             </div>

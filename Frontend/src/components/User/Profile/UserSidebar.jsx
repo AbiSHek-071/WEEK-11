@@ -93,9 +93,9 @@ function UserSidebar() {
             onClick={() => {
               navigate("/home");
             }}
-            className="w-24 h-24 cursor-pointer bg-gray-300 rounded-full flex items-center justify-center text-gray-600 text-3xl font-bold"
+            className="w-24 h-24 cursor-pointer bg-gray-300 rounded-full flex items-center justify-center text-gray-600 text-xl font-semibold"
           >
-            AP
+            Home
           </div>
         </div>
         <nav className="flex-grow overflow-y-auto">

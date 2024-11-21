@@ -1,6 +1,7 @@
 import { addProductOfferApi } from "@/APIs/Products/Offer";
+import { validateOfferAdding } from "@/util/ValidationFunctions";
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 const AddProductOffer = () => {
@@ -8,28 +9,35 @@ const AddProductOffer = () => {
   const [offerName, setofferName] = useState("");
   const [offerValue, setofferValue] = useState(0);
   const [offerExpairyDate, setOfferExpairyDate] = useState();
+  const [error, setError] = useState({});
 
+  const navigate = useNavigate();
   async function handleAddOffer() {
-    console.log("id---------->", id);
-    console.log("productName---------->", productName);
-    console.log("offerName---------->", offerName);
-    console.log("offerValue---------->", offerValue);
-    console.log("offerExpairyDate---------->", offerExpairyDate);
-    try {
-      const target_type = "product";
-      const response = await addProductOfferApi(
-        id,
-        productName,
-        offerName,
-        offerValue,
-        offerExpairyDate,
-        target_type
-      );
-      toast.success(response.data.message);
-    } catch (err) {
-      console.log(err);
-      if (err.response) {
-        toast.error(err.response.data.message);
+    const validate = validateOfferAdding(
+      offerName,
+      offerValue,
+      offerExpairyDate,
+      setError
+    );
+
+    if (validate) {
+      try {
+        const target_type = "product";
+        const response = await addProductOfferApi(
+          id,
+          productName,
+          offerName,
+          offerValue,
+          offerExpairyDate,
+          target_type
+        );
+        toast.success(response.data.message);
+        navigate("/admin/product");
+      } catch (err) {
+        console.log(err);
+        if (err.response) {
+          toast.error(err.response.data.message);
+        }
       }
     }
   }
@@ -61,13 +69,17 @@ const AddProductOffer = () => {
                     id="name"
                     name="name"
                     type="text"
+                    value={offerName}
                     required
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-black focus:border-black sm:text-sm"
                     placeholder="Enter offer name"
                     onChange={(e) => {
-                      setofferName(e.target.value);
+                      setofferName(e.target.value.toUpperCase());
                     }}
                   />
+                  <span className="text-red-700   mt-10 ms-2">
+                    {error && error.offerName}
+                  </span>
                 </div>
                 <div>
                   <label
@@ -87,6 +99,9 @@ const AddProductOffer = () => {
                       setofferValue(e.target.value);
                     }}
                   />
+                  <span className="text-red-700   mt-10 ms-2">
+                    {error && error.offerValue}
+                  </span>
                 </div>
 
                 <div>
@@ -106,6 +121,9 @@ const AddProductOffer = () => {
                     }}
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-black focus:border-black sm:text-sm"
                   />
+                  <span className="text-red-700   mt-10 ms-2">
+                    {error && error.offerExpairyDate}
+                  </span>
                 </div>
               </div>
 

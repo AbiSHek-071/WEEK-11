@@ -4,6 +4,7 @@ import { AddCouponApi } from "@/APIs/Shopping/coupon";
 import { toast } from "sonner";
 import axiosInstance from "@/AxiosConfig";
 import { useNavigate } from "react-router-dom";
+import { validateCouponDetails } from "@/util/ValidationFunctions";
 
 function AddCoupon() {
   const navigate = useNavigate();
@@ -14,27 +15,42 @@ function AddCoupon() {
   const [maxDiscountAmount, setMaxDiscountAmount] = useState("");
   const [expirationDate, setExpirationDate] = useState("");
   const [usageLimit, setUsageLimit] = useState("");
+  const [error, setError] = useState({});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const coupon = {
-        code,
-        description,
-        discount_value: parseFloat(discountValue),
-        min_purchase_amount: parseFloat(minPurchaseAmount),
-        max_discount_amount: parseFloat(maxDiscountAmount),
-        expiration_date: new Date(expirationDate),
-        usage_limit: parseInt(usageLimit),
-        is_active: true,
-      };
-      const response = await AddCouponApi(coupon);
-      toast.success(response.data.message);
-      navigate("/admin/coupons");
-    } catch (err) {
-      console.log(err);
-      if (err.response) {
-        toast.error(err.response.data.message);
+    const validate = validateCouponDetails(
+      code,
+      description,
+      discountValue,
+      minPurchaseAmount,
+      maxDiscountAmount,
+      expirationDate,
+      usageLimit,
+      setError
+    );
+    console.log("validate::::::::::::>", validate);
+
+    if (validate) {
+      try {
+        const coupon = {
+          code,
+          description,
+          discount_value: parseFloat(discountValue),
+          min_purchase_amount: parseFloat(minPurchaseAmount),
+          max_discount_amount: parseFloat(maxDiscountAmount),
+          expiration_date: new Date(expirationDate),
+          usage_limit: parseInt(usageLimit),
+          is_active: true,
+        };
+        const response = await AddCouponApi(coupon);
+        toast.success(response.data.message);
+        navigate("/admin/coupons");
+      } catch (err) {
+        console.log(err);
+        if (err.response) {
+          toast.error(err.response.data.message);
+        }
       }
     }
   };
@@ -70,6 +86,9 @@ function AddCoupon() {
                     onChange={(e) => setCode(e.target.value)}
                     required
                   />
+                  <span className="text-red-700 bottom-5  mt-10 ms-2">
+                    {error && error.code}
+                  </span>
                 </div>
               </div>
               <div>
@@ -86,6 +105,9 @@ function AddCoupon() {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
+                <span className="text-red-700   mt-10 ms-2">
+                  {error && error.description}
+                </span>
               </div>
               <div>
                 <label
@@ -107,6 +129,9 @@ function AddCoupon() {
                     onChange={(e) => setDiscountValue(e.target.value)}
                     required
                   />
+                  <span className="text-red-700   mt-10 ms-2">
+                    {error && error.discountValue}
+                  </span>
                 </div>
               </div>
               <div>
@@ -128,6 +153,9 @@ function AddCoupon() {
                     value={minPurchaseAmount}
                     onChange={(e) => setMinPurchaseAmount(e.target.value)}
                   />
+                  <span className="text-red-700   mt-10 ms-2">
+                    {error && error.minPurchaseAmount}
+                  </span>
                 </div>
               </div>
               <div>
@@ -149,6 +177,9 @@ function AddCoupon() {
                     value={maxDiscountAmount}
                     onChange={(e) => setMaxDiscountAmount(e.target.value)}
                   />
+                  <span className="text-red-700   mt-10 ms-2">
+                    {error && error.maxDiscountAmount}
+                  </span>
                 </div>
               </div>
               <div>
@@ -173,6 +204,9 @@ function AddCoupon() {
                     onChange={(e) => setExpirationDate(e.target.value)}
                     required
                   />
+                  <span className="text-red-700   mt-10 ms-2">
+                    {error && error.expirationDate}
+                  </span>
                 </div>
               </div>
               <div>
@@ -197,6 +231,9 @@ function AddCoupon() {
                     value={usageLimit}
                     onChange={(e) => setUsageLimit(e.target.value)}
                   />
+                  <span className="text-red-700   mt-10 ms-2">
+                    {error && error.usageLimit}
+                  </span>
                 </div>
               </div>
             </div>

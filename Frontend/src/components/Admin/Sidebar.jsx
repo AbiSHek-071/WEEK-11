@@ -30,7 +30,11 @@ function Sidebar() {
         <nav className="p-4">
           <ul className="space-y-2">
             {[
-              { icon: <LayoutDashboard size={20} />, label: "Dashboard" },
+              {
+                path: "/admin/dashboard",
+                icon: <LayoutDashboard size={20} />,
+                label: "Dashboard",
+              },
               // Routes with NavLink for /admin/category, /admin/product, and /admin/customer
               {
                 path: "/admin/category",

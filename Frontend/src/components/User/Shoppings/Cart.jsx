@@ -201,15 +201,32 @@ export default function Cart() {
                     </div>
                   </div>
                   <div className="mt-6 space-y-4">
-                    <button
-                      onClick={() => {
-                        navigate("/checkout");
-                      }}
-                      className="w-full flex justify-center items-center space-x-2 bg-black text-white py-3 rounded-md hover:bg-gray-800 transition duration-300 ease-in-out"
-                    >
-                      <span>Go to Checkout</span>
-                      <ChevronRight size={20} />
-                    </button>
+                    {subtotal ? (
+                      <button
+                        onClick={() => {
+                          navigate("/checkout");
+                        }}
+                        className="w-full flex justify-center items-center space-x-2 bg-black text-white py-3 rounded-md hover:bg-gray-800 transition duration-300 ease-in-out"
+                      >
+                        <span>Go to Checkout</span>
+                        <ChevronRight size={20} />
+                      </button>
+                    ) : (
+                      <div className="flex justify-center flex-col items-center gap-3">
+                        <span className="text-lg font-semibold text-red-400">
+                          Current items in the cart are out of stock{" "}
+                        </span>
+                        <button
+                          onClick={() => {
+                            navigate("/shop");
+                          }}
+                          className="w-full flex justify-center items-center space-x-2 bg-black text-white py-3 rounded-md hover:bg-gray-800 transition duration-300 ease-in-out"
+                        >
+                          <span>Continue Shopping</span>
+                          <ChevronRight size={20} />
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

@@ -1,4 +1,4 @@
-const product = require("../Models/product");
+const Product = require("../Models/product");
 
 async function checkStockAvailability(req, res, next) {
   try {
@@ -6,7 +6,7 @@ async function checkStockAvailability(req, res, next) {
     console.log("cartItems:::CheckStock::::::::::>", cartItems);
 
     for (const item of cartItems) {
-      const product = await product.findById(item.productId._id);
+      const product = await Product.findById(item.productId._id);
       if (product) {
         const currentProduct = product.sizes.find((s) => s.size === item.size);
         if (currentProduct && currentProduct.stock < item.qty) {

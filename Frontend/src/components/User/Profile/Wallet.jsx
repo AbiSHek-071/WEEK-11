@@ -138,7 +138,7 @@ function Wallet() {
                     }`}
                   >
                     {transaction.transaction_type === "credit" ? "+" : "-"}₹
-                    {transaction.amount}
+                    {transaction.amount.toFixed(2)}
                   </p>
                 </div>
               </div>

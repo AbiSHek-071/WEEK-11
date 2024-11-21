@@ -3,6 +3,7 @@ import store from "@/store/store";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { Button } from "../ui/button";
 
 export default function ViewOrderDetails() {
   const adminData = useSelector((store) => store.admin.adminDatas);
@@ -28,6 +29,21 @@ export default function ViewOrderDetails() {
     return <div>Loading...</div>;
   }
 
+  async function handleDownloadInvoice() {
+    try {
+      const response = await axiosInstance.post(
+        "user/invoice/download",
+        { orderData },
+        { responseType: "blob" }
+      );
+
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      saveAs(blob, "Invoice.pdf");
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       <h1 className="text-2xl md:text-3xl font-bold mb-6">Order Details</h1>
@@ -51,16 +67,19 @@ export default function ViewOrderDetails() {
       )}
 
       <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
-        <div className="bg-gray-50 border-b border-gray-200 p-6 md:p-8">
-          <h2 className="text-2xl font-semibold">
-            Order #{orderData?.order_id || "N/A"}
-          </h2>
-          <p className="text-base text-gray-600 mt-2">
-            Placed on:{" "}
-            {orderData?.placed_at
-              ? new Date(orderData.placed_at).toLocaleDateString()
-              : "N/A"}
-          </p>
+        <div className="bg-gray-50 border-b border-gray-200 p-6 md:p-8 flex justify-between">
+          <div>
+            <h2 className="text-2xl font-semibold">
+              Order #{orderData?.order_id || "N/A"}
+            </h2>
+            <p className="text-base text-gray-600 mt-2">
+              Placed on:{" "}
+              {orderData?.placed_at
+                ? new Date(orderData.placed_at).toLocaleDateString()
+                : "N/A"}
+            </p>
+          </div>
+          <Button onClick={handleDownloadInvoice}>Download Invoice</Button>
         </div>
 
         <div className="p-6 md:p-8 space-y-8">
@@ -90,7 +109,6 @@ export default function ViewOrderDetails() {
                   Payment Information
                 </h3>
                 <p>Method: {orderData?.payment_method || "N/A"}</p>
-                <p>Status: {orderData?.order_status || "N/A"}</p>
               </div>
               {orderData?.order_status != "Cancelled" && (
                 <div>
@@ -167,12 +185,22 @@ export default function ViewOrderDetails() {
                     <p className="text-base text-gray-600">
                       Price: ₹{item?.price?.toFixed(2) || "0.00"}
                     </p>
+                    <p className="text-base text-gray-600">
+                      Payment Status: {item?.payment_status || "N/A"}
+                    </p>
                   </div>
                   <div className="text-right">
                     <p className="text-lg font-medium">Price:</p>
                     <p className="text-base text-gray-600">
                       ₹{item?.total_price?.toFixed(2) || "0.00"}
                     </p>
+
+                    <span className="text-green-800 font-semibold">
+                      Delivered on:
+                      {item?.Delivered_on
+                        ? new Date(item?.Delivered_on).toLocaleDateString()
+                        : null}
+                    </span>
                   </div>
                 </div>
               ))}

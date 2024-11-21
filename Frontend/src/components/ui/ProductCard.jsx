@@ -66,9 +66,7 @@ export default function ProductCard({ product }) {
       <div className="p-4">
         <h3 className="font-semibold text-lg mb-1 truncate">{name}</h3>
         <div className="flex justify-between items-center mb-2">
-          <p className="font-bold text-lg">
-            ₹{discountedAmount.toLocaleString() || salePrice.toLocaleString()}
-          </p>
+          <p className="font-bold text-lg">₹{discountedAmount || salePrice}</p>
 
           <div className="flex items-center">
             {[...Array(stars)].map((_, index) => (

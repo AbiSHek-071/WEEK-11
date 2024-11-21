@@ -13,6 +13,7 @@ const offerController = require("../Controller/Admin/offerController");
 const couponController = require("../Controller/Admin/couponController");
 const salesController = require("../Controller/Admin/salesController");
 const bannerController = require("../Controller/Admin/bannerController");
+const dashboardController = require("../Controller/Admin/dashboardController");
 const adminAuth = require("../Middleware/adminAuth");
 const admin = require("../Models/admin");
 
@@ -86,7 +87,11 @@ adminRoute.put(
 
 //orders Controller routes
 adminRoute.get("/orders", orderController.fetchOrders);
-adminRoute.patch("/status/:orderId/:newStatus", orderController.switchStatus);
+adminRoute.patch(
+  "/status/:orderId/:itemId/:newStatus",
+  orderController.switchStatus
+);
+adminRoute.patch("/return/response", orderController.respondToReturnReq);
 
 //offer Controller routes
 adminRoute.post("/product/offer", offerController.addProductOffer);
@@ -110,5 +115,8 @@ adminRoute.get("/sales/download/excel", salesController.downloadSalesExcel);
 adminRoute.post("/banner", bannerController.addBanner);
 adminRoute.get("/banner", bannerController.fetchBanners);
 adminRoute.patch("/banner/status", bannerController.toggleStatus);
+
+//dashboard Controller routes
+adminRoute.get("/dashboard", dashboardController.fetchDashboardData);
 
 module.exports = adminRoute;

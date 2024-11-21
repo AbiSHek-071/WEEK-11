@@ -28,7 +28,7 @@ async function fetchCategory(req, res) {
     const skip = (page - 1) * limit;
     const totalCategory = await Category.countDocuments();
 
-    const categories = await Category.find({}).skip(skip).limit(limit);;
+    const categories = await Category.find({}).skip(skip).limit(limit);
     if (!categories) {
       return res
         .status(404)
@@ -118,7 +118,6 @@ async function toggleCategory(req, res) {
   }
 }
 
-
 async function sendCatgories(req, res) {
   try {
     const categories = await Category.find({ isActive: true });
@@ -140,8 +139,6 @@ async function sendCatgories(req, res) {
   }
 }
 
-
-
 module.exports = {
   addCategory,
   fetchCategory,
@@ -149,5 +146,4 @@ module.exports = {
   editcategory,
   toggleCategory,
   sendCatgories,
-
 };

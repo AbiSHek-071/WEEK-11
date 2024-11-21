@@ -40,7 +40,6 @@ const AddBanner = () => {
       );
 
       const imageUrl = res.data.secure_url;
-      console.log("imageUrl:::::::::::::", imageUrl);
 
       const response = await addBannerApi(
         title,
@@ -48,7 +47,7 @@ const AddBanner = () => {
         advertisement,
         imageUrl
       );
-      navigate("/admin/product");
+      navigate("/admin/banner");
       return toast.success(response.data.messsage);
     } catch (err) {
       if (err.response) {

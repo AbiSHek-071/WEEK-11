@@ -21,6 +21,7 @@ import AddCoupon from "./components/Admin/Coupons/AddCoupon";
 import SalesReport from "./components/Admin/SalesReport";
 import AddBanner from "./components/Admin/banner/AddBanner";
 import Banner from "./components/Admin/banner/Banner";
+import Dashboard from "./components/Admin/Dashboard";
 
 function Admin() {
   return (
@@ -34,6 +35,15 @@ function Admin() {
       <div className="flex-grow ml-64 p-6 overflow-y-auto bg-gray-100">
         <Provider store={store}>
           <Routes>
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedAdminHome>
+                  {" "}
+                  <Dashboard />
+                </ProtectedAdminHome>
+              }
+            />
             <Route
               path="/category"
               element={

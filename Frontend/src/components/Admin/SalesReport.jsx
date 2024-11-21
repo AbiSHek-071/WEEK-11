@@ -1,6 +1,7 @@
 import axiosInstance from "@/AxiosConfig";
 import React, { useState, useEffect } from "react";
 import { saveAs } from "file-saver";
+import { toast } from "sonner";
 
 const SalesReport = () => {
   const [startDate, setStartDate] = useState("");
@@ -66,13 +67,31 @@ const SalesReport = () => {
             <input
               type="date"
               value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
+              onChange={(e) => {
+                const selectedDate = new Date(e.target.value);
+                const currentDate = new Date();
+
+                if (selectedDate > currentDate) {
+                  toast.error("Select a past date");
+                } else {
+                  setStartDate(e.target.value);
+                }
+              }}
               className="border border-gray-300 rounded px-3 py-2"
             />
             <input
               type="date"
               value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
+              onChange={(e) => {
+                const selectedEndDate = new Date(e.target.value);
+                const start = new Date(startDate);
+
+                if (selectedEndDate < start) {
+                  toast.error("End date cannot be earlier than the start date");
+                } else {
+                  setEndDate(e.target.value);
+                }
+              }}
               className="border border-gray-300 rounded px-3 py-2"
             />
           </>

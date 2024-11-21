@@ -119,37 +119,88 @@ userRoute.post(
 );
 userRoute.get("/orders/:_id", orderController.fetchOrders);
 userRoute.get("/order/:id", orderController.fetchOrderDetails);
-userRoute.patch(
-  "/order/return/:order_id",
-  userAuth.jwtVerification,
-  userAuth.checkUserBlocked,
-  orderController.returnOrder
-);
+// userRoute.patch(
+//   "/order/return/:order_id",
+//   userAuth.jwtVerification,
+//   userAuth.checkUserBlocked,
+//   orderController.returnOrder
+// );
 userRoute.put(
-  "/order/cancel/:order_id",
-  userAuth.jwtVerification,
-  userAuth.checkUserBlocked,
+  "/order/cancel/:order_id/:item_id",
+  // userAuth.jwtVerification,
+  // userAuth.checkUserBlocked,
   orderController.cancelOrder
 );
+//return request
+userRoute.post("/return/request", orderController.registerReturnReq);
+userRoute.post("/invoice/download", orderController.downloadInvoice);
+userRoute.patch("/order/finish-payment", orderController.finishPayment);
 
 //wishlist controller routes
-userRoute.post("/wishlist/add", wishlistController.addTOWishlist);
-userRoute.post("/wishlist/remove", wishlistController.removeFromWishlist);
+userRoute.post(
+  "/wishlist/add",
+  userAuth.jwtVerification,
+  userAuth.checkUserBlocked,
+  userAuth.jwtVerification,
+  userAuth.checkUserBlocked,
+  wishlistController.addTOWishlist
+);
+userRoute.post(
+  "/wishlist/remove",
+  userAuth.jwtVerification,
+  userAuth.checkUserBlocked,
+  wishlistController.removeFromWishlist
+);
 userRoute.get(
   "/wishlist/isexist",
   wishlistController.checkIsExistOnWishlistApi
 );
-userRoute.get("/wishlist", wishlistController.fetchWishlist);
-userRoute.post("/whishlist/movetocart", wishlistController.movetocart);
-userRoute.post("/whishlist/isoncart", wishlistController.checkisOnCart);
+userRoute.get(
+  "/wishlist",
+  userAuth.jwtVerification,
+  userAuth.checkUserBlocked,
+  wishlistController.fetchWishlist
+);
+userRoute.post(
+  "/whishlist/movetocart",
+  userAuth.jwtVerification,
+  userAuth.checkUserBlocked,
+  wishlistController.movetocart
+);
+userRoute.post(
+  "/whishlist/isoncart",
+  userAuth.jwtVerification,
+  userAuth.checkUserBlocked,
+  wishlistController.checkisOnCart
+);
 
 //coupon Controller routes
-userRoute.get("/coupon", couponController.fetchCouponDetails);
-userRoute.patch("/coupon", couponController.updateCoupon);
+userRoute.get(
+  "/coupon",
+  userAuth.jwtVerification,
+  userAuth.checkUserBlocked,
+  couponController.fetchCouponDetails
+);
+userRoute.patch(
+  "/coupon",
+  userAuth.jwtVerification,
+  userAuth.checkUserBlocked,
+  couponController.updateCoupon
+);
 
 //wallet controller routes
-userRoute.post("/wallet/add-money", walletController.addMoneytoWallet);
-userRoute.get("/wallet", walletController.fetchWallet);
+userRoute.post(
+  "/wallet/add-money",
+  userAuth.jwtVerification,
+  userAuth.checkUserBlocked,
+  walletController.addMoneytoWallet
+);
+userRoute.get(
+  "/wallet",
+  userAuth.jwtVerification,
+  userAuth.checkUserBlocked,
+  walletController.fetchWallet
+);
 
 //offer controller routes
 userRoute.get("/findoffer", offerController.fetchCorrectOffer);
