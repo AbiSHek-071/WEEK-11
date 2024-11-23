@@ -77,6 +77,7 @@ async function fetchCart(req, res) {
   try {
     const _id = req.params.id;
 
+    // Fetch the cart and populate without filtering
     const cartItems = await Cart.findOne({ userId: _id }).populate({
       path: "items.productId",
       populate: [
@@ -93,9 +94,15 @@ async function fetchCart(req, res) {
       });
     }
 
+    // Filter out items where productId.isActive is false
+    cartItems.items = cartItems.items.filter(
+      (item) => item.productId?.isActive
+    );
+
+    // Process each item
     cartItems.items.forEach((item) => {
       const product = item.productId;
-      const sizeData = product.sizes.find((s) => s.size === item.size);
+      const sizeData = product?.sizes?.find((s) => s.size === item.size);
 
       if (sizeData) {
         if (item.qty > sizeData.stock) {
@@ -103,22 +110,27 @@ async function fetchCart(req, res) {
         }
         item.totalProductPrice = item.qty * item.discountedAmount;
       }
-      if (item.qty == 0 && sizeData.stock > 1) {
+      if (item.qty === 0 && sizeData?.stock > 1) {
         item.qty = 1;
       }
     });
 
+    // Calculate offers for each item
     cartItems.items.forEach((item) => {
       calculateProductOfferinCart(item);
     });
+
+    // Calculate total cart price and discount
     cartItems.totalCartPrice = cartItems.items.reduce(
-      (total, item) => total + item.totalProductPrice,
+      (total, item) => total + (item.totalProductPrice || 0),
       0
     );
     cartItems.total_discount = cartItems.items.reduce(
-      (total, item) => total + item.discountAmount * item.qty,
+      (total, item) => total + (item.discountAmount || 0) * (item.qty || 0),
       0
     );
+
+    // Save updated cart items
     await cartItems.save();
 
     return res.status(200).json({

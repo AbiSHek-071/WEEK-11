@@ -7,8 +7,12 @@ const PDFDocument = require("pdfkit-table");
 
 function generateDateFilterQuery(filterType, startDate, endDate) {
   const now = new Date();
-  const filterQueries = {};
-
+  // const filterQueries = {};
+  const filterQueries = {
+    order_items: {
+      $elemMatch: { order_status: "Delivered" }, // Ensure at least one order item is delivered
+    },
+  };
   if (filterType === "custom" && startDate && endDate) {
     // Custom date range
     const start = new Date(startDate);
@@ -131,7 +135,7 @@ const dowloadSalesPDF = async (req, res) => {
       }
 
       pdfDoc.fontSize(14).font("Helvetica-Bold");
-      pdfDoc.text(`Report ${index + 1}:`).moveDown(0.5);
+      pdfDoc.text(`Order ${index + 1}:`).moveDown(0.5);
 
       pdfDoc.fontSize(10).font("Helvetica");
       pdfDoc.text(
@@ -229,7 +233,6 @@ async function downloadSalesExcel(req, res) {
       { header: "Product Name", key: "productName", width: 25 },
       { header: "Quantity", key: "quantity", width: 10 },
       { header: "Unit Price (RS)", key: "unitPrice", width: 15 },
-      { header: "Total Price (RS)", key: "totalPrice", width: 15 },
       { header: "Discount (RS)", key: "discount", width: 15 },
       { header: "Coupon (RS)", key: "couponDeduction", width: 15 },
       { header: "Final Amount (RS)", key: "finalAmount", width: 15 },

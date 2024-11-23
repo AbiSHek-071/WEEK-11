@@ -21,8 +21,6 @@ async function fetchCouponDetails(req, res) {
 }
 
 async function updateCoupon(req, res) {
-  console.log("call reached on updated coupon");
-
   try {
     const { coupon_id, user_id } = req.body;
     const couponData = await Coupon.findOne({ _id: coupon_id });

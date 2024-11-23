@@ -188,7 +188,7 @@ async function fetchDashboardData(req, res) {
         },
       },
       { $sort: { sales: -1 } },
-      { $limit: 8 },
+      { $limit: 10 },
       {
         $project: {
           _id: 0,

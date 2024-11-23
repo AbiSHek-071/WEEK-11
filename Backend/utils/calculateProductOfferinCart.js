@@ -8,25 +8,23 @@ function calculateProductOfferinCart(item) {
   let discountAmount = 0;
   let discountPercentage = 0;
 
-  // Determine the highest discount offer
+  // highest discount offer
   if (categoryOffer > productOffer) {
     discountAmount = (item.salePrice * categoryOffer) / 100;
-    discountPercentage = categoryOffer; // Category offer percentage
+    discountPercentage = categoryOffer;
   } else if (productOffer > categoryOffer) {
     discountAmount = (item.salePrice * productOffer) / 100;
-    discountPercentage = productOffer; // Product offer percentage
+    discountPercentage = productOffer;
   } else if (productOffer === categoryOffer && productOffer > 0) {
-    // If both are equal and greater than 0, apply either
     discountAmount = (item.salePrice * productOffer) / 100;
     discountPercentage = productOffer;
   }
 
   console.log("Final discountAmount outside:", discountAmount);
 
-  // Calculate the final price after discount
+  // final price after discount
   const discountedAmount = item.salePrice - discountAmount;
 
-  // Assign the discount-related fields to the item
   item.discount = discountPercentage;
   item.discountAmount = discountAmount;
   item.discountedAmount = discountedAmount;

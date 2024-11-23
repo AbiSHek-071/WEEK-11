@@ -1,8 +1,6 @@
 const offer = require("../../Models/offer");
 
 async function fetchCorrectOffer(req, res) {
-  console.log("api call recieved for finding the offers -----------------");
-
   try {
     const { product_id, category_id, product_price } = req.query;
 

@@ -311,9 +311,6 @@ export function validateCouponDetails(
   // Maximum Discount Amount validation
   if (maxDiscountAmount === undefined || maxDiscountAmount === null) {
     error.maxDiscountAmount = "Maximum discount amount is required";
-  } else if (maxDiscountAmount <= minPurchaseAmount) {
-    error.maxDiscountAmount =
-      "Maximum discount amount must be greater than the minimum purchase amount";
   } else if (maxDiscountAmount > 3000) {
     error.maxDiscountAmount = "Maximum discount amount cannot exceed 3000";
   }

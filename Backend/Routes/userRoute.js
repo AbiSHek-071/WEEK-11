@@ -43,6 +43,10 @@ userRoute.post("/change-password", userController.changePassword);
 userRoute.get("/products", productController.fetchProducts);
 userRoute.post("/fetchproduct", productController.fetchproduct);
 userRoute.post("/products/related", productController.fetchRelatedProducts);
+userRoute.get(
+  "/product/available",
+  productController.checkisProductSizeAvailabel
+);
 
 //review controller routes
 userRoute.post(

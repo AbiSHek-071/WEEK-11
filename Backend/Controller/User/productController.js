@@ -158,8 +158,70 @@ async function fetchRelatedProducts(req, res) {
     console.log(err);
   }
 }
+
+async function checkisProductSizeAvailabel(req, res) {
+  try {
+    const { cartItems } = req.query; // Ensure the request is sending data in the body
+
+    // Validate cartItems format
+    if (!Array.isArray(cartItems)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid cart items format" });
+    }
+
+    const unavailableItems = [];
+
+    for (const item of cartItems) {
+      const { productId, size, qty } = item;
+
+      const Product = await product.findOne({
+        _id: productId,
+        isActive: true,
+        "sizes.size": size,
+      });
+
+      if (!Product) {
+        unavailableItems.push({
+          productId,
+          size,
+          reason: "Product not found or inactive",
+        });
+        continue;
+      }
+
+      const sizeData = Product.sizes.find((s) => s.size === size);
+
+      if (!sizeData || sizeData.stock < qty) {
+        unavailableItems.push({
+          productId,
+          size,
+          reason: sizeData ? "Insufficient stock" : "Size not found",
+        });
+      }
+    }
+
+    if (unavailableItems.length > 0) {
+      return res.status(200).json({
+        success: false,
+        message: "Sorry Some items are Currently unavailable",
+        unavailableItems,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "All items are available",
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+}
+
 module.exports = {
   fetchproduct,
   fetchProducts,
   fetchRelatedProducts,
+  checkisProductSizeAvailabel,
 };

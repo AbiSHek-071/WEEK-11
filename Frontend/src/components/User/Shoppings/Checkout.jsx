@@ -18,6 +18,7 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@nextui-org/react";
+import { toast as toastiy } from "react-toastify";
 import {
   Table,
   TableHeader,
@@ -126,6 +127,14 @@ export default function Checkout() {
         payment_status = "Paid";
       } else if (typeof payment_status !== "string") {
         payment_status = "Pending";
+      }
+
+      const res = await axiosInstance.get("/user/product/available", {
+        params: { cartItems },
+      });
+
+      if (!res.data.success) {
+        return toastiy.error(res.data.message);
       }
 
       //+++++++++++++++CONSOLE TESTED++++++++++++++++++++++++++++++++
@@ -627,6 +636,7 @@ export default function Checkout() {
               <PaymentComponent
                 total={total_price_with_discount.toFixed(2)}
                 handlePlaceOrder={handlePlaceOrder}
+                cartItems={cartItems}
               />
             )}
             {selectedPaymentMethod == "wallet" && selectedAddress && (

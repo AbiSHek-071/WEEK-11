@@ -8,13 +8,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PlusCircle, Pencil } from "lucide-react";
+import { PlusCircle, Pencil, MoreVertical } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "@/AxiosConfig";
 import { Switch } from "../../ui/switch";
 import { toast } from "sonner";
 import Pagination from "../../shared/Pagination";
 import { fetchCatOfferApi, removeOffer } from "@/APIs/Products/Offer";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Category() {
   const [categories, setCategories] = useState([]);
@@ -62,6 +68,7 @@ export default function Category() {
       toast.error("An error occurred. Please try again.");
     }
   }
+
   async function removeCategoryOffer(_id) {
     try {
       const response = await removeOffer(_id);
@@ -91,96 +98,96 @@ export default function Category() {
   }, [toggle, page, reload]);
 
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-3xl font-bold">Categories</h1>
+    <div className="p-4 sm:p-6 md:p-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+        <div className="mb-4 sm:mb-0">
+          <h1 className="text-2xl sm:text-3xl font-bold">Categories</h1>
           <p className="text-gray-500">Dashboard &gt; Category</p>
         </div>
         <Button
           onClick={() => navigate("/admin/addcategory")}
-          className="bg-primary text-primary-foreground hover:bg-primary/90"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 w-full sm:w-auto"
         >
           <PlusCircle className="mr-2 h-4 w-4" /> Create Category
         </Button>
       </div>
-      <Table className="bg-white shadow-md rounded-lg">
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[200px]">Category Name</TableHead>
-            <TableHead>Added</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Offer</TableHead>
-            <TableHead>Offer Actions</TableHead>
-            <TableHead className="text-right">Action</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {categories.map((category) => {
-            // Check if the current category has an offer
-            const categoryOffer = offer.find(
-              (f) => f.target_id === category._id
-            );
+      <div className="overflow-x-auto">
+        <Table className="w-full bg-white shadow-md rounded-lg">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[200px]">Category Name</TableHead>
+              <TableHead className="hidden sm:table-cell">Added</TableHead>
+              <TableHead className="hidden md:table-cell">Status</TableHead>
+              <TableHead>Offer</TableHead>
+              <TableHead className="text-right">Action</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {categories.map((category) => {
+              const categoryOffer = offer.find(
+                (f) => f.target_id === category._id
+              );
 
-            return (
-              <TableRow key={category._id}>
-                <TableCell className="font-medium">{category.name}</TableCell>
-                <TableCell className="font-medium">
-                  {category.createdAt}
-                </TableCell>
-                <TableCell className="font-medium">
-                  {category.isActive ? "Enabled" : "Disabled"}discount
-                </TableCell>
-                <TableCell className="font-medium">
-                  {categoryOffer ? `${categoryOffer.offer_value}%` : "0%"}
-                </TableCell>
-                <TableCell className="font-medium">
-                  {categoryOffer ? (
-                    <button
-                      onClick={() =>
-                        removeCategoryOffer(categoryOffer.target_id)
-                      }
-                      className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-200"
-                    >
-                      Remove Offer
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => {
-                        navigate(
-                          `/admin/category-offer/${category._id}/${category.name}`
-                        );
-                      }}
-                      className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition duration-200"
-                    >
-                      Add Offer
-                    </button>
-                  )}
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end items-center space-x-2">
-                    <Button
-                      onClick={() => handleEdit(category._id)}
-                      variant="ghost"
-                      size="icon"
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Switch
-                      checked={category.isActive}
-                      onCheckedChange={() =>
-                        handleToggle(category._id, category.isActive)
-                      }
-                      className="data-[state=checked]:bg-primary"
-                    />
-                  </div>
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-      <Pagination page={page} setPage={setPage} totalPages={totalPages} />
+              return (
+                <TableRow key={category._id}>
+                  <TableCell className="font-medium">{category.name}</TableCell>
+                  <TableCell className="hidden sm:table-cell font-medium">
+                    {category.createdAt}
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell font-medium">
+                    {category.isActive ? "Enabled" : "Disabled"}
+                  </TableCell>
+                  <TableCell className="font-medium">
+                    {categoryOffer ? `${categoryOffer.offer_value}%` : "0%"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end items-center space-x-2">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onClick={() => handleEdit(category._id)}
+                          >
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              handleToggle(category._id, category.isActive)
+                            }
+                          >
+                            {category.isActive ? "Disable" : "Enable"}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => {
+                              if (categoryOffer) {
+                                removeCategoryOffer(categoryOffer.target_id);
+                              } else {
+                                navigate(
+                                  `/admin/category-offer/${category._id}/${category.name}`
+                                );
+                              }
+                            }}
+                          >
+                            {categoryOffer ? "Remove Offer" : "Add Offer"}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </div>
+      <div className="mt-4">
+        <Pagination page={page} setPage={setPage} totalPages={totalPages} />
+      </div>
     </div>
   );
 }

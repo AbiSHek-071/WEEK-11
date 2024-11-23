@@ -15,6 +15,7 @@ import {
   DollarSign,
   Package,
   ShoppingBag,
+  IndianRupee,
 } from "lucide-react";
 import axiosInstance from "@/AxiosConfig";
 
@@ -36,11 +37,7 @@ export default function Dashboard() {
         {React.createElement(icon, { className: "w-6 h-6 text-gray-400" })}
       </div>
       <div className="text-2xl font-bold mb-2">{value}</div>
-      <div className="flex items-center text-sm">
-        <ArrowUpRight className="w-4 h-4 text-green-500 mr-1" />
-        <span className="text-green-500 font-medium">{change}%</span>
-        <span className="text-gray-500 ml-1">from last month</span>
-      </div>
+      <div className="flex items-center text-sm"></div>
     </div>
   );
 
@@ -56,6 +53,8 @@ export default function Dashboard() {
       setTotalProducts(response.data.TotalProducts || 0);
       setSalesChartData(response.data.salesChart || []);
       setBestSellingProducts(response.data.bestProducts || []);
+      console.log("products:::::::::>", response.data.bestProducts);
+
       setBestSellingCategories(response.data.bestCategory || []);
     } catch (err) {
       console.error("Error fetching chart data:", err);
@@ -72,29 +71,17 @@ export default function Dashboard() {
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard
-          title="Total Customers"
-          value={TotalCustomers}
-          icon={Users}
-          change="2.5"
-        />
+        <StatCard title="Total Customers" value={TotalCustomers} icon={Users} />
         <StatCard
           title="Total Sales"
-          value={`$${totalSales}`}
-          icon={DollarSign}
-          change="3.2"
+          value={`₹ ${totalSales}`}
+          icon={IndianRupee}
         />
-        <StatCard
-          title="Total Orders"
-          value={totalOrders}
-          icon={Package}
-          change="1.8"
-        />
+        <StatCard title="Total Orders" value={totalOrders} icon={Package} />
         <StatCard
           title="Total Products"
           value={TotalProducts}
           icon={ShoppingBag}
-          change="4.1"
         />
       </div>
 

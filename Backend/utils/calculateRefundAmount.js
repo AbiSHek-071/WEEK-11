@@ -1,37 +1,36 @@
+const product = require("../Models/product");
+
 function calculateRefundAmount(theOrderData, item_id) {
   const orderData = theOrderData.toObject();
   const couponDiscountAmt = orderData.coupon_discount;
   const price_with_coupon = orderData.total_price_with_discount;
-  console.log(couponDiscountAmt);
 
   const total_without_coupon = price_with_coupon + couponDiscountAmt;
   const orderItems = orderData.order_items;
 
-  // Proportion of coupon applied
   if (couponDiscountAmt > 0) {
     orderItems.forEach((item) => {
-      console.log(item.total_price);
-
-      item.couponDiscountProportion =
-        (item.total_price / total_without_coupon) * couponDiscountAmt;
+      if (total_without_coupon > 0) {
+        item.couponDiscountProportion =
+          (item.total_price / total_without_coupon) * couponDiscountAmt;
+      } else {
+        item.couponDiscountProportion = 0;
+      }
     });
   }
 
-  // Corrected `find` condition
   const cancelledProduct = orderItems.find(
     (item) => item._id.toString() === item_id
   );
 
-  // Check if cancelledProduct is found
   if (!cancelledProduct) {
     throw new Error("Cancelled product not found in the order items");
   }
 
-  console.log("cancelledProduct:::::::::>", cancelledProduct);
-
-  const proportion = cancelledProduct.couponDiscountProportion;
+  const proportion = cancelledProduct.couponDiscountProportion || 0;
   const priceOfCancelledProduct =
-    cancelledProduct.total_price * cancelledProduct.qty;
+    (cancelledProduct.total_price || 0) * (cancelledProduct.qty || 1);
+
   return priceOfCancelledProduct - proportion;
 }
 

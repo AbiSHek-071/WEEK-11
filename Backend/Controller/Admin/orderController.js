@@ -37,12 +37,8 @@ async function switchStatus(req, res) {
         .json({ success: false, message: "Item not found" });
     }
     if (newStatus == "Delivered") {
-      console.log("newStatus::::::::>", newStatus);
-
       itemToUpdate.payment_status = "Paid";
       itemToUpdate.Delivered_on = new Date();
-
-      console.log("after delivered::::::::>", itemToUpdate);
     }
 
     itemToUpdate.order_status = newStatus;

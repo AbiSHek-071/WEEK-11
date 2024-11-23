@@ -3,7 +3,6 @@ const Product = require("../Models/product");
 async function checkStockAvailability(req, res, next) {
   try {
     const { cartItems } = req.body;
-    console.log("cartItems:::CheckStock::::::::::>", cartItems);
 
     for (const item of cartItems) {
       const product = await Product.findById(item.productId._id);

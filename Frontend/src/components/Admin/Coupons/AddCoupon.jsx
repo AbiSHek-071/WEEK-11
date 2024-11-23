@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Tag, Calendar, Users, Save } from "lucide-react";
 import { AddCouponApi } from "@/APIs/Shopping/coupon";
 import { toast } from "sonner";
-import axiosInstance from "@/AxiosConfig";
 import { useNavigate } from "react-router-dom";
 import { validateCouponDetails } from "@/util/ValidationFunctions";
 
@@ -29,7 +28,6 @@ function AddCoupon() {
       usageLimit,
       setError
     );
-    console.log("validate::::::::::::>", validate);
 
     if (validate) {
       try {
@@ -56,194 +54,206 @@ function AddCoupon() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        <div className="bg-white shadow-lg rounded-md overflow-hidden">
-          <div className="bg-gradient-to-r from-black to-gray-600 px-5 py-3">
-            <h1 className="text-2xl font-semibold text-white">
-              Add New Coupon
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center p-4">
+      <div className="w-full max-w-2xl">
+        <div className="bg-white shadow-2xl rounded-2xl overflow-hidden border border-gray-200">
+          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4">
+            <h1 className="text-3xl font-bold text-white tracking-wide">
+              Create Coupon
             </h1>
           </div>
-          <form onSubmit={handleSubmit} className="px-6 py-4 space-y-4">
-            <div className="space-y-2">
+          <form onSubmit={handleSubmit} className="p-6 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label
                   htmlFor="code"
-                  className="block text-base font-medium text-gray-700"
+                  className="block text-sm font-medium text-gray-700 mb-2"
                 >
                   Coupon Code
                 </label>
-                <div className="relative rounded-md shadow-sm">
+                <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Tag className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                    <Tag className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
                     type="text"
                     id="code"
-                    className="block w-full pl-10 pr-4 py-2 text-base border border-gray-300 rounded-md focus:ring focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
                     placeholder="SUMMER2023"
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
                     required
                   />
-                  <span className="text-red-700 bottom-5  mt-10 ms-2">
-                    {error && error.code}
-                  </span>
+                  {error.code && (
+                    <p className="text-red-500 text-xs mt-1">{error.code}</p>
+                  )}
                 </div>
               </div>
+
               <div>
                 <label
                   htmlFor="description"
-                  className="block text-base font-medium text-gray-700"
+                  className="block text-sm font-medium text-gray-700 mb-2"
                 >
                   Description
                 </label>
                 <input
                   id="description"
-                  className="block w-full px-3 py-2 text-base border border-gray-300 rounded-md focus:ring focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
                   placeholder="Enter coupon description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
-                <span className="text-red-700   mt-10 ms-2">
-                  {error && error.description}
-                </span>
+                {error.description && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {error.description}
+                  </p>
+                )}
               </div>
+
               <div>
                 <label
                   htmlFor="discount_value"
-                  className="block text-base font-medium text-gray-700"
+                  className="block text-sm font-medium text-gray-700 mb-2"
                 >
                   Discount Value (%)
                 </label>
-                <div className="relative rounded-md shadow-sm">
+                <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="text-gray-500 text-base">%</span>
+                    <span className="text-gray-500 text-sm">%</span>
                   </div>
                   <input
                     type="number"
                     id="discount_value"
-                    className="block w-full pl-10 pr-3 py-2 text-base border border-gray-300 rounded-md focus:ring focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
                     placeholder="20"
                     value={discountValue}
                     onChange={(e) => setDiscountValue(e.target.value)}
                     required
                   />
-                  <span className="text-red-700   mt-10 ms-2">
-                    {error && error.discountValue}
-                  </span>
+                  {error.discountValue && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {error.discountValue}
+                    </p>
+                  )}
                 </div>
               </div>
+
               <div>
                 <label
                   htmlFor="min_purchase_amount"
-                  className="block text-base font-medium text-gray-700"
+                  className="block text-sm font-medium text-gray-700 mb-2"
                 >
                   Minimum Purchase Amount
                 </label>
-                <div className="relative rounded-md shadow-sm">
+                <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="text-gray-500 text-base">₹</span>
+                    <span className="text-gray-500 text-sm">₹</span>
                   </div>
                   <input
                     type="number"
                     id="min_purchase_amount"
-                    className="block w-full pl-10 pr-3 py-2 text-base border border-gray-300 rounded-md focus:ring focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
                     placeholder="100"
                     value={minPurchaseAmount}
                     onChange={(e) => setMinPurchaseAmount(e.target.value)}
                   />
-                  <span className="text-red-700   mt-10 ms-2">
-                    {error && error.minPurchaseAmount}
-                  </span>
+                  {error.minPurchaseAmount && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {error.minPurchaseAmount}
+                    </p>
+                  )}
                 </div>
               </div>
+
               <div>
                 <label
                   htmlFor="max_discount_amount"
-                  className="block text-base font-medium text-gray-700"
+                  className="block text-sm font-medium text-gray-700 mb-2"
                 >
                   Maximum Discount Amount
                 </label>
-                <div className="relative rounded-md shadow-sm">
+                <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="text-gray-500 text-base">₹</span>
+                    <span className="text-gray-500 text-sm">₹</span>
                   </div>
                   <input
                     type="number"
                     id="max_discount_amount"
-                    className="block w-full pl-10 pr-3 py-2 text-base border border-gray-300 rounded-md focus:ring focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
                     placeholder="50"
                     value={maxDiscountAmount}
                     onChange={(e) => setMaxDiscountAmount(e.target.value)}
                   />
-                  <span className="text-red-700   mt-10 ms-2">
-                    {error && error.maxDiscountAmount}
-                  </span>
+                  {error.maxDiscountAmount && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {error.maxDiscountAmount}
+                    </p>
+                  )}
                 </div>
               </div>
+
               <div>
                 <label
                   htmlFor="expiration_date"
-                  className="block text-base font-medium text-gray-700"
+                  className="block text-sm font-medium text-gray-700 mb-2"
                 >
                   Expiration Date
                 </label>
-                <div className="relative rounded-md shadow-sm">
+                <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Calendar
-                      className="h-5 w-5 text-gray-400"
-                      aria-hidden="true"
-                    />
+                    <Calendar className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
                     type="date"
                     id="expiration_date"
-                    className="block w-full pl-10 pr-3 py-2 text-base border border-gray-300 rounded-md focus:ring focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
                     value={expirationDate}
                     onChange={(e) => setExpirationDate(e.target.value)}
                     required
                   />
-                  <span className="text-red-700   mt-10 ms-2">
-                    {error && error.expirationDate}
-                  </span>
+                  {error.expirationDate && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {error.expirationDate}
+                    </p>
+                  )}
                 </div>
               </div>
+
               <div>
                 <label
                   htmlFor="usage_limit"
-                  className="block text-base font-medium text-gray-700"
+                  className="block text-sm font-medium text-gray-700 mb-2"
                 >
                   Usage Limit
                 </label>
-                <div className="relative rounded-md shadow-sm">
+                <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Users
-                      className="h-5 w-5 text-gray-400"
-                      aria-hidden="true"
-                    />
+                    <Users className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
                     type="number"
                     id="usage_limit"
-                    className="block w-full pl-10 pr-3 py-2 text-base border border-gray-300 rounded-md focus:ring focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
                     placeholder="100"
                     value={usageLimit}
                     onChange={(e) => setUsageLimit(e.target.value)}
                   />
-                  <span className="text-red-700   mt-10 ms-2">
-                    {error && error.usageLimit}
-                  </span>
+                  {error.usageLimit && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {error.usageLimit}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
-            <div className="flex justify-end">
+            <div className="flex justify-end mt-6">
               <button
                 type="submit"
-                className="inline-flex items-center px-5 py-2.5 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-black hover:bg-gray-700 focus:outline-none focus:ring focus:ring-offset-1 focus:ring-indigo-500 transition duration-150 ease-in-out"
+                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg shadow-md hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-300"
               >
-                <Save className="h-5 w-5 mr-1" />
-                Add Coupon
+                <Save className="h-5 w-5 mr-2" />
+                Create Coupon
               </button>
             </div>
           </form>

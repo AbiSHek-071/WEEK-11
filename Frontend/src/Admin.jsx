@@ -1,164 +1,192 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
-import Login from "./components/Admin/Login";
-import ProductManagement from "./components/Admin/Product/ProductManagement";
-import Sidebar from "./components/Admin/Sidebar";
-import Category from "./components/Admin/Category/Category";
-import AddCategory from "./components/Admin/Category/AddCategory";
-import EditCategory from "./components/Admin/Category/EditCategory";
-import Customer from "./components/Admin/Customer";
-import AddProduct from "./components/Admin/Product/AddProduct";
 import { Provider } from "react-redux";
 import store from "./store/store";
 import ProtectedAdminHome from "./private/ProtectedAdminHome";
-import OrdersComponent from "./components/User/Profile/OrdersComponent";
-import AdminOrdersComponent from "./components/Admin/AdminOrdersComponent";
-import ViewOrderDetails from "./components/shared/ViewOrderDetails";
-import AddProductOffer from "./components/Admin/Offer/AddProductOffer";
-import AddCategoryOffer from "./components/Admin/Offer/AddCategoryOffer";
-import Coupons from "./components/Admin/Coupons/Coupons";
-import AddCoupon from "./components/Admin/Coupons/AddCoupon";
-import SalesReport from "./components/Admin/SalesReport";
-import AddBanner from "./components/Admin/banner/AddBanner";
-import Banner from "./components/Admin/banner/Banner";
-import Dashboard from "./components/Admin/Dashboard";
+
+// Lazy loaded components
+const Login = lazy(() => import("./components/Admin/Login"));
+const ProductManagement = lazy(() =>
+  import("./components/Admin/Product/ProductManagement")
+);
+const Sidebar = lazy(() => import("./components/Admin/Sidebar"));
+const Category = lazy(() => import("./components/Admin/Category/Category"));
+const AddCategory = lazy(() =>
+  import("./components/Admin/Category/AddCategory")
+);
+const EditCategory = lazy(() =>
+  import("./components/Admin/Category/EditCategory")
+);
+const Customer = lazy(() => import("./components/Admin/Customer"));
+const AddProduct = lazy(() => import("./components/Admin/Product/AddProduct"));
+const OrdersComponent = lazy(() =>
+  import("./components/User/Profile/OrdersComponent")
+);
+const AdminOrdersComponent = lazy(() =>
+  import("./components/Admin/AdminOrdersComponent")
+);
+const ViewOrderDetails = lazy(() =>
+  import("./components/shared/ViewOrderDetails")
+);
+const AddProductOffer = lazy(() =>
+  import("./components/Admin/Offer/AddProductOffer")
+);
+const AddCategoryOffer = lazy(() =>
+  import("./components/Admin/Offer/AddCategoryOffer")
+);
+const Coupons = lazy(() => import("./components/Admin/Coupons/Coupons"));
+const AddCoupon = lazy(() => import("./components/Admin/Coupons/AddCoupon"));
+const SalesReport = lazy(() => import("./components/Admin/SalesReport"));
+const AddBanner = lazy(() => import("./components/Admin/banner/AddBanner"));
+const Banner = lazy(() => import("./components/Admin/banner/Banner"));
+const Dashboard = lazy(() => import("./components/Admin/Dashboard"));
+
+// Loading component
+const Loading = () => (
+  <div className="flex justify-center items-center h-full">
+    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-blue-500"></div>
+  </div>
+);
 
 function Admin() {
   return (
-    <div className="flex h-screen">
-      {/* Sidebar: fixed and not scrollable */}
-      <div className="w-64 fixed h-full">
-        <Sidebar />
+    <div className="flex flex-col lg:flex-row min-h-screen">
+      {/* Sidebar: fixed on large screens, toggleable on small screens */}
+      <div className="lg:w-64 lg:fixed lg:h-full">
+        <Suspense fallback={<Loading />}>
+          <Sidebar />
+        </Suspense>
       </div>
 
       {/* Main content: scrollable area */}
-      <div className="flex-grow ml-64 p-6 overflow-y-auto bg-gray-100">
+      <div className="flex-grow lg:ml-64 p-6 overflow-y-auto bg-gray-100">
         <Provider store={store}>
-          <Routes>
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedAdminHome>
-                  {" "}
-                  <Dashboard />
-                </ProtectedAdminHome>
-              }
-            />
-            <Route
-              path="/category"
-              element={
-                <ProtectedAdminHome>
-                  {" "}
-                  <Category />
-                </ProtectedAdminHome>
-              }
-            />
-            <Route
-              path="/addcategory"
-              element={
-                <ProtectedAdminHome>
-                  <AddCategory />
-                </ProtectedAdminHome>
-              }
-            />
-            <Route path="/editcategory/:id" element={<EditCategory />} />
-            <Route
-              path="/product"
-              element={
-                <ProtectedAdminHome>
-                  <ProductManagement />
-                </ProtectedAdminHome>
-              }
-            />
-            <Route
-              path="/addproduct"
-              element={
-                <ProtectedAdminHome>
-                  <AddProduct />
-                </ProtectedAdminHome>
-              }
-            />
-            <Route
-              path="/customer"
-              element={
-                <ProtectedAdminHome>
-                  <Customer />
-                </ProtectedAdminHome>
-              }
-            />
-            <Route
-              path="/orders"
-              element={
-                <ProtectedAdminHome>
-                  <AdminOrdersComponent />
-                </ProtectedAdminHome>
-              }
-            />
-            <Route
-              path="orderdetails/:id"
-              element={
-                <ProtectedAdminHome>
-                  <ViewOrderDetails />
-                </ProtectedAdminHome>
-              }
-            />
-            <Route
-              path="product-offer/:id/:productName"
-              element={
-                <ProtectedAdminHome>
-                  <AddProductOffer />
-                </ProtectedAdminHome>
-              }
-            />
-            <Route
-              path="category-offer/:id/:categoryName"
-              element={
-                <ProtectedAdminHome>
-                  <AddCategoryOffer />
-                </ProtectedAdminHome>
-              }
-            />
-            <Route
-              path="coupons"
-              element={
-                <ProtectedAdminHome>
-                  <Coupons />
-                </ProtectedAdminHome>
-              }
-            />
-            <Route
-              path="addcoupon"
-              element={
-                <ProtectedAdminHome>
-                  <AddCoupon />
-                </ProtectedAdminHome>
-              }
-            />
-            <Route
-              path="sales-report"
-              element={
-                <ProtectedAdminHome>
-                  <SalesReport />
-                </ProtectedAdminHome>
-              }
-            />
-            <Route
-              path="banner"
-              element={
-                <ProtectedAdminHome>
-                  <Banner />
-                </ProtectedAdminHome>
-              }
-            />
-            <Route
-              path="add-banner"
-              element={
-                <ProtectedAdminHome>
-                  <AddBanner />
-                </ProtectedAdminHome>
-              }
-            />
-          </Routes>
+          <Suspense fallback={<Loading />}>
+            <Routes>
+              {/* Your existing routes */}
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedAdminHome>
+                    <Dashboard />
+                  </ProtectedAdminHome>
+                }
+              />
+              <Route
+                path="/category"
+                element={
+                  <ProtectedAdminHome>
+                    <Category />
+                  </ProtectedAdminHome>
+                }
+              />
+              <Route
+                path="/addcategory"
+                element={
+                  <ProtectedAdminHome>
+                    <AddCategory />
+                  </ProtectedAdminHome>
+                }
+              />
+              <Route path="/editcategory/:id" element={<EditCategory />} />
+              <Route
+                path="/product"
+                element={
+                  <ProtectedAdminHome>
+                    <ProductManagement />
+                  </ProtectedAdminHome>
+                }
+              />
+              <Route
+                path="/addproduct"
+                element={
+                  <ProtectedAdminHome>
+                    <AddProduct />
+                  </ProtectedAdminHome>
+                }
+              />
+              <Route
+                path="/customer"
+                element={
+                  <ProtectedAdminHome>
+                    <Customer />
+                  </ProtectedAdminHome>
+                }
+              />
+              <Route
+                path="/orders"
+                element={
+                  <ProtectedAdminHome>
+                    <AdminOrdersComponent />
+                  </ProtectedAdminHome>
+                }
+              />
+              <Route
+                path="orderdetails/:id"
+                element={
+                  <ProtectedAdminHome>
+                    <ViewOrderDetails />
+                  </ProtectedAdminHome>
+                }
+              />
+              <Route
+                path="product-offer/:id/:productName"
+                element={
+                  <ProtectedAdminHome>
+                    <AddProductOffer />
+                  </ProtectedAdminHome>
+                }
+              />
+              <Route
+                path="category-offer/:id/:categoryName"
+                element={
+                  <ProtectedAdminHome>
+                    <AddCategoryOffer />
+                  </ProtectedAdminHome>
+                }
+              />
+              <Route
+                path="coupons"
+                element={
+                  <ProtectedAdminHome>
+                    <Coupons />
+                  </ProtectedAdminHome>
+                }
+              />
+              <Route
+                path="addcoupon"
+                element={
+                  <ProtectedAdminHome>
+                    <AddCoupon />
+                  </ProtectedAdminHome>
+                }
+              />
+              <Route
+                path="sales-report"
+                element={
+                  <ProtectedAdminHome>
+                    <SalesReport />
+                  </ProtectedAdminHome>
+                }
+              />
+              <Route
+                path="banner"
+                element={
+                  <ProtectedAdminHome>
+                    <Banner />
+                  </ProtectedAdminHome>
+                }
+              />
+              <Route
+                path="add-banner"
+                element={
+                  <ProtectedAdminHome>
+                    <AddBanner />
+                  </ProtectedAdminHome>
+                }
+              />
+            </Routes>
+          </Suspense>
         </Provider>
       </div>
     </div>

@@ -21,6 +21,7 @@ import Wishlist from "./components/User/Shoppings/Wishlist";
 import WishlistPage from "./Pages/WishlistPage";
 import PaymentComponent from "./util/PaymentComponent";
 import Wallet from "./components/User/Profile/Wallet";
+import PageNotFound from "./components/shared/PageNotFound";
 
 function User() {
   return (
@@ -91,6 +92,8 @@ function User() {
           </ProtectedHome>
         }
       />
+
+      <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 }

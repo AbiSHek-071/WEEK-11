@@ -11,21 +11,22 @@ import Login from "./components/Admin/Login";
 import LandingPage from "./Pages/LandingPage";
 import ProtectedAdminLogin from "./private/ProtectedAdminLogin";
 import { ToastContainer } from "react-toastify";
+import PageNotFound from "./components/shared/PageNotFound";
 
 function App() {
   return (
     <>
-      <Toaster richColors position='bottom-right' />
-      <ToastContainer position='bottom-right' />
+      <Toaster richColors position="bottom-right" />
+      <ToastContainer position="bottom-right" />
       <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
         <Provider store={store}>
           <Router>
             <Routes>
-              <Route path='/' element={<LandingPage />} />
-              <Route path='/*' element={<User />} />
-              <Route path='/admin/*' element={<Admin />} />
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/*" element={<User />} />
+              <Route path="/admin/*" element={<Admin />} />
               <Route
-                path='/admin/login'
+                path="/admin/login"
                 element={
                   <ProtectedAdminLogin>
                     <Login />

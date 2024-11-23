@@ -5,6 +5,7 @@ const Product = require("../../Models/product");
 const Wallet = require("../../Models/wallet");
 const calculateRefundAmount = require("../../utils/calculateRefundAmount");
 const { refundAmounttoWallet } = require("../../utils/refundAmounttoWallet");
+const product = require("../../Models/product");
 
 async function createOrder(req, res) {
   try {
@@ -20,8 +21,6 @@ async function createOrder(req, res) {
       payment_status,
       cart_id,
     } = req.body;
-
-    console.log("payment status recieved as ::::::>", payment_status);
 
     const products = [];
 
@@ -174,30 +173,6 @@ async function fetchOrderDetails(req, res) {
   }
 }
 
-// async function returnOrder(req, res) {
-//   try {
-//     const { order_id } = req.params;
-
-//     const updatedData = await Order.findByIdAndUpdate(
-//       { _id: order_id },
-//       { order_status: "Returned" },
-//       { new: true }
-//     );
-//     if (!updatedData) {
-//       return res
-//         .status(404)
-//         .json({ success: false, message: "Unable to return your order" });
-//     }
-//     return res.status(200).json({
-//       success: true,
-//       message: "Your order has been successfully returned",
-//     });
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).json({ success: false, message: "Server error" });
-//   }
-// }
-
 async function cancelOrder(req, res) {
   try {
     const { order_id, item_id } = req.params;
@@ -227,6 +202,7 @@ async function cancelOrder(req, res) {
     await orderData.save();
     if (orderData.payment_method !== "Cash on Delivery") {
       const refundAmount = calculateRefundAmount(orderData, item_id);
+      console.log("the refund amount::::::>", refundAmount);
 
       refundAmounttoWallet(orderData.user, refundAmount);
 
@@ -262,7 +238,6 @@ async function registerReturnReq(req, res) {
     }
 
     const returnItem = orderData.order_items.find((item) => item._id == itemId);
-    console.log("returnItem::::::::::>", returnItem);
 
     if (!returnItem) {
       return res.status(404).json({ message: "Item not found in order" });

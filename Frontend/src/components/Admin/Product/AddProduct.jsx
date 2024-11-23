@@ -17,6 +17,7 @@ import axiosInstance from "@/AxiosConfig";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { validateProduct } from "../../../util/ValidationFunctions.jsx";
+import Loading from "@/components/shared/Loading";
 
 export default function AddProduct() {
   const navigate = useNavigate();
@@ -42,6 +43,7 @@ export default function AddProduct() {
   const [sleeve, setSleeve] = useState("");
   const [catId, setCatId] = useState(null);
   const [error, setError] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     async function fetchCat() {
@@ -56,6 +58,7 @@ export default function AddProduct() {
       }
     }
     fetchCat();
+    setIsLoading(false);
   }, []);
 
   const handleImageUpload = (e, index) => {
@@ -120,6 +123,7 @@ export default function AddProduct() {
     );
     if (validate) {
       try {
+        setIsLoading(true);
         const convertBlobUrlToFile = async (blobUrl) => {
           const response = await fetch(blobUrl);
           const blob = await response.blob();
@@ -164,6 +168,7 @@ export default function AddProduct() {
           sleeve,
           uploadedImageUrls,
         });
+        setIsLoading(false);
         navigate("/admin/product");
         toast.success(response.data.message);
       } catch (err) {
@@ -391,9 +396,14 @@ export default function AddProduct() {
             >
               Cancel
             </Button>
-            <Button onClick={handleAddProduct}>Add Product</Button>
+            {isLoading ? (
+              <Button>Product adding...</Button>
+            ) : (
+              <Button onClick={handleAddProduct}>Add Product</Button>
+            )}
           </div>
         </div>
+        <Loading isLoading={isLoading} />
       </main>
     </div>
   );
