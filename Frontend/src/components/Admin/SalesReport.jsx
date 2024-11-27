@@ -2,6 +2,7 @@ import axiosInstance from "@/AxiosConfig";
 import React, { useState, useEffect } from "react";
 import { saveAs } from "file-saver";
 import { toast } from "sonner";
+import Pagination from "../shared/Pagination";
 
 const SalesReport = () => {
   const [startDate, setStartDate] = useState("");
@@ -9,6 +10,11 @@ const SalesReport = () => {
   const [filterType, setFilterType] = useState("daily");
   const [orders, setOrders] = useState([]);
   const [totalSales, setTotalSales] = useState(0);
+
+  //pagination
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const limit = 15;
 
   const handlePdfDownload = async () => {
     try {
@@ -39,23 +45,28 @@ const SalesReport = () => {
 
   useEffect(() => {
     const fetchOrders = async () => {
-      const response = await axiosInstance.get("/admin/sales", {
-        params: {
-          filterType,
-          startDate,
-          endDate,
-        },
-      });
+      const response = await axiosInstance.get(
+        `/admin/sales?page=${page}&limit=${limit}`,
+        {
+          params: {
+            filterType,
+            startDate,
+            endDate,
+          },
+        }
+      );
       const data = await response.data.orders;
       const totalsaleData = await response.data.totalSales;
 
       setOrders(data);
       setTotalSales(totalsaleData);
+      setTotalPages(response.data.totalPages);
+      setPage(response.data.currentPage);
     };
 
     fetchOrders();
     console.log("filterType ------>", filterType);
-  }, [startDate, endDate, filterType]);
+  }, [startDate, endDate, filterType, page]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -209,6 +220,7 @@ const SalesReport = () => {
           </p>
         </div>
       )}
+      <Pagination page={page} setPage={setPage} totalPages={totalPages} />
     </div>
   );
 };

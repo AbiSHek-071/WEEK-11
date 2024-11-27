@@ -113,6 +113,14 @@ export default function AddProduct() {
   };
 
   async function handleAddProduct() {
+
+    if(!catId){
+      return toast.error("SELECT A CATEGORY TO CONTINUE")
+    }
+    if(!sleeve){
+      return toast.error("SELECT A SLEEVE TO CONTINUE")
+    }
+
     const validate = validateProduct(
       name,
       price,
@@ -312,15 +320,9 @@ export default function AddProduct() {
                   </div>
                 </div>
                 <div>
+                 
                   <Input
-                    onChange={(e) => setPrice(e.target.value)}
-                    placeholder="Enter Regular Price here..."
-                  />
-                  <span className="text-red-700  mt-10 ms-2">
-                    {error && error.price}
-                  </span>
-                  <Input
-                    onChange={(e) => setSalePrice(e.target.value)}
+                    onChange={(e) => {setSalePrice(e.target.value); setPrice(e.target.value)}}
                     placeholder="Enter Sale Price here..."
                     className="mt-4"
                   />

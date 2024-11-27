@@ -38,6 +38,7 @@ userRoute.post(
 );
 userRoute.post("/reset-password", userController.resetPassword);
 userRoute.post("/change-password", userController.changePassword);
+userRoute.post("/referal", userController.referal);
 
 //product controller routes
 userRoute.get("/products", productController.fetchProducts);
@@ -47,6 +48,8 @@ userRoute.get(
   "/product/available",
   productController.checkisProductSizeAvailabel
 );
+
+userRoute.patch("/referal/skip", userController.skipReferal);
 
 //review controller routes
 userRoute.post(

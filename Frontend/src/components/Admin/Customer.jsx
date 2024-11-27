@@ -14,7 +14,7 @@ import axiosInstance from "@/AxiosConfig";
 
 import { toast } from "sonner";
 import { Input } from "../ui/input";
-import { Search } from "lucide-react";
+import { FolderX, Search } from "lucide-react";
 import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "@/store/slice/userSlice";
@@ -96,22 +96,10 @@ export default function Customer() {
           <h1 className='text-3xl font-bold text-gray-900'>Consumers List</h1>
           <p className='text-sm text-gray-500 mt-1'>Dashboard &gt; Consumers</p>
         </div>
-        <div className='flex w-full sm:w-auto max-w-sm items-center space-x-2'>
-          <div className='relative w-full'>
-            <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400' />
-            <Input
-              type='text'
-              placeholder='Search consumers'
-              className='pl-10 pr-4 py-2 w-full'
-            />
-          </div>
-          <Button type='submit' className='whitespace-nowrap'>
-            Search
-          </Button>
-        </div>
+        
       </div>
       <div className='bg-white shadow-md rounded-lg overflow-hidden'>
-        <Table>
+        {users.length != 0 && <Table>
           <TableHeader>
             <TableRow className='bg-gray-100'>
               <TableHead className='w-[100px]'>Avatar</TableHead>
@@ -152,9 +140,16 @@ export default function Customer() {
               </TableRow>
             ))}
           </TableBody>
-        </Table>
-        <Pagination page={page} setPage={setPage} totalPages={totalPages} />
+        </Table>}
+
+        {users.length !== 0 && <Pagination page={page} setPage={setPage} totalPages={totalPages} />}
       </div>
+        {users.length == 0 && <div className="flex items-center justify-center h-[50vh]">
+      <div className="text-center">
+        <FolderX className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+        <h1 className="text-2xl font-semibold text-gray-900">No Customers Yet</h1>
+      </div>
+    </div>}
     </div>
   );
 }

@@ -12,6 +12,7 @@ const AddBanner = () => {
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [advertisement, setAdvertisement] = useState("");
+  const [isLoading,setIsLoading] = useState(false);
 
   //preview image
   const [previewImage, setpreviewImage] = useState("");
@@ -26,6 +27,7 @@ const AddBanner = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setIsLoading(true);
       //upload Image to Cloudinary
       const UploadFile = image;
       console.log("UploadFile::::::::::::::::", UploadFile);
@@ -47,6 +49,7 @@ const AddBanner = () => {
         advertisement,
         imageUrl
       );
+      setIsLoading(false);
       navigate("/admin/banner");
       return toast.success(response.data.messsage);
     } catch (err) {
@@ -168,12 +171,17 @@ const AddBanner = () => {
           >
             Cancel
           </button>
-          <button
+          {isLoading ?<button
+            type="submit"
+            className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+          >
+            Saving...
+          </button> :<button
             type="submit"
             className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
           >
             Save
-          </button>
+          </button>}
         </div>
       </form>
     </div>

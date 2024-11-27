@@ -146,11 +146,12 @@ export function validateSignup(name, email, phone, password, setError) {
   if (!password?.trim()) {
     error.password = "Password is required";
   } else if (
-    !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password.trim())
+    !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/.test(password.trim())
   ) {
     error.password =
       "Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, and a number";
   }
+  
 
   setError(error);
   if (Object.keys(error).length == 0) {

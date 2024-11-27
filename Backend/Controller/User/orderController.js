@@ -112,42 +112,60 @@ async function manageProductQty(order_items) {
   }
 }
 
-async function manageProductQtyAfterCancel(order_items) {
-  for (const item of order_items) {
-    try {
-      const product = await Product.findById(item.product);
-      const sizeObject = product.sizes.find((size) => size.size === item.size);
+//function to calcuate and update the cancelled order size and stock
+async function manageProductQtyAfterCancel(itemToUpdate) {
+  try {
+    const product = await Product.findById(itemToUpdate.product);
 
-      if (sizeObject) {
-        sizeObject.stock += item.qty;
-        product.totalStock += item.qty;
-        await product.save();
-      } else {
-        console.warn(`Size ${item.size} not found for product ${product._id}`);
-      }
-    } catch (error) {
-      console.error(`Error fetching product ${item.product}:`, error);
+    const sizeObject = product.sizes.find(
+      (size) => size.size === itemToUpdate.size
+    );
+
+    if (sizeObject) {
+      sizeObject.stock += itemToUpdate.qty;
+      product.totalStock += itemToUpdate.qty;
+
+      await product.save();
+    } else {
+      console.warn(
+        `Size ${itemToUpdate.size} not found for product ${product._id}`
+      );
     }
+  } catch (error) {
+    console.error(`Error fetching product ${itemToUpdate.product}:`, error);
   }
 }
 
 async function fetchOrders(req, res) {
   try {
     const { _id } = req.params;
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
+    const totalOrders = await Order.countDocuments();
+
     const orders = await Order.find({ user: _id })
       .populate("user")
       .populate("shipping_address")
       .populate("order_items.product")
-      .sort({ placed_at: -1 });
+      .sort({ placed_at: -1 })
+      .skip(skip)
+      .limit(limit);
 
     if (!orders) {
       return res
         .status(404)
         .json({ success: true, message: "Order Fetch failed" });
     }
-    return res
-      .status(200)
-      .json({ success: true, message: "Order Fetched Successfully", orders });
+    return res.status(200).json({
+      success: true,
+      message: "Order Fetched Successfully",
+      orders,
+      currentPage: page,
+      totalPages: Math.ceil(totalOrders / limit),
+      totalOrders,
+    });
   } catch (err) {
     console.log(err);
   }
@@ -197,12 +215,11 @@ async function cancelOrder(req, res) {
 
     itemToUpdate.order_status = "Cancelled";
 
-    manageProductQtyAfterCancel(orderData.order_items);
+    manageProductQtyAfterCancel(itemToUpdate);
 
     await orderData.save();
     if (orderData.payment_method !== "Cash on Delivery") {
       const refundAmount = calculateRefundAmount(orderData, item_id);
-      console.log("the refund amount::::::>", refundAmount);
 
       refundAmounttoWallet(orderData.user, refundAmount);
 

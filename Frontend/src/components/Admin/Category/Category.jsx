@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PlusCircle, Pencil, MoreVertical } from "lucide-react";
+import { PlusCircle, Pencil, MoreVertical, FolderX } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "@/AxiosConfig";
 import { Switch } from "../../ui/switch";
@@ -45,7 +45,7 @@ export default function Category() {
       if (err.response && err.response.status === 404) {
         return toast.error(err.response.data.message);
       }
-      toast.error("An error occurred. Please try again.");
+      // toast.error("An error occurred. Please try again.");
     }
   }
 
@@ -98,6 +98,9 @@ export default function Category() {
   }, [toggle, page, reload]);
 
   return (
+    <>
+    
+
     <div className="p-4 sm:p-6 md:p-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
         <div className="mb-4 sm:mb-0">
@@ -112,7 +115,7 @@ export default function Category() {
         </Button>
       </div>
       <div className="overflow-x-auto">
-        <Table className="w-full bg-white shadow-md rounded-lg">
+        {categories.length != 0 && <Table className="w-full bg-white shadow-md rounded-lg">
           <TableHeader>
             <TableRow>
               <TableHead className="w-[200px]">Category Name</TableHead>
@@ -123,6 +126,9 @@ export default function Category() {
             </TableRow>
           </TableHeader>
           <TableBody>
+
+          
+
             {categories.map((category) => {
               const categoryOffer = offer.find(
                 (f) => f.target_id === category._id
@@ -183,11 +189,18 @@ export default function Category() {
               );
             })}
           </TableBody>
-        </Table>
+        </Table>}
+        {categories.length == 0 && <div className="flex items-center justify-center h-[50vh]">
+      <div className="text-center">
+        <FolderX className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+        <h1 className="text-2xl font-semibold text-gray-900">No categories added yet</h1>
+      </div>
+    </div>}
       </div>
       <div className="mt-4">
         <Pagination page={page} setPage={setPage} totalPages={totalPages} />
       </div>
-    </div>
+    </div></>
+    
   );
 }

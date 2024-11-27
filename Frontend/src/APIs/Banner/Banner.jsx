@@ -12,8 +12,8 @@ export const addBannerApi = async (title, subtitle, advertisement, image) => {
     image,
   });
 };
-export const fetchBannersAdminApi = async () => {
-  return await axiosInstance.get("/admin/banner");
+export const fetchBannersAdminApi = async (page, limit) => {
+  return await axiosInstance.get(`/admin/banner?page=${page}&limit=${limit}`);
 };
 
 export const fetchBannersApi = async () => {

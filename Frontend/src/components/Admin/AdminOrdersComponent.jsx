@@ -11,6 +11,7 @@ import {
   Newspaper,
   Bell,
   AlertCircle,
+  FolderX,
 } from "lucide-react";
 import axiosInstance from "@/AxiosConfig";
 import { useNavigate } from "react-router-dom";
@@ -18,6 +19,7 @@ import { toast } from "sonner";
 import ConfirmationModal from "../shared/confirmationModal";
 import { Button } from "../ui/button";
 import ConfirmationModalwithButtons from "../shared/ConfirmationModalwithButtons";
+import Pagination from "../shared/Pagination";
 
 const statusOptions = ["Pending", "Shipped", "Delivered"];
 
@@ -46,6 +48,11 @@ export default function AdminOrdersComponent() {
   const navigate = useNavigate();
   const [permenent, setpermenent] = useState("");
   const [reload, setreload] = useState(false);
+
+  //pagination
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const limit = 10;
 
   const handleStatusChange = async (orderId, itemId, newStatus) => {
     if (newStatus === "Cancelled") {
@@ -108,7 +115,9 @@ export default function AdminOrdersComponent() {
 
   async function fetchOrders() {
     try {
-      const response = await axiosInstance.get("admin/orders");
+      const response = await axiosInstance.get(`admin/orders?page=${page}&limit=${limit}`);
+      setTotalPages(response.data.totalPages);
+      setPage(response.data.currentPage)
       setOrders(response.data.orders);
     } catch (err) {
       console.log(err);
@@ -174,7 +183,7 @@ export default function AdminOrdersComponent() {
   useEffect(() => {
     fetchOrders();
     setreload(false);
-  }, [reload]);
+  }, [reload,page]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -187,21 +196,12 @@ export default function AdminOrdersComponent() {
       />
       <h1 className="text-3xl font-bold mb-6"> Orders Dashboard</h1>
       <div className="mb-6">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search orders by ID, customer name, or email..."
-            className="w-full pl-10 pr-4 py-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-300 focus:border-blue-300"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <Search className="absolute left-3 top-3.5 text-gray-400" size={20} />
-        </div>
+        
       </div>
 
       <div className="bg-white shadow-md rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full">
+          {filteredOrders.length != 0 &&  <table className="w-full">
             <thead className="bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
               <tr>
                 <th className="px-4 py-3 sm:px-6">Order ID</th>
@@ -420,9 +420,16 @@ export default function AdminOrdersComponent() {
                 </React.Fragment>
               ))}
             </tbody>
-          </table>
+          </table>}
+
         </div>
       </div>
+          {filteredOrders.length == 0 &&<div className="flex items-center justify-center h-[50vh]">
+      <div className="text-center">
+        <FolderX className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+        <h1 className="text-2xl font-semibold text-gray-900">No Orders Yet</h1>
+      </div>
+    </div>}
       <ConfirmationModalwithButtons
         isOpen={isOpenWithButton}
         onOpenChange={setIsOpenWithButton}
@@ -433,6 +440,7 @@ export default function AdminOrdersComponent() {
         onConfirm={modalContent.onConfirm}
         onCancel={modalContent.onCancel}
       />
+      <Pagination page={page} setPage={setPage} totalPages={totalPages} />
     </div>
   );
 }

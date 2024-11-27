@@ -6,6 +6,7 @@ import visa from "../../../assets/visa.png";
 import master from "../../../assets/master.png";
 import rupya from "../../../assets/rupya.png";
 import verify from "../../../assets/verify.svg";
+import Pending from "../../../assets/pending.svg";
 
 import { toast as reactToast, ToastContainer } from "react-toastify";
 import { toast } from "sonner";
@@ -338,8 +339,32 @@ export default function Checkout() {
               <ModalHeader className="mx-auto">Order Summary</ModalHeader>
               <ModalBody>
                 <div className="flex flex-col items-center">
-                  <img src={verify} alt="" className="h-20 my-5" />
-                  <h2 className="flex">Payment successfully Completed</h2>
+                  {orderDetails.order_items.every(
+                    (item) => item.payment_status === "Paid"
+                  ) ? (
+                    <img src={verify} alt="" className="h-20 my-5" />
+                  ) : orderDetails.order_items.some(
+                      (item) => item.payment_status === "Failed"
+                    ) ? (
+                    <img src={Pending} alt="" className="h-20 my-5" />
+                  ) : (
+                    <img src={Pending} alt="" className="h-20 my-5" />
+                  )}
+
+                  {orderDetails.order_items.every(
+                    (item) => item.payment_status === "Paid"
+                  ) ? (
+                    <h2 className="flex">Payment successfully Completed</h2>
+                  ) : orderDetails.order_items.some(
+                      (item) => item.payment_status === "Failed"
+                    ) ? (
+                    <h2 className="flex">Order Placed.Payment Failed</h2>
+                  ) : (
+                    <h2 className="flex">
+                      Order Placed.Payment status pending
+                    </h2>
+                  )}
+
                   <Table
                     aria-label="Example static collection table"
                     className="my-7"

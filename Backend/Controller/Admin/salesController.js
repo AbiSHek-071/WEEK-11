@@ -55,10 +55,11 @@ function generateDateFilterQuery(filterType, startDate, endDate) {
 //fetch sales report
 async function fetchSalesReport(req, res) {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
+
     const { filterType, startDate, endDate } = req.query;
-    console.log("filterType------------>", filterType);
-    console.log("startDate------------>", startDate);
-    console.log("endDate------------>", endDate);
 
     const filterQueries = generateDateFilterQuery(
       filterType,
@@ -66,11 +67,14 @@ async function fetchSalesReport(req, res) {
       endDate
     );
 
+    const totalSalesCount = await Order.countDocuments(filterQueries);
     const orders = await Order.find(filterQueries)
       .populate("user")
       .populate("shipping_address")
       .populate("order_items.product")
-      .sort({ placed_at: -1 });
+      .sort({ placed_at: -1 })
+      .skip(skip)
+      .limit(limit);
 
     let totalSales = orders.reduce((total, order) => {
       const orderTotal = order.order_items.reduce((sum, item) => {
@@ -79,9 +83,13 @@ async function fetchSalesReport(req, res) {
       return total + orderTotal;
     }, 0);
 
-    console.log("totalSales---------->", totalSales);
-
-    res.status(200).json({ sucess: true, orders, totalSales });
+    res.status(200).json({
+      sucess: true,
+      orders,
+      totalSales,
+      currentPage: page,
+      totalPages: Math.ceil(totalSalesCount / limit),
+    });
     // console.log(orders);
   } catch (err) {
     console.log(err);

@@ -6,6 +6,7 @@ import {
   Calendar,
   Users,
   Layers,
+  FolderX,
 } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
@@ -83,7 +84,7 @@ export default function Component() {
           </button>
         </div>
         <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
-          {coupons.map((coupon) => (
+          {coupons.length != 0 && coupons.map((coupon) => (
             <div
               key={coupon._id}
               className="rounded-lg shadow-md p-6 relative hover:shadow-lg transition duration-300 border border-gray-200"
@@ -152,6 +153,12 @@ export default function Component() {
             </div>
           ))}
         </div>
+        {coupons.length == 0 &&<div className="flex items-center justify-center h-[50vh]">
+      <div className="text-center">
+        <FolderX className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+        <h1 className="text-2xl font-semibold text-gray-900">No Coupons added yet</h1>
+      </div>
+    </div>}
       </div>
       <ConfirmationModal
         isOpen={isOpen}

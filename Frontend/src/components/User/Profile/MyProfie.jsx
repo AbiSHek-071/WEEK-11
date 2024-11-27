@@ -6,6 +6,7 @@ import { addUser } from "@/store/slice/userSlice";
 import { toast } from "sonner";
 import Address from "./Address";
 import { validateUserDetails } from "@/util/ValidationFunctions";
+import ReferalCode from "./ReferalCode";
 function MyProfie() {
   //redux
   const userData = useSelector((store) => store.user.userDatas);
@@ -16,6 +17,7 @@ function MyProfie() {
   const [name, setName] = useState(userData.name);
   const [phone, setPhone] = useState(userData.phone);
   const [error, setError] = useState({});
+  const [selectedAddress, setSelectedAddress] = useState();
 
   //FUNCTIONS
   async function handleUpdate() {
@@ -43,7 +45,7 @@ function MyProfie() {
   // })
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
+    <div className="container mx-auto px-4 py-8 max-w-6xl sm:px-1 sm:py-1">
       <div className="flex flex-col justify-between ">
         <h1 className="text-2xl md:text-3xl font-bold mb-4">My Profile</h1>
         <div className="flex items-center gap-2 text-xs md:text-sm text-gray-600 mb-6 md:mb-8">
@@ -191,7 +193,13 @@ function MyProfie() {
           </div>
         </div>
       </div>
-      <Address />
+
+      <Address
+        selectedAddress={selectedAddress}
+        setSelectedAddress={setSelectedAddress}
+      />
+
+      <ReferalCode />
     </div>
   );
 }

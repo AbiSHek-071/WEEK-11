@@ -4,14 +4,35 @@ const { refundAmounttoWallet } = require("../../utils/refundAmounttoWallet");
 
 async function fetchOrders(req, res) {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
+    const totalOrders = await Order.countDocuments();
+
     const orders = await Order.find()
       .populate("user")
       .populate("shipping_address")
       .populate("order_items.product")
-      .sort({ placed_at: -1 });
-    res.status(200).json({ sucess: true, orders });
+      .sort({ placed_at: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    res.status(200).json({
+      success: true,
+      orders,
+      currentPage: page,
+      totalPages: Math.ceil(totalOrders / limit),
+      totalOrders,
+    });
   } catch (err) {
-    console.log(err);
+    console.error(err);
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: "Internal server error",
+        error: err.message,
+      });
   }
 }
 

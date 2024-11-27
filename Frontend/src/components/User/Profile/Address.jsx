@@ -13,7 +13,7 @@ export default function Address({ selectedAddress, setSelectedAddress }) {
   async function fetchAddress() {
     try {
       const response = await axiosInstance.get(`/user/address/${userData._id}`);
-      console.log(response.data.address);
+      console.log("address",response.data.address);
       setSelectedAddress(response.data.address[0]);
       setAddresses(response.data.address);
     } catch (err) {
@@ -184,6 +184,7 @@ export default function Address({ selectedAddress, setSelectedAddress }) {
               selectedAddress === address ? "border-black" : "border-gray-200"
             } rounded-lg p-4 hover:shadow-md transition-shadow`}
           >
+            
             <div className="flex justify-between items-start mb-2">
               <h3 className="font-semibold text-lg">{address.name}</h3>
               <div className="flex space-x-2">

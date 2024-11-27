@@ -319,7 +319,7 @@ export default function ProductDetails({
                   );
                 })}
               </div>
-              {product.totalStock <= 15 && product.totalStock > 1 && (
+              {product.totalStock <= 15 && product.totalStock >= 1 && (
                 <h6 className="mt-5 text-red-500">
                   Total Stock Left: {product.totalStock}
                 </h6>

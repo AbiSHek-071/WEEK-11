@@ -25,7 +25,12 @@ async function addBanner(req, res) {
 
 async function fetchBanners(req, res) {
   try {
-    const banners = await Banner.find();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
+    const totalBanner = await Banner.countDocuments();
+
+    const banners = await Banner.find().skip(skip).limit(limit);
     if (!banners) {
       return res
         .status(404)
@@ -35,6 +40,8 @@ async function fetchBanners(req, res) {
       success: true,
       message: "banners fetched successfullt",
       banners,
+      currentPage: page,
+      totalPages: Math.ceil(totalBanner / limit),
     });
   } catch (err) {
     console.log(err);

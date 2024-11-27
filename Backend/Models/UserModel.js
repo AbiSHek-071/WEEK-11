@@ -19,9 +19,17 @@ const UserSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
+  referalCode: {
+    type: String,
+    trim: true,
+  },
   isActive: {
     type: Boolean,
     default: true,
+  },
+  usedReferral: {
+    type: Boolean,
+    default: false,
   },
   googleId: {
     type: String,

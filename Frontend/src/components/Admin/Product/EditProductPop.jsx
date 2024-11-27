@@ -27,28 +27,22 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import axiosInstance from "@/AxiosConfig";
 import { toast } from "sonner";
-import {validateEditProduct} from "../../../util/ValidationFunctions"
+import { validateEditProduct } from "../../../util/ValidationFunctions";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 function EditProductPop({ product, categories, setReload }) {
+  useEffect(() => {}, []);
 
-  useEffect(()=>{
-
-  },[])
-
-  
-  
   const [sizes, setSizes] = useState(product.sizes || []);
-  
 
   const [editName, setEditName] = useState(product.name);
   const [editDescription, setEditDescription] = useState(product.description);
   const [editCategory, setEditCategory] = useState(product.category._id);
   const [editPrice, setEditPrice] = useState(product.price);
-  const [editSalePrice,setEditSalePrice] = useState(product.salePrice);
+  const [editSalePrice, setEditSalePrice] = useState(product.salePrice);
   const [editSleeve, setEditSleeve] = useState(product.sleeve);
   const [editSizes, setEditSizes] = useState(product.sizes);
   const [editImages, setEditImages] = useState(product.images);
-
 
   const navigate = useNavigate();
   const [images, setImages] = useState([]);
@@ -56,16 +50,14 @@ function EditProductPop({ product, categories, setReload }) {
   const [croppedPixels, setCroppedPixels] = useState([]);
   const [croppedImages, setCroppedImages] = useState([]);
   const [zooms, setZooms] = useState([1]);
-  const[error,setError] = useState({})
+  const [error, setError] = useState({});
+
+  const [open, setOpen] = useState(false);
 
   // const [isLoading,setIsLoading] =useState(false);
 
- 
-  
-
   const handleImageUpload = (e, index) => {
     const file = e.target.files[0];
-
 
     if (file) {
       const fileURL = URL.createObjectURL(file);
@@ -117,12 +109,12 @@ function EditProductPop({ product, categories, setReload }) {
   };
 
   async function handleEdit() {
-     const validate = validateEditProduct(
-       editName,
-       editPrice,
-       editDescription,
-       setError,
-     );
+    const validate = validateEditProduct(
+      editName,
+      editPrice,
+      editDescription,
+      setError
+    );
     if (validate) {
       try {
         const convertBlobUrlToFile = async (blobUrl) => {
@@ -178,19 +170,27 @@ function EditProductPop({ product, categories, setReload }) {
           }
         });
 
+        if (imagesEdit.length < 3) {
+          return setError((prevError) => ({
+            ...prevError,
+            images: "Minimum 3 images required",
+          }));
+        }
+
         const result = await axiosInstance.put("/admin/product", {
           _id: product._id,
           name: editName,
           description: editDescription,
           price: editPrice,
-          salePrice:editSalePrice,
+          salePrice: editSalePrice,
           category: editCategory,
           sleeve: editSleeve,
           sizes: editSizes,
           images: imagesEdit,
         });
-
+        setOpen(false);
         setReload(true);
+
         toast.success(result.data.message);
       } catch (err) {
         if (err.result && err.result.status === 404) {
@@ -202,32 +202,32 @@ function EditProductPop({ product, categories, setReload }) {
     }
   }
 
- function handleRemoveImage(deleteImage) {
-   // First, check if the image is part of the fetched editImages
-   const updatedEditImages = editImages.filter(
-     (image) => image !== deleteImage
-   );
+  function handleRemoveImage(deleteImage) {
+    // First, check if the image is part of the fetched editImages
+    const updatedEditImages = editImages.filter(
+      (image) => image !== deleteImage
+    );
 
-   // Then, check if the image is part of the newly cropped images
-   const updatedCroppedImages = croppedImages.filter(
-     (image) => image !== deleteImage
-   );
+    // Then, check if the image is part of the newly cropped images
+    const updatedCroppedImages = croppedImages.filter(
+      (image) => image !== deleteImage
+    );
 
-   // Update the states accordingly
-   setEditImages(updatedEditImages);
-   setCroppedImages(updatedCroppedImages);
- }
- const allImages = [...editImages, ...croppedImages];
+    // Update the states accordingly
+    setEditImages(updatedEditImages);
+    setCroppedImages(updatedCroppedImages);
+  }
+  const allImages = [...editImages, ...croppedImages];
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className='flex gap-2' variant='outline' size='sm'>
-          <Eye className='w-4 h-4 ' />
+        <Button className="flex gap-2" variant="outline" size="sm">
+          <Eye className="w-4 h-4 " />
           Edit
         </Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-[1000px]'>
+      <DialogContent className="sm:max-w-[1000px]">
         <DialogHeader>
           <DialogTitle>{product.name}</DialogTitle>
           <DialogDescription>View and edit product details</DialogDescription>
@@ -239,7 +239,7 @@ function EditProductPop({ product, categories, setReload }) {
             image && (
               <div
                 key={index}
-                className='crop-container'
+                className="crop-container"
                 style={{
                   width: "100%",
                   height: "800px",
@@ -251,7 +251,8 @@ function EditProductPop({ product, categories, setReload }) {
                   backgroundColor: "#fff",
                   padding: "20px",
                   boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                }}>
+                }}
+              >
                 {crops[index] && (
                   <Cropper
                     image={image}
@@ -273,31 +274,31 @@ function EditProductPop({ product, categories, setReload }) {
                 )}
 
                 <button
-                  className='relative top-10'
-                  onClick={() => handleCropped(index)}>
+                  className="relative top-10"
+                  onClick={() => handleCropped(index)}
+                >
                   done
                 </button>
               </div>
             )
         )}
 
-        
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-          <div className='space-y-4'>
-            <div className='grid grid-cols-4 items-center gap-4'>
-              <Label htmlFor='name' className='text-right'>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">
                 Name
               </Label>
               <Input
-                id='name'
+                id="name"
                 onChange={(e) => setEditName(e.target.value)}
                 value={editName}
-                className='col-span-3'
+                className="col-span-3"
               />
-              <span className='text-red-700 absolute bottom-5  mt-10 ms-2'></span>
+              <span className="text-red-700 absolute bottom-5  mt-10 ms-2"></span>
             </div>
-            <div className='grid grid-cols-4 items-center gap-4'>
-              <Label htmlFor='price' className='text-right'>
+            <div className="grid grid-cols-4 items-center gap-4">
+              {/* <Label htmlFor='price' className='text-right'>
                 Price
               </Label>
 
@@ -306,46 +307,50 @@ function EditProductPop({ product, categories, setReload }) {
                 onChange={(e) => setEditPrice(e.target.value)}
                 value={editPrice}
                 className='col-span-3'
-              />
-              <span className='text-red-700 absolute bottom-5  mt-10 ms-2'></span>
+              /> */}
+              <span className="text-red-700 absolute bottom-5  mt-10 ms-2"></span>
             </div>
-            <div className='grid grid-cols-4 items-center gap-4'>
-              <Label htmlFor='price' className='text-right'>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="price" className="text-right">
                 Sale Price
               </Label>
 
               <Input
-                id='salePrice'
-                onChange={(e) => setEditSalePrice(e.target.value)}
+                id="salePrice"
+                onChange={(e) => {
+                  setEditSalePrice(e.target.value);
+                  setEditPrice(e.target.value);
+                }}
                 value={editSalePrice}
-                className='col-span-3'
+                className="col-span-3"
               />
-              <span className='text-red-700 absolute bottom-5  mt-10 ms-2'></span>
+              <span className="text-red-700 absolute bottom-5  mt-10 ms-2"></span>
             </div>
 
-            <div className='grid grid-cols-4 items-start gap-4'>
-              <Label htmlFor='description' className='text-right pt-2'>
+            <div className="grid grid-cols-4 items-start gap-4">
+              <Label htmlFor="description" className="text-right pt-2">
                 Description
               </Label>
               <Textarea
-                id='description'
+                id="description"
                 value={editDescription || ""}
                 onChange={(e) => setEditDescription(e.target.value)}
-                className='col-span-3 h-32'
-                placeholder='Enter product description'
+                className="col-span-3 h-32"
+                placeholder="Enter product description"
               />
-              <span className='text-red-700 absolute bottom-5  mt-10 ms-2'></span>
+              <span className="text-red-700 absolute bottom-5  mt-10 ms-2"></span>
             </div>
-            <div className='grid grid-cols-4 items-center gap-4'>
-              <Label htmlFor='category' className='text-right'>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="category" className="text-right">
                 Category
               </Label>
-              <div className='col-span-3'>
+              <div className="col-span-3">
                 <Select
                   onValueChange={(value) => {
                     setEditCategory(value);
-                  }}>
-                  <SelectTrigger className='w-full'>
+                  }}
+                >
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder={product.category.name} />
                   </SelectTrigger>
                   <SelectContent>
@@ -358,51 +363,51 @@ function EditProductPop({ product, categories, setReload }) {
                 </Select>
               </div>
             </div>
-            <div className='grid grid-cols-4 items-center gap-4'>
-              <Label htmlFor='sleeve-select' className='text-right'>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="sleeve-select" className="text-right">
                 Sleeve
               </Label>
-              <div className='col-span-3'>
+              <div className="col-span-3">
                 <Select
                   onValueChange={(value) => {
                     setEditSleeve(value);
-                  }}>
-                  <SelectTrigger id='sleeve-select' className='w-full'>
+                  }}
+                >
+                  <SelectTrigger id="sleeve-select" className="w-full">
                     <SelectValue placeholder={`${product.sleeve} sleeve`} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value='short'>Short Sleeve</SelectItem>
-                    <SelectItem value='long'>Long Sleeve</SelectItem>
-                    <SelectItem value='sleeveless'>Sleeveless</SelectItem>
+                    <SelectItem value="short">Short Sleeve</SelectItem>
+                    <SelectItem value="long">Long Sleeve</SelectItem>
+                    <SelectItem value="sleeveless">Sleeveless</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
-            <div className='flex flex-col absolute bottom-5 border p-5'>
-              <span className='text-red-700 '>{error && error.name}</span>
-              <span className='text-red-700 '>
+            <div className="flex flex-col absolute bottom-5 border p-5">
+              <span className="text-red-700 ">{error && error.name}</span>
+              <span className="text-red-700 ">
                 {error && error.description}
               </span>
-              <span className='text-red-700 '>{error && error.price}</span>
-              <span className='text-red-700 '>
-                {/* {error && error.croppedImages} */}
-              </span>
+              <span className="text-red-700 ">{error && error.price}</span>
+              <span className="text-red-700 ">{error && error.images}</span>
             </div>
           </div>
-          <div className='space-y-4'>
+          <div className="space-y-4">
             <Label>Sizes and Stock</Label>
-            <div className='grid grid-cols-2 gap-2'>
+            <div className="grid grid-cols-2 gap-2">
               {product.sizes.map((item, index) => (
-                <div key={item.size} className='flex items-center space-x-2'>
-                  <span className='w-8 text-sm font-medium'>{item.size}</span>
+                <div key={item.size} className="flex items-center space-x-2">
+                  <span className="w-8 text-sm font-medium">{item.size}</span>
                   <Select
                     onValueChange={(value) => {
                       const updatedSizes = [...sizes];
 
                       updatedSizes[index].stock = parseInt(value);
                       setEditSizes(updatedSizes);
-                    }}>
-                    <SelectTrigger className='w-full'>
+                    }}
+                  >
+                    <SelectTrigger className="w-full">
                       <SelectValue placeholder={item.stock} />
                     </SelectTrigger>
                     <SelectContent>
@@ -417,17 +422,18 @@ function EditProductPop({ product, categories, setReload }) {
               ))}
             </div>
             <Label>Product Images</Label>
-            <div className='grid grid-cols-3 gap-2'>
+            <div className="grid grid-cols-3 gap-2">
               {Array.from({ length: 5 }).map((_, index) => (
                 <div
                   key={index}
-                  className='border-2 h-56 w-36 aspect-square border-dashed border-gray-300 rounded-lg p-2 text-center flex items-center justify-center flex-col relative'>
+                  className="border-2 h-56 w-36 aspect-square border-dashed border-gray-300 rounded-lg p-2 text-center flex items-center justify-center flex-col relative"
+                >
                   {croppedImages[index] || editImages[index] ? (
                     <>
                       <img
                         src={croppedImages[index] || editImages[index]}
                         alt={`Product Image ${index + 1}`}
-                        className='rounded-lg h-full w-full object-cover'
+                        className="rounded-lg h-full w-full object-cover"
                       />
                       <span
                         onClick={() =>
@@ -435,29 +441,35 @@ function EditProductPop({ product, categories, setReload }) {
                             croppedImages[index] || editImages[index]
                           )
                         }
-                        className='my-2 cursor-pointer text-red-500 hover:underline'>
+                        className="my-2 cursor-pointer text-red-500 hover:underline"
+                      >
                         Remove
                       </span>
                     </>
                   ) : (
-                    <span className='text-gray-500'>Add Image</span>
+                    <span className="text-gray-500">Add Image</span>
                   )}
                   <input
                     style={{ height: "80%" }}
-                    className='absolute inset-0 w-full opacity-0 cursor-pointer upload-area'
-                    type='file'
-                    accept='image/*'
+                    className="absolute inset-0 w-full opacity-0 cursor-pointer upload-area"
+                    type="file"
+                    accept="image/*"
                     onChange={(e) => handleImageUpload(e, index)}
                   />
                 </div>
               ))}
             </div>
 
-            <span className='text-red-700 absolute bottom-5  mt-10 ms-2'></span>
+            <span className="text-red-700 absolute bottom-5  mt-10 ms-2"></span>
           </div>
         </div>
 
         <DialogFooter>
+          <DialogClose asChild>
+            <Button type="button" variant="secondary">
+              Close
+            </Button>
+          </DialogClose>
           <Button onClick={handleEdit}>Save changes</Button>
         </DialogFooter>
       </DialogContent>

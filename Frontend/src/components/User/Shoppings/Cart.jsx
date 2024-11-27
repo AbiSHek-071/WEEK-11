@@ -1,5 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { ChevronRight, Minus, Plus, ShoppingCart, Tag, X } from "lucide-react";
+import {
+  Binary,
+  ChevronRight,
+  Delete,
+  DeleteIcon,
+  Minus,
+  Plus,
+  Recycle,
+  ShoppingCart,
+  Tag,
+  Trash2,
+  X,
+} from "lucide-react";
 import { toast } from "sonner";
 import axiosInstance from "@/AxiosConfig";
 import { useSelector } from "react-redux";
@@ -165,9 +177,9 @@ export default function Cart() {
 
                         <button
                           onClick={() => handleRemove(item)}
-                          className="text-gray-600 hover:text-gray-800 transition duration-200 text-center"
+                          className="text-gray-600 hover:text-gray-800 transition duration-200 text-center pointer-events-auto opacity-100"
                         >
-                          <X size={20} />
+                          <Trash2 size={20} />
                         </button>
                       </div>
                     ))}

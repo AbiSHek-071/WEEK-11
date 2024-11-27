@@ -89,13 +89,13 @@ export default function SignUp() {
   };
 
   return (
-    <div className='flex flex-col items-center justify-center min-h-screen p-4 bg-background'>
-      <div className='w-full max-w-md space-y-8'>
+    <div className='flex flex-col items-center justify-center min-h-screen p-6 bg-background'>
+      <div className='w-full max-w-md space-y-6'>
         <div className='text-center'>
           <h1 className='text-2xl font-bold'>Snitchers</h1>
           <h2 className='text-3xl font-bold mt-6 mb-6'>Sign up</h2>
         </div>
-        <form className='space-y-4' onSubmit={handleSignUp}>
+        <form className='space-y-6' onSubmit={handleSignUp}>
           <div className='space-y-1'>
             <Label htmlFor='fullName'>Full name</Label>
             <Input
@@ -104,7 +104,7 @@ export default function SignUp() {
               placeholder='Full name'
               required
             />
-            <span className='text-red-700  mt-10 ms-2'>
+            <span className='text-red-700 text-sm block mt-1'>
               {error && error.name}
             </span>
           </div>
@@ -118,7 +118,7 @@ export default function SignUp() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <span className='text-red-700  mt-10 ms-2'>
+            <span className='text-red-700 text-sm block mt-1'>
               {error && error.email}
             </span>
           </div>
@@ -131,7 +131,7 @@ export default function SignUp() {
               placeholder='Mobile Number'
               required
             />
-            <span className='text-red-700  mt-10 ms-2'>
+            <span className='text-red-700 text-sm block mt-1'>
               {error && error.phone}
             </span>
           </div>
@@ -145,7 +145,6 @@ export default function SignUp() {
                 placeholder='Password'
                 required
               />
-
               <button
                 type='button'
                 className='absolute inset-y-0 right-0 pr-3 flex items-center'
@@ -157,7 +156,7 @@ export default function SignUp() {
                 )}
               </button>
             </div>
-            <span className='text-red-700  mt-10 '>
+            <span className='text-red-700 text-sm block mt-1'>
               {error && error.password}
             </span>
           </div>
@@ -183,7 +182,7 @@ export default function SignUp() {
               </button>
             </div>
           </div>
-          <div className='text-sm text-center'>
+          <div className='text-sm text-center mt-4'>
             Already have an account?{" "}
             <Link
               to='/user/login'
@@ -195,7 +194,7 @@ export default function SignUp() {
             Sign Up
           </Button>
         </form>
-        <div className='relative'>
+        <div className='relative mt-8'>
           <div className='absolute inset-0 flex items-center'>
             <span className='w-full border-t' />
           </div>
@@ -206,7 +205,7 @@ export default function SignUp() {
           </div>
         </div>
 
-        <div className='w-full flex justify-center'>
+        <div className='w-full flex justify-center mt-6'>
           <GoogleLogin
             onSuccess={async (credentialResponse) => {
               try {

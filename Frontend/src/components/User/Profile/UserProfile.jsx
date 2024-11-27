@@ -17,7 +17,7 @@ function UserProfile() {
       <div className="  h-full">
         <UserSidebar />
       </div>
-      <div className="flex-grow  p-6 overflow-y-auto bg-gray-100">
+      <div className="flex-grow   overflow-y-auto bg-gray-100 sm:p-6">
         <Provider store={store}>
           <Routes>
             {/* Define routes relative to /user/profile */}
