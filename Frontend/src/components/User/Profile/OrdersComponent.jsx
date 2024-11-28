@@ -318,7 +318,8 @@ export default function OrdersComponent() {
                               {items.order_status !== "Cancelled" &&
                                 items.order_status !== "Returned" &&
                                 items.order_status !== "Delivered" &&
-                                items.order_status !== "Return Rejected" && (
+                                items.order_status !== "Return Rejected" &&
+                                items.payment_status !== "Failed" && (
                                   <button
                                     onClick={() =>
                                       handleCancel(order._id, items._id)

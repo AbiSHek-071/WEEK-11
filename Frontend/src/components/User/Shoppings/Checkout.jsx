@@ -340,7 +340,7 @@ export default function Checkout() {
               <ModalBody>
                 <div className="flex flex-col items-center">
                   {orderDetails.order_items.every(
-                    (item) => item.payment_status === "Paid"
+                    (item) => item.payment_status !== "Failed"
                   ) ? (
                     <img src={verify} alt="" className="h-20 my-5" />
                   ) : orderDetails.order_items.some(

@@ -59,7 +59,7 @@ function Admin() {
       </div>
 
       {/* Main content: scrollable area */}
-      <div className="flex-grow lg:ml-64 p-6 overflow-y-auto bg-gray-100">
+      <div className="flex-grow lg:ml-64 p-2 md:p-6 overflow-y-auto bg-gray-100">
         <Provider store={store}>
           <Suspense fallback={<Loading />}>
             <Routes>

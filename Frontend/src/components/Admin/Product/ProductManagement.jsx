@@ -16,7 +16,7 @@ export default function ImprovedProductList() {
   const [reload, setReload] = useState(false);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const limit = 6;
+  const limit = 9;
   async function fetchProducts() {
     try {
       const response = await axiosInstance.get(

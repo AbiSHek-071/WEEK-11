@@ -19,6 +19,12 @@ function Wallet() {
 
   const handleAddMoney = async () => {
     try {
+      if (amount > 2000) {
+        return toast.error("You cannot add money above 2000 at a time");
+      } else if (amount < 0) {
+        return toast.error("Negative values are not accepted");
+      }
+
       const response = await addMoneytoWalletApi(amount, userData._id);
       setReload(true);
       setIsModalOpen(false);

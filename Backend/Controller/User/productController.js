@@ -9,8 +9,10 @@ async function fetchProducts(req, res) {
   try {
     const { category, sleeve, size, search, sortBy } = req.query;
 
+    console.log("category:::::::>", category);
+
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 5;
+    const limit = parseInt(req.query.limit) || 8;
     const skip = (page - 1) * limit;
 
     // active category

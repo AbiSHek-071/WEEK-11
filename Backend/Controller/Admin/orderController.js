@@ -26,13 +26,11 @@ async function fetchOrders(req, res) {
     });
   } catch (err) {
     console.error(err);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "Internal server error",
-        error: err.message,
-      });
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: err.message,
+    });
   }
 }
 
@@ -109,8 +107,29 @@ async function respondToReturnReq(req, res) {
   }
 }
 
+async function fetchOrderDetails(req, res) {
+  try {
+    const { id } = req.params;
+    const order = await Order.findOne({ order_id: id })
+      .populate("user")
+      .populate("shipping_address")
+      .populate("order_items.product");
+    if (!order) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Details fetch failed" });
+    }
+    return res
+      .status(200)
+      .json({ success: true, message: "Details fetched succesfully", order });
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 module.exports = {
   fetchOrders,
   switchStatus,
   respondToReturnReq,
+  fetchOrderDetails,
 };

@@ -65,7 +65,7 @@ export default function Cart() {
       setReload(true);
     } catch (err) {
       if (err.response) {
-        reactToast.error(err.response.data.message);
+        toast.error(err.response.data.message);
       }
       console.log(err);
     }
@@ -127,57 +127,56 @@ export default function Cart() {
                     <span className="text-center">Price</span>
                     <span className="text-center">Quantity</span>
                   </div>
-                  <div className="space-y-8">
+                  <div className="space-y-4 sm:space-y-6 md:space-y-8">
                     {cartItems.map((item) => (
                       <div
                         key={item._id}
-                        className={`relative grid grid-cols-6 items-center py-8 border-b border-gray-200 ${
+                        className={`relative flex flex-col sm:grid sm:grid-cols-6 items-center gap-4 py-4 sm:py-6 md:py-8 border-b border-gray-200 ${
                           item.qty === 0 ? "pointer-events-none opacity-40" : ""
                         }`}
                       >
-                        {/* {item.qty === 0 && (
-                        <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-20 rounded-lg text-white font-semibold'>
-                          <span className="">Currently Unavailable</span>
-                        </div>
-                      )} */}
-                        <div className="col-span-2 flex items-center space-x-6">
+                        <div className="w-full sm:col-span-2 flex flex-col sm:flex-row items-center sm:space-x-4 md:space-x-6">
                           <img
                             src={item?.productId?.images[0]}
                             alt={item?.productId?.images[1]}
-                            className="w-40 h-60 object-cover rounded-sm"
+                            className="w-full max-w-[160px] sm:w-24 sm:h-36 md:w-32 md:h-48 lg:w-40 lg:h-60 object-cover rounded-sm"
                           />
-                          <h3 className="text-lg font-semibold">
+                          <h3 className="text-base sm:text-lg font-semibold mt-2 sm:mt-0 text-center sm:text-left">
                             {item.productId.name}
                           </h3>
                         </div>
 
-                        <p className="text-center">{item.size}</p>
+                        <p className="text-sm sm:text-base text-center sm:col-span-1">
+                          {item.size}
+                        </p>
 
-                        <p className="text-center font-semibold">
+                        <p className="text-sm sm:text-base font-semibold text-center sm:col-span-1">
                           INR {item.discountedAmount.toFixed(2)}
                         </p>
 
-                        <div className="flex flex-col items-center">
-                          <div className="flex items-center justify-center space-x-2">
+                        <div className="flex flex-col items-center sm:col-span-1">
+                          <div className="flex items-center justify-center space-x-2 border border-gray-200 rounded-full">
                             <button
                               onClick={() => handelMinus(item)}
-                              className="px-2 py-1 text-gray-600 hover:bg-gray-100 transition duration-200"
+                              className="p-1 sm:p-2 text-gray-600 hover:bg-gray-100 transition duration-200 rounded-full"
                             >
-                              <Minus />
+                              <Minus size={16} />
                             </button>
-                            <span className="px-3">{item.qty}</span>
+                            <span className="px-2 sm:px-3 min-w-[24px] text-center">
+                              {item.qty}
+                            </span>
                             <button
                               onClick={() => handelPlus(item)}
-                              className="px-2 py-1 text-gray-600 hover:bg-gray-100 transition duration-200"
+                              className="p-1 sm:p-2 text-gray-600 hover:bg-gray-100 transition duration-200 rounded-full"
                             >
-                              <Plus />
+                              <Plus size={16} />
                             </button>
                           </div>
                         </div>
 
                         <button
                           onClick={() => handleRemove(item)}
-                          className="text-gray-600 hover:text-gray-800 transition duration-200 text-center pointer-events-auto opacity-100"
+                          className="text-gray-600 hover:text-red-500 transition duration-200 sm:col-span-1 mt-2 sm:mt-0"
                         >
                           <Trash2 size={20} />
                         </button>

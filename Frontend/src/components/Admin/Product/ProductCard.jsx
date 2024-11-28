@@ -51,7 +51,7 @@ function ProductCard({ product, categories, setReload, offers }) {
   return (
     <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
       <CardContent className="p-0 flex flex-col sm:flex-row">
-        <div className="w-full sm:w-1/3 h-48 sm:h-full relative">
+        <div className="w-full sm:w-1/3 h-64 sm:h-auto relative">
           <img
             src={product.images[0]}
             alt={product.name}
@@ -65,7 +65,7 @@ function ProductCard({ product, categories, setReload, offers }) {
         </div>
         <div className="p-4 flex-1 flex flex-col justify-between bg-gray-50">
           <div>
-            <div className="flex justify-between items-start mb-2">
+            <div className="flex flex-col sm:flex-row justify-between items-start mb-2 gap-2">
               <h2 className="text-xl font-semibold">{product.name}</h2>
               <span className="text-sm px-2 py-1 bg-gray-200 rounded-full">
                 {product.category.name}

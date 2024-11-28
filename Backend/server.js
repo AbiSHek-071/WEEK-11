@@ -8,8 +8,6 @@ const cors = require("cors");
 const app = express();
 const path = require("path");
 
-
-
 app.use(express.json());
 
 app.use(
@@ -21,17 +19,24 @@ app.use(
 );
 app.use(cookieParser());
 
-mongoose.connect(process.env.DATABASE_ORIGIN, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+const connectToDB = async () => {
+  try {
+    await mongoose.connect(process.env.DATABASE_ORIGIN, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log("Connected to the database successfully!");
+  } catch (err) {
+    console.error("Failed to connect to the database:", err.message);
+  }
+};
 
+connectToDB();
 
-const userRoute = require("./Routes/userRoute");  
+const userRoute = require("./Routes/userRoute");
 const adminRoute = require("./Routes/adminRoute");
 
-
-app.use("/user", userRoute);  
+app.use("/user", userRoute);
 app.use("/admin", adminRoute);
 
 app.listen(process.env.BACKEND_PORT, () => {

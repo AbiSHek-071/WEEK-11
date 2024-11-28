@@ -283,38 +283,30 @@ function EditProductPop({ product, categories, setReload }) {
             )
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[80vh] overflow-y-auto md:overflow-hidden p-4 md:p-6">
+          <div className="space-y-4 md:space-y-4">
+            <div className="grid grid-cols-4 items-center gap-2 md:gap-4">
+              <Label htmlFor="name" className="text-right text-sm md:text-base">
                 Name
               </Label>
               <Input
                 id="name"
                 onChange={(e) => setEditName(e.target.value)}
                 value={editName}
-                className="col-span-3"
+                className="col-span-3 text-sm md:text-base"
               />
-              <span className="text-red-700 absolute bottom-5  mt-10 ms-2"></span>
+              <span className="text-red-700 text-xs md:text-sm col-span-4 md:absolute md:bottom-5 md:mt-10 md:ms-2"></span>
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              {/* <Label htmlFor='price' className='text-right'>
-                Price
-              </Label>
-
-              <Input
-                id='price'
-                onChange={(e) => setEditPrice(e.target.value)}
-                value={editPrice}
-                className='col-span-3'
-              /> */}
-              <span className="text-red-700 absolute bottom-5  mt-10 ms-2"></span>
+            <div className="grid grid-cols-4 items-center gap-2 md:gap-4">
+              <span className="text-red-700 text-xs md:text-sm col-span-4 md:absolute md:bottom-5 md:mt-10 md:ms-2"></span>
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="price" className="text-right">
+            <div className="grid grid-cols-4 items-center gap-2 md:gap-4">
+              <Label
+                htmlFor="price"
+                className="text-right text-sm md:text-base"
+              >
                 Sale Price
               </Label>
-
               <Input
                 id="salePrice"
                 onChange={(e) => {
@@ -322,26 +314,31 @@ function EditProductPop({ product, categories, setReload }) {
                   setEditPrice(e.target.value);
                 }}
                 value={editSalePrice}
-                className="col-span-3"
+                className="col-span-3 text-sm md:text-base"
               />
-              <span className="text-red-700 absolute bottom-5  mt-10 ms-2"></span>
+              <span className="text-red-700 text-xs md:text-sm col-span-4 md:absolute md:bottom-5 md:mt-10 md:ms-2"></span>
             </div>
-
-            <div className="grid grid-cols-4 items-start gap-4">
-              <Label htmlFor="description" className="text-right pt-2">
+            <div className="grid grid-cols-4 items-start gap-2 md:gap-4">
+              <Label
+                htmlFor="description"
+                className="text-right pt-2 text-sm md:text-base"
+              >
                 Description
               </Label>
               <Textarea
                 id="description"
                 value={editDescription || ""}
                 onChange={(e) => setEditDescription(e.target.value)}
-                className="col-span-3 h-32"
+                className="col-span-3 h-24 md:h-32 text-sm md:text-base"
                 placeholder="Enter product description"
               />
-              <span className="text-red-700 absolute bottom-5  mt-10 ms-2"></span>
+              <span className="text-red-700 text-xs md:text-sm col-span-4 md:absolute md:bottom-5 md:mt-10 md:ms-2"></span>
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="category" className="text-right">
+            <div className="grid grid-cols-4 items-center gap-2 md:gap-4">
+              <Label
+                htmlFor="category"
+                className="text-right text-sm md:text-base"
+              >
                 Category
               </Label>
               <div className="col-span-3">
@@ -350,7 +347,7 @@ function EditProductPop({ product, categories, setReload }) {
                     setEditCategory(value);
                   }}
                 >
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full text-sm md:text-base">
                     <SelectValue placeholder={product.category.name} />
                   </SelectTrigger>
                   <SelectContent>
@@ -363,8 +360,11 @@ function EditProductPop({ product, categories, setReload }) {
                 </Select>
               </div>
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="sleeve-select" className="text-right">
+            <div className="grid grid-cols-4 items-center gap-2 md:gap-4">
+              <Label
+                htmlFor="sleeve-select"
+                className="text-right text-sm md:text-base"
+              >
                 Sleeve
               </Label>
               <div className="col-span-3">
@@ -373,7 +373,10 @@ function EditProductPop({ product, categories, setReload }) {
                     setEditSleeve(value);
                   }}
                 >
-                  <SelectTrigger id="sleeve-select" className="w-full">
+                  <SelectTrigger
+                    id="sleeve-select"
+                    className="w-full text-sm md:text-base"
+                  >
                     <SelectValue placeholder={`${product.sleeve} sleeve`} />
                   </SelectTrigger>
                   <SelectContent>
@@ -384,30 +387,37 @@ function EditProductPop({ product, categories, setReload }) {
                 </Select>
               </div>
             </div>
-            <div className="flex flex-col absolute bottom-5 border p-5">
-              <span className="text-red-700 ">{error && error.name}</span>
-              <span className="text-red-700 ">
+            <div className="flex flex-col border p-3 md:p-5 mt-4 md:mt-0 md:absolute md:bottom-5">
+              <span className="text-red-700 text-xs md:text-sm">
+                {error && error.name}
+              </span>
+              <span className="text-red-700 text-xs md:text-sm">
                 {error && error.description}
               </span>
-              <span className="text-red-700 ">{error && error.price}</span>
-              <span className="text-red-700 ">{error && error.images}</span>
+              <span className="text-red-700 text-xs md:text-sm">
+                {error && error.price}
+              </span>
+              <span className="text-red-700 text-xs md:text-sm">
+                {error && error.images}
+              </span>
             </div>
           </div>
-          <div className="space-y-4">
-            <Label>Sizes and Stock</Label>
+          <div className="space-y-4 md:space-y-4">
+            <Label className="text-sm md:text-base">Sizes and Stock</Label>
             <div className="grid grid-cols-2 gap-2">
               {product.sizes.map((item, index) => (
                 <div key={item.size} className="flex items-center space-x-2">
-                  <span className="w-8 text-sm font-medium">{item.size}</span>
+                  <span className="w-8 text-xs md:text-sm font-medium">
+                    {item.size}
+                  </span>
                   <Select
                     onValueChange={(value) => {
                       const updatedSizes = [...sizes];
-
                       updatedSizes[index].stock = parseInt(value);
                       setEditSizes(updatedSizes);
                     }}
                   >
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger className="w-full text-xs md:text-sm">
                       <SelectValue placeholder={item.stock} />
                     </SelectTrigger>
                     <SelectContent>
@@ -421,12 +431,12 @@ function EditProductPop({ product, categories, setReload }) {
                 </div>
               ))}
             </div>
-            <Label>Product Images</Label>
+            <Label className="text-sm md:text-base">Product Images</Label>
             <div className="grid grid-cols-3 gap-2">
               {Array.from({ length: 5 }).map((_, index) => (
                 <div
                   key={index}
-                  className="border-2 h-56 w-36 aspect-square border-dashed border-gray-300 rounded-lg p-2 text-center flex items-center justify-center flex-col relative"
+                  className="border-2 h-32 w-24 md:h-56 md:w-36 aspect-square border-dashed border-gray-300 rounded-lg p-2 text-center flex items-center justify-center flex-col relative"
                 >
                   {croppedImages[index] || editImages[index] ? (
                     <>
@@ -441,13 +451,15 @@ function EditProductPop({ product, categories, setReload }) {
                             croppedImages[index] || editImages[index]
                           )
                         }
-                        className="my-2 cursor-pointer text-red-500 hover:underline"
+                        className="my-2 cursor-pointer text-red-500 hover:underline text-xs md:text-sm"
                       >
                         Remove
                       </span>
                     </>
                   ) : (
-                    <span className="text-gray-500">Add Image</span>
+                    <span className="text-gray-500 text-xs md:text-sm">
+                      Add Image
+                    </span>
                   )}
                   <input
                     style={{ height: "80%" }}
@@ -459,8 +471,7 @@ function EditProductPop({ product, categories, setReload }) {
                 </div>
               ))}
             </div>
-
-            <span className="text-red-700 absolute bottom-5  mt-10 ms-2"></span>
+            <span className="text-red-700 text-xs md:text-sm md:absolute md:bottom-5 md:mt-10 md:ms-2"></span>
           </div>
         </div>
 

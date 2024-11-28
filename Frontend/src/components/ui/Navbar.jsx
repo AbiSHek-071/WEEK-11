@@ -32,12 +32,6 @@ export default function Navbar() {
             <Link to="/shop" className="hover:text-gray-700">
               Shop
             </Link>
-            <Link href="#" className="hover:text-gray-700">
-              Our Story
-            </Link>
-            <Link href="#" className="hover:text-gray-700">
-              Contact us
-            </Link>
           </div>
         </div>
 

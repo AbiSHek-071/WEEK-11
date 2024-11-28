@@ -8,13 +8,12 @@ async function createAdmin(req, res) {
     const adminPassword = "admin";
     const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
-    const admin = new Admin({
+    const admin = await Admin.create({
       email: req.params.email,
       password: hashedPassword,
       role: "admin",
     });
 
-    await admin.save();
     console.log("Admin user created successfully!");
   } catch (error) {
     console.error("Error creating admin user:", error);
@@ -47,7 +46,7 @@ async function login(req, res) {
     }
     const accessToken = generateAccessToken(adminData._id);
     const refreshToken = generateRefreshToken(adminData._id);
-    
+
     res.cookie("adminAccessToken", accessToken, {
       httpOnly: true,
       secure: false,
@@ -75,7 +74,6 @@ async function login(req, res) {
     });
   }
 }
-
 
 module.exports = {
   createAdmin,

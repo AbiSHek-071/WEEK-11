@@ -92,6 +92,7 @@ adminRoute.patch(
   orderController.switchStatus
 );
 adminRoute.patch("/return/response", orderController.respondToReturnReq);
+adminRoute.get("/order/:id", orderController.fetchOrderDetails);
 
 //offer Controller routes
 adminRoute.post("/product/offer", offerController.addProductOffer);
